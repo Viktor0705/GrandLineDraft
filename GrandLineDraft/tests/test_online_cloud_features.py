@@ -27,8 +27,8 @@ def test_direct_link_calls_cloud_upload():
     assert "direct_link" in fn
 
 def test_online_spin_uses_shared_start_time():
-    assert "classic_spin_started_at = time.time() + 1.25" in APP
-    assert "rank_spin_started_at = time.time() + 1.25" in APP
+    assert "classic_spin_started_at = time.time() + 2.50" in APP
+    assert "rank_spin_started_at = time.time() + 2.50" in APP
     assert "start_at=st.session_state.get(\"classic_spin_started_at\")" in APP
     assert "start_at=st.session_state.get(\"rank_spin_started_at\")" in APP
     assert "startAtSeconds=Number(a.start_at||0)" in WHEEL
@@ -50,3 +50,9 @@ def test_portrait_archive_parser_has_limits_and_no_extractall():
     assert "info.file_size > 12 * 1024 * 1024" in APP
     assert "total_size > 150 * 1024 * 1024" in APP
     assert "extractall(" not in APP
+
+
+def test_wheel_animation_keeps_dom_and_catches_up_to_shared_epoch():
+    assert "Preserve the active DOM node on ordinary Streamlit rerenders" in WHEEL
+    assert "animationDelay=elapsedMs>0" in WHEEL
+    assert "will-change:transform" in WHEEL

@@ -1,6 +1,7 @@
 """Integrity tests for Grand Line Draft 5.0 bundle."""
 from __future__ import annotations
 import json
+import gzip
 import unittest
 from pathlib import Path
 
@@ -12,6 +13,8 @@ class CharacterDataIntegrityTests(unittest.TestCase):
     def setUpClass(cls):
         cls.characters = json.loads((BASE / "characters.json").read_text(encoding="utf-8"))
         cls.data = json.loads((BASE / "character_ratings.json").read_text(encoding="utf-8"))
+        with gzip.open(BASE / "matchup_results.json.gz", "rt", encoding="utf-8") as handle:
+            cls.matchups = json.load(handle)
         cls.ratings = cls.data["characters"]
 
     def test_character_ids_and_names_are_unique(self):
@@ -81,7 +84,7 @@ class CharacterDataIntegrityTests(unittest.TestCase):
             self.assertEqual(self.ratings[name]["power"], power, name)
 
     def test_matchup_matrix_complete_and_simulated(self):
-        matchups = self.data["matchup_results"]
+        matchups = self.matchups
         self.assertEqual(len(matchups), 135 * 134 // 2)
         self.assertEqual(len({tuple(sorted((m["a"], m["b"]))) for m in matchups}), len(matchups))
         for item in matchups:
@@ -91,7 +94,7 @@ class CharacterDataIntegrityTests(unittest.TestCase):
             self.assertTrue(item.get("reason"))
 
     def test_disputed_matchup_directions_are_consistent(self):
-        index = {tuple(sorted((m["a"],m["b"]))):m for m in self.data["matchup_results"]}
+        index = {tuple(sorted((m["a"],m["b"]))):m for m in self.matchups}
         def chance(a,b):
             row=index[tuple(sorted((a,b)))]
             return row["a_win_probability"] if row["a"]==a else 100-row["a_win_probability"]

@@ -1,10 +1,10 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title Grand Line Draft 5.0
+title Grand Line Draft 5.0.3
 
 echo ==========================================
-echo         GRAND LINE DRAFT 5.0
+echo         GRAND LINE DRAFT 5.0.3
 echo ==========================================
 echo.
 

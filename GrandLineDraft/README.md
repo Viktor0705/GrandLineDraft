@@ -1,4 +1,4 @@
-# Grand Line Draft 5.0 — Peak Edition
+# Grand Line Draft 5.0.3 — Peak Edition
 
 One-Piece-Draft-App auf Python/Streamlit-Basis. Sie enthält den klassischen Auktions-Draft und den separaten Fivefold-Ranking-Modus. Beide nutzen denselben Pool aus **135 eindeutigen Charakter-IDs** und eine gemeinsame Power-/Matchup-Matrix. Spielumgebung und Draft-Spielmodus sind getrennt wählbar.
 
@@ -104,3 +104,8 @@ Fanprojekt, nicht mit Eiichiro Oda, Shueisha, VIZ oder anderen Rechteinhabern ve
 ## Grand Line Draft 5.0.2 – Online Performance & Cloud Portraits
 
 Diese Version synchronisiert Classic- und Fivefold-Rad-Animationen über einen gemeinsamen Startzeitpunkt, reduziert die Online-Polling-Last auf kompakte Metadaten und nutzt Supabase Storage für gemeinsame Charakterporträts. Vor der ersten Bildsynchronisierung einmal `cloud_portraits_schema.sql` im Supabase SQL Editor ausführen. Danach in der App den Cloud-Bilder-Expander verwenden. Siehe `ONLINE_SETUP.md`.
+
+
+## Performance Edition 5.0.3
+
+Die Matchup-Tabelle liegt separat in `matchup_results.json.gz` und wird erst beim Teamvergleich geladen. Charakter-/Fivefold-Profile und der Suchindex sind gecacht; sichtbare Cloud-Porträts werden parallel vorgeladen und als kompakte Thumbnails gerendert.
