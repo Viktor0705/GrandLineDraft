@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+:root{--gold:#edc871;--blue:#75caed;--ink:#07111b;--panel:#102033;--line:rgba(210,226,243,.18);--text:#edf4fa;--muted:#9db0c2}
+*{box-sizing:border-box}html,body{padding:0;margin:0;background:transparent;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.widget{width:100%;padding:6px 2px 12px}.eyebrow{font-size:10px;letter-spacing:.2em;font-weight:900;color:var(--gold);text-transform:uppercase}.title{font-size:20px;font-weight:900;line-height:1.2;margin:6px 0;color:#fff}.sub{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:14px}
+.wheel-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:5px 0 10px}.pointer{font-size:25px;color:var(--gold);margin-bottom:-7px;z-index:2;text-shadow:0 2px 5px #000}.wheel{width:min(255px,70vw);aspect-ratio:1;border-radius:50%;border:7px solid var(--gold);position:relative;display:flex;align-items:center;justify-content:center;background:conic-gradient(from 0deg,#20394d 0 30deg,#bd8d40 30deg 60deg,#152a3c 60deg 90deg,#e4c574 90deg 120deg,#20394d 120deg 150deg,#bd8d40 150deg 180deg,#152a3c 180deg 210deg,#e4c574 210deg 240deg,#20394d 240deg 270deg,#bd8d40 270deg 300deg,#152a3c 300deg 330deg,#e4c574 330deg 360deg);box-shadow:0 0 0 8px rgba(232,189,100,.09),0 18px 45px rgba(0,0,0,.38),inset 0 0 0 3px rgba(4,12,20,.8);transform:rotate(0deg)}
+.wheel:before{content:"";position:absolute;inset:22px;border-radius:50%;border:1px dashed rgba(255,255,255,.38)}.wheel.spinning{animation:spin var(--spin-duration,3.2s) cubic-bezier(.08,.72,.08,1) forwards}@keyframes spin{0%{transform:rotate(0deg)}58%{transform:rotate(1450deg)}100%{transform:rotate(1830deg)}}
+.hub{z-index:1;width:92px;height:92px;border-radius:50%;border:5px solid #0d1a28;background:linear-gradient(145deg,#f5d993,#a36d21);display:flex;align-items:center;justify-content:center;color:#101820;font-size:30px;box-shadow:0 4px 18px #0008}.wheel-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-top:14px}.pulse{width:7px;height:7px;border-radius:50%;display:inline-block;background:#82e1ae;box-shadow:0 0 0 5px #82e1ae1c;margin-right:8px}
+.assign-head{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:11px;background:linear-gradient(130deg,#172d40,#0c1927);margin:8px 0 14px}.char-img{height:90px;width:70px;object-fit:cover;border-radius:9px;border:1px solid #edc87166;background:#091420}.char-name{font-size:17px;font-weight:900}.char-sub{color:var(--muted);font-size:11px;margin-top:5px}.drag-label{color:var(--gold);font-size:10px;font-weight:900;letter-spacing:.1em;margin-top:8px}.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cat{border:1px solid var(--line);border-radius:13px;padding:12px;min-height:112px;background:linear-gradient(155deg,#112438,#0a1521);transition:border .15s,transform .15s,background .15s;position:relative}.cat:last-child:nth-child(odd){grid-column:1/-1}.cat .ico{font-size:22px;margin-bottom:7px}.cat.fruit{border-top:3px solid #f0a64c}.cat.haki{border-top:3px solid #b9a1ff}.cat.strength{border-top:3px solid #f27e73}.cat.speed{border-top:3px solid #72cafa}.cat.iq{border-top:3px solid #72d8a0}.cat.fruit .ico{color:#f0a64c}.cat.haki .ico{color:#b9a1ff}.cat.strength .ico{color:#f27e73}.cat.speed .ico{color:#72cafa}.cat.iq .ico{color:#72d8a0}.cat .label{font-weight:900;font-size:13px}.cat .desc{font-size:10px;line-height:1.4;color:var(--muted);margin-top:5px}.cat .score{font-size:24px;font-weight:900;color:var(--gold);line-height:1.1;margin-top:9px;font-variant-numeric:tabular-nums}.cat.available{border-color:#edc8716b;border-style:dashed;cursor:copy}.cat.available:after{content:'KARTE HIER ABLEGEN';display:block;color:#e8c779;font-size:8px;letter-spacing:.08em;font-weight:900;margin-top:8px}.cat.available.dragover{background:linear-gradient(155deg,#47371b,#172838);border:2px solid var(--gold);transform:translateY(-2px);box-shadow:0 0 0 4px #edc8711c}.cat.occupied{opacity:.52;background:#111821}.dnd-foot{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.5}.pulse-btn{display:inline-block;border-radius:99px;padding:5px 8px;background:#edc87116;color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.08em;margin-top:5px}
+@media(max-width:420px){.cats{grid-template-columns:1fr}.cat:last-child:nth-child(odd){grid-column:auto}.title{font-size:18px}}
+</style>
+</head>
+<body>
+<div id="root" class="widget"><div class="eyebrow">Grand Line Draft · Fivefold Ranking</div><div class="title">Lade Spieloberfläche …</div></div>
+<script>
+(function(){
+ const root=document.getElementById('root'); let currentSpin=null; let sentSpin=null; let startedSpin=null; let scheduledSpin=null; let lastArgs={};
+ function send(value){window.parent.postMessage({isStreamlitMessage:true,type:'streamlit:setComponentValue',value:value,dataType:'json'},'*')}
+ function setHeight(){window.parent.postMessage({isStreamlitMessage:true,type:'streamlit:setFrameHeight',height:document.documentElement.scrollHeight},'*')}
+ function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+ function renderWheel(a){
+   const id=String(a.spin_id||'');
+   const label=String(a.variant||'ranking')==='classic'?'CLASSIC DRAFT':'FIVEFOLD RANKING';
+   const animationMs=Math.max(1800,Math.min(6000,Number(a.animation_ms||3200)));
+   const settleMs=Math.max(0,Math.min(3000,Number(a.broadcast_delay_ms||1200)));
+   const startAtSeconds=Number(a.start_at||0);
+   const startDelay=startAtSeconds>0?Math.max(0,Math.min(5000,startAtSeconds*1000-Date.now())):0;
+   const isStarted=startedSpin===id;
+   root.innerHTML=`<div class="eyebrow">${label} · RUNDE ${escapeHtml(a.round||'')}</div><div class="title">Das Rad entscheidet …</div><div class="sub"><span class="pulse"></span>${escapeHtml(a.player||'Aktiver Spieler')} zieht eine Figur. Beide Spieler sehen dieselbe Ziehung.</div><div class="wheel-wrap"><div class="pointer">▼</div><div class="wheel ${isStarted?'spinning':''}" id="glWheel"><div class="hub">⚖</div></div><div class="wheel-label" id="wheelStatus">${startDelay>0?'BEIDE SPIELER WERDEN SYNCHRONISIERT':'EINE KARTE · EIN ZUSCHLAG'}</div></div>`;
+   const w=document.getElementById('glWheel');
+   if(w) w.style.setProperty('--spin-duration',`${animationMs}ms`);
+   if(currentSpin!==id){
+     currentSpin=id; sentSpin=null; startedSpin=null; scheduledSpin=id;
+     setTimeout(()=>{
+       if(currentSpin!==id || startedSpin===id)return;
+       startedSpin=id;
+       const wheel=document.getElementById('glWheel');
+       if(wheel) wheel.classList.add('spinning');
+       const status=document.getElementById('wheelStatus');
+       if(status) status.textContent='EINE KARTE · EIN ZUSCHLAG';
+       setTimeout(()=>{if(currentSpin===id){const node=document.getElementById('wheelStatus');if(node)node.textContent='ERGEBNIS WIRD SYNCHRONISIERT …';}},animationMs);
+       // Both sessions share start_at. The settle window absorbs normal polling/network jitter.
+       setTimeout(()=>{if(currentSpin===id&&sentSpin!==id){sentSpin=id;send({event:'spin_complete',spin_id:id})}},animationMs+settleMs);
+     }, startDelay);
+   } else if(!isStarted && scheduledSpin!==id){
+     scheduledSpin=id;
+   }
+   setHeight();
+ }
+ const categoriesMeta={
+   'Teufelsfrucht':{icon:'🍈',cls:'fruit',desc:'Fruchtwirkung, Beherrschung, Erwachen und Vielseitigkeit'},
+   'Haki':{icon:'⚡',cls:'haki',desc:'Observations-, Rüstungs- und Königshaki im Gesamtbild'},
+   'Stärke':{icon:'💥',cls:'strength',desc:'Kraft, Durchschlagskraft, Defensive und Ausdauer'},
+   'Geschwindigkeit':{icon:'💨',cls:'speed',desc:'Tempo, Reaktionen, Beschleunigung und Mobilität'},
+   'Battle IQ':{icon:'🧠',cls:'iq',desc:'Taktik, Anpassung und Entscheidungen im Kampf'}
+ };
+ function renderAssign(a){
+   const c=a.character||{}; const occupied=new Set(a.occupied||[]); const cats=a.categories||[];
+   const image=c.image_data?`<img class="char-img" src="${c.image_data}" alt="">`:`<div class="char-img" style="display:flex;align-items:center;justify-content:center;font-size:24px">☠</div>`;
+   root.innerHTML=`<div class="eyebrow">KATEGORIE ZUORDNEN · SPIELER ${escapeHtml(a.player||'')}</div><div class="title">Ziehe deine Karte auf eine Disziplin</div><div class="sub">Du entscheidest, welche Kategorie du mit diesem Charakter besetzt. Nur noch freie Plätze können belegt werden; der Wert wird direkt auf der Eigenschaft angezeigt.</div><div class="assign-head"><div id="dragCard" draggable="true">${image}</div><div><div class="char-name">${escapeHtml(c.name||'Charakter')}</div><div class="char-sub">Auktionsgewinner · ${escapeHtml(c.price_text||'Preis nicht verfügbar')}</div><div class="drag-label">↕ KARTE ANFASSEN & ZIEHEN</div><div class="pulse-btn">ODER FREIEN PLATZ ANTIPPEN</div></div></div><div class="cats">${cats.map(cat=>{const m=categoriesMeta[cat.label]||{icon:'🏴‍☠️',desc:''};const used=occupied.has(cat.label)||!cat.available;return `<div class="cat ${m.cls} ${used?'occupied':'available'}" data-category="${escapeHtml(cat.label)}" data-available="${!used}" role="button" tabindex="${used?-1:0}" aria-label="${escapeHtml(cat.label)}${used?' belegt':' auswählen'}"><div class="ico">${m.icon}</div><div class="label">${escapeHtml(cat.label)}</div><div class="desc">${escapeHtml(cat.description||m.desc)}</div><div class="score">${escapeHtml(cat.score)}/100</div></div>`}).join('')}</div><div class="dnd-foot">Der Durchschnitt wird bis zum Ende der Partie verborgen. Die fünf Disziplinen sind gleich gewichtet – jede Kategorie kann nur einmal vergeben werden.</div>`;
+   const card=document.getElementById('dragCard'); if(card){card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',String(c.id));e.dataTransfer.effectAllowed='move';});}
+   root.querySelectorAll('.cat.available').forEach(el=>{
+     const choose=()=>send({event:'assign',category:el.dataset.category,character_id:c.id});
+     el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('dragover');e.dataTransfer.dropEffect='move'});
+     el.addEventListener('dragleave',()=>el.classList.remove('dragover'));
+     el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('dragover');choose()});
+     el.addEventListener('click',choose);
+     el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}});
+   });setHeight();
+ }
+ function onRender(event){
+   const d=event.data||{};if(d.type!=='streamlit:render')return;lastArgs=d.args||{};
+   if(lastArgs.mode==='wheel')renderWheel(lastArgs); else if(lastArgs.mode==='assign')renderAssign(lastArgs); else {root.innerHTML='<div class="title">Fivefold</div>';setHeight()}
+ }
+ window.addEventListener('message',onRender);
+ window.parent.postMessage({isStreamlitMessage:true,type:'streamlit:componentReady',apiVersion:1},'*');
+ window.parent.postMessage({isStreamlitMessage:true,type:'streamlit:setFrameHeight',height:250},'*');
+})();
+</script>
+</body></html>
