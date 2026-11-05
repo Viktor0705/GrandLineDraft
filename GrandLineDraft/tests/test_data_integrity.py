@@ -115,7 +115,17 @@ class CharacterDataIntegrityTests(unittest.TestCase):
         self.assertEqual(method["simulations_per_pair"],15000)
         self.assertEqual(method["unique_pairs"],9045)
         self.assertEqual(method["total_simulated_fights"],135675000)
-        self.assertEqual(self.data["review_summary"]["date"],"2026-11-04")
+        self.assertEqual(self.data["review_summary"]["date"],"2026-11-05")
+
+    def test_katakuri_haki_recalibration(self):
+        kat=self.data["characters"]["Charlotte Katakuri"]
+        self.assertEqual(kat["haki_score"],89)
+        self.assertEqual(kat["ranking_stats"]["haki"],89)
+        self.assertEqual(kat["haki_breakdown"]["observation"]["score"],98)
+        self.assertEqual(kat["haki_breakdown"]["armament"]["score"],89)
+        self.assertEqual(kat["haki_breakdown"]["conqueror"]["score"],80)
+        self.assertEqual(kat["power"],89)
+        self.assertEqual(len([m for m in self.matchups if "Charlotte Katakuri" in (m["a"],m["b"])]),134)
 
 
 if __name__ == "__main__":

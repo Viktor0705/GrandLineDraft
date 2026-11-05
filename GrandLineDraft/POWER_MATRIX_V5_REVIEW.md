@@ -44,3 +44,20 @@ Numerische Gesamt-Haki-Profile: 35; unbekannt/nicht quantifizierbar: 100. Der Ha
 - Die Aussage zu Beckmans IQ ist wörtlich auf die bis dahin eingeführten Figuren im SBS Band 8 begrenzt; keine Aussage über Haki.
 - Kapitel 1197: Sanjis Rüstungshaki-Defensivleistung erhöht. Ob Königshaki erwacht ist, bleibt unbestätigt, weil Sanji seine Fähigkeit als Rüstungshaki bezeichnet und Killingham nur mutmaßt.
 - Simulationen sind 15.000 binomiale Ergebnisziehungen je Paar auf Basis eines vorab festgelegten Wahrscheinlichkeitszentrums, keine künstlich erzeugten Canon-Kämpfe oder 15.000 unabhängigen taktischen KI-Kampfverläufe. Samples senken den Zufallsfehler; Unsicherheit der Quellen bleibt bestehen.
+
+## Haki-Nachkalibrierung 5.0.4 – Charlotte Katakuri (5. November 2026)
+
+| Haki-Art | Bisher | Neu | Einordnung |
+|---|---:|---:|---|
+| Observationshaki | 98 | 98 | Fortgeschrittene Zukunftssicht; klarer Schwerpunkt |
+| Rüstungshaki | 89 | 89 | Sehr stark; im Whole-Cake-Kampf über Ruffys damaliger Härtung |
+| Königshaki | 65 | 80 | Bestätigte, gezielte Grundanwendung in Kapitel 893; keine belegte fortgeschrittene Beschichtung |
+| **Gesamt-Haki** | **84** | **89** | Gleich gewichteter Mittelwert der drei Teilwerte |
+
+Die vorherigen 65 Punkte unterschätzten, dass Katakuri sein Königshaki tatsächlich gezielt einsetzt. 80 steht für eine solide Grundbeherrschung, nicht für fortgeschrittene Königshaki-Beschichtung. Der Gesamtwert 89 ergibt sich aus (98 + 89 + 80) / 3. Katakuris Power Level bleibt 89; diese Änderung betrifft nur Haki und dessen leichten Einfluss auf die Matchup-Prognosen.
+
+Quellen: [OPwiki – Charlotte Katakuri](https://opwiki.org/wiki/Charlotte_Katakuri), [OPwiki – Haki](https://opwiki.org/wiki/Haki), [OPwiki – Ruffy vs. Charlotte Katakuri](https://opwiki.org/wiki/Ruffy_vs_Charlotte_Katakuri).
+
+## Betroffene Matchups
+
+Die 134 Paarungen mit Katakuri wurden neu gezogen. Das Modell gewichtet den allgemeinen Haki-Wert im Duellrating mit 10 %; +5 Haki-Punkte ergeben damit +0,50 Punkte auf Katakuris Duellrating. Die bisherige matchup-spezifische Ausgangsprognose und Konterlage bleiben erhalten; der zugrunde liegende Profilabstand sowie explizite numerische Haki-Abstandsnotizen wurden konsistent aktualisiert. Pro betroffenem Duell wurden 15.000 neue Ergebnisziehungen berechnet. Die übrigen 8.911 Paarungen bleiben unverändert. Die 15.000 Stichproben sind keine 15.000 unabhängigen, taktisch simulierten Manga-Kämpfe.

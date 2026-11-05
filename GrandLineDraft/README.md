@@ -1,4 +1,4 @@
-# Grand Line Draft 5.0.3 — Peak Edition
+# Grand Line Draft 5.0.4 — Peak Edition
 
 One-Piece-Draft-App auf Python/Streamlit-Basis. Sie enthält den klassischen Auktions-Draft und den separaten Fivefold-Ranking-Modus. Beide nutzen denselben Pool aus **135 eindeutigen Charakter-IDs** und eine gemeinsame Power-/Matchup-Matrix. Spielumgebung und Draft-Spielmodus sind getrennt wählbar.
 
@@ -109,3 +109,12 @@ Diese Version synchronisiert Classic- und Fivefold-Rad-Animationen über einen g
 ## Performance Edition 5.0.3
 
 Die Matchup-Tabelle liegt separat in `matchup_results.json.gz` und wird erst beim Teamvergleich geladen. Charakter-/Fivefold-Profile und der Suchindex sind gecacht; sichtbare Cloud-Porträts werden parallel vorgeladen und als kompakte Thumbnails gerendert.
+
+
+## 5.0.4 – Katakuri Haki-Rekalibrierung
+
+- Katakuris Gesamt-Haki wurde von 84 auf 89 angepasst.
+- Observationshaki 98 und Rüstungshaki 89 bleiben bestehen; Königshaki steigt von 65 auf 80 (bestätigte Grundanwendung, keine belegte fortgeschrittene Beschichtung).
+- Fivefold-Haki-Wert und Charakterdetail zeigen jetzt 89.
+- Die 134 Katakuri-Matchups wurden mit kleinem Haki-Einfluss und 15.000 Ergebnisziehungen je Paar aktualisiert.
+- Keine Änderung an Katakuris Power Level (89), Draft-Regeln, Charakter-IDs oder Supabase-Schema.

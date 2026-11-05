@@ -41,7 +41,7 @@ MAX_RETURNS = 3
 RETURN_PENALTY = 1
 API_BASE = "https://onepieceapi.com/api/characters"
 FANDOM_API = "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/5.0.3 (fan game; performance edition)"
+USER_AGENT = "GrandLineDraft/5.0.4 (fan game; Katakuri Haki recalibration)"
 PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Keep-alive HTTP sessions are local to each Streamlit worker thread. This avoids
@@ -57,7 +57,7 @@ def http_session() -> requests.Session:
     return session
 
 st.set_page_config(
-    page_title="Grand Line Draft 5.0.3 | Performance Edition",
+    page_title="Grand Line Draft 5.0.4 | Peak Edition",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -3593,7 +3593,7 @@ with st.sidebar:
 # ---- Hero ------------------------------------------------------------------
 hero_left, hero_right = st.columns([4, 1])
 with hero_left:
-    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.0.3 · PERFORMANCE EDITION · MANGA-STAND KAPITEL 1197 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.0.4 · PEAK EDITION · MANGA-STAND KAPITEL 1197 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
     current_mode_for_badge = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
@@ -3616,7 +3616,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.3 · PERFORMANCE EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1197.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.4 · PEAK EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1197.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -3971,7 +3971,7 @@ with st.expander(f"📚 Spielhistorie ({len(st.session_state.get('classic_match_
                 st.session_state.confirm_clear_classic_history = False
                 st.rerun()
 
-st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.3 · PERFORMANCE EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.4 · PEAK EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
 
 
 # Persist each fully rendered state as a safety net; key transitions also save before reruns.
