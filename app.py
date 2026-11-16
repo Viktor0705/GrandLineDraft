@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import base64
+import gzip
+import threading
 from itertools import permutations
 import html
 import io
@@ -39,11 +41,23 @@ MAX_RETURNS = 3
 RETURN_PENALTY = 1
 API_BASE = "https://onepieceapi.com/api/characters"
 FANDOM_API = "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/5.1 (local fan game; exact One Piece character portraits)"
+USER_AGENT = "GrandLineDraft/5.1.0 (fan game; chapter 1198 and 140-character roster)"
 PORTRAIT_DIR.mkdir(exist_ok=True)
 
+# Keep-alive HTTP sessions are local to each Streamlit worker thread. This avoids
+# opening a fresh TCP/TLS connection for every small Supabase poll or image request.
+_HTTP_LOCAL = threading.local()
+
+def http_session() -> requests.Session:
+    session = getattr(_HTTP_LOCAL, "session", None)
+    if session is None:
+        session = requests.Session()
+        session.headers.update({"User-Agent": USER_AGENT})
+        _HTTP_LOCAL.session = session
+    return session
+
 st.set_page_config(
-    page_title="Grand Line Draft 5.1 | Power Matrix v5.1",
+    page_title="Grand Line Draft 5.1 | Peak Edition",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -198,6 +212,23 @@ def get_rating_data() -> dict[str, Any]:
         }
 
 
+MATCHUPS_FILE = BASE_DIR / "matchup_results.json.gz"
+
+@st.cache_data(show_spinner=False, max_entries=1)
+def get_matchup_rows() -> list[dict[str, Any]]:
+    """Load the large pairwise table only when a finished-team matchup is requested."""
+    if MATCHUPS_FILE.is_file():
+        try:
+            with gzip.open(MATCHUPS_FILE, "rt", encoding="utf-8") as handle:
+                rows = json.load(handle)
+            return rows if isinstance(rows, list) else []
+        except (OSError, EOFError, gzip.BadGzipFile, json.JSONDecodeError):
+            return []
+    # Backwards compatibility with 5.0.0/5.0.1 projects where rows lived in the main JSON.
+    rows = get_rating_data().get("matchup_results", [])
+    return rows if isinstance(rows, list) else []
+
+
 def bounty_label(amount: int | None, state: str = "unbekannt") -> str:
     if amount is None:
         return "Unbekannt"
@@ -299,8 +330,14 @@ def power_tier(value: float) -> str:
     return "BEGRENZTE KAMPFFEATS"
 
 
-def character_profile(character: dict[str, Any]) -> dict[str, Any]:
-    ratings = get_rating_data().get("characters", {})
+@st.cache_data(show_spinner=False, max_entries=512)
+def _build_character_profile_cached(
+    character_name: str,
+    rating_entry: dict[str, Any],
+    weights: dict[str, Any],
+    live_record: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Pure profile derivation cached by the character's static data and optional bounty override."""
     profile = {
         "power": 50, "abilities": 50, "intelligence": 50, "intelligence_bonus": 0.0,
         "haki_score": None, "haki_status": "nicht bestätigt", "haki_types": [],
@@ -311,34 +348,31 @@ def character_profile(character: dict[str, Any]) -> dict[str, Any]:
         "ability_summary": "Noch keine individuelle Fähigkeitsbeschreibung hinterlegt.",
         "combat_stats": {"offense": 50, "defense": 50, "speed": 50, "endurance": 50, "battle_iq": 50, "haki_mastery": 0},
         "weaknesses": "Kein besonderer Konter hinterlegt.",
-        **ratings.get(character.get("name", ""), {}),
+        **(rating_entry if isinstance(rating_entry, dict) else {}),
     }
-    # Normalize optional collections so a missing JSON value never breaks the roster/detail view.
     if not isinstance(profile.get("haki_types"), list):
         profile["haki_types"] = []
     if not isinstance(profile.get("haki_breakdown"), dict):
         profile["haki_breakdown"] = {}
-    # Enforce the fair-data rule even if a malformed record contains a score but no confirmation.
     if profile.get("haki_status") != "bestätigt" or not isinstance(profile.get("haki_score"), (int, float)):
         profile["haki_score"] = None
         if not profile.get("haki_status"):
             profile["haki_status"] = "nicht bestätigt"
-    live = live_bounty_for(character.get("name", ""))
-    if live:
-        profile["bounty"] = live["amount"]
+    if live_record:
+        profile["bounty"] = live_record.get("amount")
         if profile.get("bounty_state") != "cross_guild":
             profile["bounty_state"] = "aktiv"
         profile["bounty_source"] = "live"
     else:
         profile["bounty_source"] = "offline"
     bounty = profile.get("bounty")
-    if bounty is None:
-        bounty_score = 50.0
-    else:
-        bounty_score = min(100.0, 100 * math.log1p(max(0, bounty) / 1_000_000) / math.log1p(5_564.8))
-    weights = get_rating_data().get("weights", {"power": .68, "haki": .14, "abilities": .14, "versatility": .04})
+    bounty_score = 50.0 if bounty is None else min(100.0, 100 * math.log1p(max(0, bounty) / 1_000_000) / math.log1p(5_564.8))
     personal_weights = {k: float(weights.get(k, 0)) for k in ("power", "haki", "abilities", "versatility")}
-    present = {"power": float(profile.get("power", 50)), "abilities": float(profile.get("abilities", 50)), "versatility": float(profile.get("versatility", 50))}
+    present = {
+        "power": float(profile.get("power", 50)),
+        "abilities": float(profile.get("abilities", 50)),
+        "versatility": float(profile.get("versatility", 50)),
+    }
     if profile.get("haki_score") is not None:
         present["haki"] = float(profile["haki_score"])
     else:
@@ -347,7 +381,6 @@ def character_profile(character: dict[str, Any]) -> dict[str, Any]:
         if total_other:
             personal_weights = {k: v / total_other for k, v in personal_weights.items()}
     score_base = sum(present.get(k, 0.0) * personal_weights.get(k, 0.0) for k in personal_weights)
-    # Intelligence is a tiny positive additive bonus, never a separate /100 strength rating.
     intel = max(0.0, min(100.0, float(profile.get("intelligence", 50))))
     profile["intelligence_bonus"] = round(max(0.0, min(.45, (intel - 50.0) / 50.0 * .45)), 3)
     score = score_base + float(profile.get("intelligence_bonus", 0.0))
@@ -356,6 +389,14 @@ def character_profile(character: dict[str, Any]) -> dict[str, Any]:
     profile["score"] = round(max(0, min(100, score)), 1)
     profile["individual_weights"] = personal_weights
     return profile
+
+
+def character_profile(character: dict[str, Any]) -> dict[str, Any]:
+    name = str(character.get("name", ""))
+    rating_entry = get_rating_data().get("characters", {}).get(name, {})
+    weights = get_rating_data().get("weights", {"power": .68, "haki": .14, "abilities": .14, "versatility": .04})
+    live_record = live_bounty_for(name)
+    return _build_character_profile_cached(name, rating_entry, weights, live_record)
 
 
 # Chemistry values are fan-model estimates of how well two characters would work together.
@@ -367,7 +408,7 @@ def _pair_key(a: str, b: str) -> tuple[str, str]:
 @st.cache_data(show_spinner=False)
 def get_matchup_index() -> dict[tuple[str, str], dict[str, Any]]:
     """Build a constant-time lookup for the supplied v5.1 pairwise simulations."""
-    rows = get_rating_data().get("matchup_results", [])
+    rows = get_matchup_rows()
     index: dict[tuple[str, str], dict[str, Any]] = {}
     if isinstance(rows, list):
         for row in rows:
@@ -528,10 +569,14 @@ GAME_STATE_KEYS = [
     "classic_match_history", "classic_next_start_player", "classic_start_player", "classic_result_recorded",
     "rank_match_history", "rank_next_start_player", "rank_start_player", "rank_result_recorded",
     "online_room_code", "online_role", "online_revision", "online_last_hash", "online_status",
+    "classic_pending_draw_character", "classic_spin_id", "classic_spin_started_at",
+    "rank_spin_started_at",
 ]
 
 
 ONLINE_ROOM_TABLE = "gld_online_rooms"
+PORTRAIT_BUCKET = "gld-character-portraits"
+PORTRAIT_TABLE = "gld_character_portraits"
 ONLINE_LOCAL_ONLY_KEYS = {"mode_selector", "rank_mode_selector", "name_input_a", "name_input_b", "online_room_code", "online_role", "online_revision", "online_last_hash", "online_status"}
 
 
@@ -546,22 +591,33 @@ def supabase_config() -> dict[str, str] | None:
     return {"url": url, "key": key} if url.startswith("https://") and key else None
 
 
-def supabase_rest(method: str, params: dict[str, Any] | None = None, payload: dict[str, Any] | None = None) -> Any:
+def supabase_rest(
+    method: str,
+    params: dict[str, Any] | None = None,
+    payload: Any = None,
+    *,
+    table: str = ONLINE_ROOM_TABLE,
+    prefer: str = "return=representation",
+) -> Any:
+    """Small server-side PostgREST helper. Secrets never leave the Streamlit server."""
     config = supabase_config()
     if not config:
-        raise RuntimeError("Supabase ist nicht konfiguriert. Lege .streamlit/secrets.toml mit URL und Service-Role-Key an.")
+        raise RuntimeError("Supabase ist nicht konfiguriert. Lege die serverseitigen Supabase-Secrets an.")
     headers = {
         "apikey": config["key"], "Authorization": f"Bearer {config['key']}",
-        "Content-Type": "application/json", "Accept": "application/json", "Prefer": "return=representation",
+        "Content-Type": "application/json", "Accept": "application/json", "Prefer": prefer,
     }
-    response = requests.request(
-        method.upper(), f"{config['url']}/rest/v1/{ONLINE_ROOM_TABLE}",
-        headers=headers, params=params or {}, json=payload, timeout=(4, 9),
+    response = http_session().request(
+        method.upper(), f"{config['url']}/rest/v1/{table}",
+        headers=headers, params=params or {}, json=payload, timeout=(3.5, 8),
     )
     response.raise_for_status()
     if not response.content:
         return []
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        return []
 
 
 def online_shared_state() -> dict[str, Any]:
@@ -585,6 +641,24 @@ def apply_online_state(state: dict[str, Any]) -> None:
 
 def online_fetch_room(code: str) -> dict[str, Any] | None:
     rows = supabase_rest("GET", {"room_code": f"eq.{code.upper()}", "select": "*", "limit": "1"})
+    if not isinstance(rows, list) or not rows:
+        return None
+    row = rows[0]
+    expires_at = row.get("expires_at")
+    if expires_at:
+        try:
+            expiry = datetime.fromisoformat(str(expires_at).replace("Z", "+00:00"))
+            if expiry <= datetime.now(timezone.utc):
+                return None
+        except ValueError:
+            pass
+    return row
+
+
+def online_fetch_room_meta(code: str) -> dict[str, Any] | None:
+    """Fetch only small lobby metadata on each poll; download the large game payload only on change."""
+    fields = "room_code,revision,status,host_name,guest_name,variant,updated_at,expires_at"
+    rows = supabase_rest("GET", {"room_code": f"eq.{code.upper()}", "select": fields, "limit": "1"})
     if not isinstance(rows, list) or not rows:
         return None
     row = rows[0]
@@ -632,7 +706,7 @@ def online_sync_local_state() -> None:
         return
     revision = int(st.session_state.get("online_revision", 0))
     try:
-        rows = supabase_rest("PATCH", {"room_code": f"eq.{code}", "revision": f"eq.{revision}"}, {
+        rows = supabase_rest("PATCH", {"room_code": f"eq.{code}", "revision": f"eq.{revision}", "select": "room_code,revision"}, {
             "payload": {"state": state}, "revision": revision + 1,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         })
@@ -699,7 +773,7 @@ def online_join_room(code: str, guest_name: str) -> tuple[bool, str]:
         if isinstance(state.get("rank_players"), dict) and "B" in state["rank_players"]:
             state["rank_players"]["B"]["name"] = guest_name.strip() or "Spieler B"
         revision = int(row.get("revision", 0))
-        result = supabase_rest("PATCH", {"room_code": f"eq.{clean}", "revision": f"eq.{revision}", "status": "eq.waiting"}, {
+        result = supabase_rest("PATCH", {"room_code": f"eq.{clean}", "revision": f"eq.{revision}", "status": "eq.waiting", "select": "room_code,revision"}, {
             "guest_name": guest_name.strip() or "Spieler B", "status": "active",
             "payload": {"state": state}, "revision": revision + 1,
             "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -725,27 +799,45 @@ def online_poll_impl() -> None:
         st.caption("Noch keiner Online-Lobby beigetreten.")
         return
     try:
-        row = online_fetch_room(code)
-        if not row:
-            st.error("Online-Raum nicht gefunden. Lokaler Spielstand bleibt erhalten.")
+        # Most polls transfer only a few metadata fields, not the full character pool.
+        meta = online_fetch_room_meta(code)
+        if not meta:
+            st.error("Online-Raum nicht gefunden oder abgelaufen. Lokaler Spielstand bleibt erhalten.")
             return
-        revision = int(row.get("revision", 0))
-        local_hash = online_state_hash()
-        last_hash = st.session_state.get("online_last_hash")
-        if revision > int(st.session_state.get("online_revision", 0)):
-            if local_hash != last_hash:
-                st.warning("Es gibt lokale Änderungen und eine neuere Raumversion. Bitte synchronisieren oder die neueste Version laden.")
-            else:
+        revision = int(meta.get("revision", 0))
+        current_revision = int(st.session_state.get("online_revision", 0))
+        if revision > current_revision:
+            # Fetch the large payload only when the revision actually changed.
+            row = online_fetch_room(code)
+            if row:
+                local_hash = online_state_hash()
+                last_hash = st.session_state.get("online_last_hash")
                 envelope = row.get("payload") or {}
                 remote_state = envelope.get("state", {}) if isinstance(envelope, dict) else {}
-                apply_online_state(remote_state)
-                st.session_state.online_revision = revision
-                st.session_state.online_last_hash = online_state_hash(remote_state)
-                st.session_state.online_status = "Neue Aktion des Mitspielers übernommen"
-                st.rerun()
-        status = row.get("status", "waiting")
-        guest = row.get("guest_name") or "wartet …"
-        st.caption(f"Raum **{code}** · Spieler {role} · Gegenüber: **{guest if role == 'A' else row.get('host_name','Host')}** · Status: **{status}** · Revision {revision}")
+                # A spin is a transient shared event, not a local edit. The non-spinning
+                # player must adopt it immediately or their browser never renders the wheel.
+                remote_spin_owner = None
+                remote_is_spin = False
+                if isinstance(remote_state, dict):
+                    active_variant = remote_state.get("draft_variant", "classic")
+                    if active_variant == "ranking":
+                        remote_is_spin = remote_state.get("rank_phase") == "spinning"
+                        remote_spin_owner = remote_state.get("rank_spin_owner") if remote_is_spin else None
+                    else:
+                        remote_is_spin = remote_state.get("phase") == "spinning"
+                        remote_spin_owner = remote_state.get("spin_owner") if remote_is_spin else None
+                    remote_is_spin = remote_is_spin and remote_spin_owner in {"A", "B"} and remote_spin_owner != role
+                if local_hash != last_hash and not remote_is_spin:
+                    st.warning("Es gibt lokale Änderungen und eine neuere Raumversion. Bitte synchronisieren oder die neueste Version laden.")
+                else:
+                    apply_online_state(remote_state)
+                    st.session_state.online_revision = int(row.get("revision", revision))
+                    st.session_state.online_last_hash = online_state_hash(remote_state)
+                    st.session_state.online_status = "Gemeinsame Rad-Animation empfangen" if remote_is_spin else "Neue Aktion des Mitspielers übernommen"
+                    st.rerun()
+        guest = meta.get("guest_name") or "wartet …"
+        status = meta.get("status", "waiting")
+        st.caption(f"Raum **{code}** · Spieler {role} · Gegenüber: **{guest if role == 'A' else meta.get('host_name','Host')}** · Status: **{status}** · Revision {revision}")
         if st.session_state.get("online_status"):
             st.caption(st.session_state.online_status)
     except Exception as exc:
@@ -753,7 +845,7 @@ def online_poll_impl() -> None:
 
 
 if hasattr(st, "fragment"):
-    render_online_poll_fragment = st.fragment(run_every=2)(online_poll_impl)
+    render_online_poll_fragment = st.fragment(run_every=1.0)(online_poll_impl)
 else:
     render_online_poll_fragment = online_poll_impl
 
@@ -772,19 +864,23 @@ def current_game_state() -> dict[str, Any]:
 
 
 def persist_game_state() -> bool:
-    """Write the current game after important actions so closing the browser won't lose it."""
+    """Persist only changed local state; still perform the lightweight online diff check."""
     if "players" not in st.session_state:
         return False
     try:
-        SAVE_DIR.mkdir(parents=True, exist_ok=True)
-        payload = json.dumps(current_game_state(), ensure_ascii=False, indent=2)
-        fd, tmp_name = tempfile.mkstemp(prefix="autosave_", suffix=".tmp", dir=str(SAVE_DIR))
-        try:
-            with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write(payload)
-            Path(tmp_name).replace(AUTOSAVE_FILE)
-        finally:
-            Path(tmp_name).unlink(missing_ok=True)
+        state = current_game_state()
+        state_digest = online_state_hash(state.get("state", {}))
+        if state_digest != st.session_state.get("_last_local_autosave_hash"):
+            SAVE_DIR.mkdir(parents=True, exist_ok=True)
+            payload = json.dumps(state, ensure_ascii=False, indent=2)
+            fd, tmp_name = tempfile.mkstemp(prefix="autosave_", suffix=".tmp", dir=str(SAVE_DIR))
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                    handle.write(payload)
+                Path(tmp_name).replace(AUTOSAVE_FILE)
+            finally:
+                Path(tmp_name).unlink(missing_ok=True)
+            st.session_state["_last_local_autosave_hash"] = state_digest
         online_sync_local_state()
         return True
     except (OSError, TypeError, ValueError):
@@ -847,7 +943,7 @@ def migrate_saved_character_pool() -> None:
 def import_game_state(payload: dict[str, Any]) -> tuple[bool, str]:
     state = payload.get("state") if isinstance(payload, dict) else None
     if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
-        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6- oder 5.0-Export verwenden."
+        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6-, 5.0- oder 5.1-Export verwenden."
     try:
         players = state["players"]
         if set(players.keys()) != {"A", "B"}:
@@ -876,7 +972,7 @@ def make_portable_backup() -> bytes:
     persist_game_state()
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
-        wanted = ["app.py", "characters.json", "character_ratings.json", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_5_0.md", "ONLINE_SETUP.md", "online_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "Start_GrandLineDraft.bat"]
+        wanted = ["app.py", "characters.json", "character_ratings.json", "matchup_results.json.gz", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_5_0.md", "ONLINE_SETUP.md", "online_schema.sql", "cloud_portraits_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "Start_GrandLineDraft.bat", "CHANGELOG_5_0_2.md", "CHANGELOG_5_1.md", "BUILD_REPORT_V5_1.json", "POWER_MATRIX_V5_MATCHUPS.csv", "POWER_MATRIX_V5_RANKINGS.csv", "CHANGELOG_5_0_3.md", "CHANGELOG_5_0_4.md"]
         for filename in wanted:
             item = BASE_DIR / filename
             if item.exists():
@@ -978,7 +1074,15 @@ def install_portrait_from_url(character: dict[str, Any], url: str) -> tuple[bool
         st.session_state["portrait_link_overrides"] = overrides
         st.session_state.setdefault("portrait_status", {})[character["name"]] = "Eigenes Bild · aus Link gespeichert"
         _cached_portrait_bytes.clear()
-        return True, "Bild erfolgreich gespeichert. Es wird lokal verwendet und beim nächsten Start ohne erneuten Download angezeigt."
+        cloud_count, cloud_errors = upload_cloud_portraits([{
+            "id": int(character["id"]), "name": character["name"],
+            "bytes": normalized_image, "source": "direct_link",
+        }])
+        if cloud_count:
+            return True, "Bild erfolgreich gespeichert und mit allen Geräten über Supabase Storage synchronisiert."
+        if cloud_errors:
+            return True, "Bild lokal gespeichert. Cloud-Synchronisierung noch nicht möglich: " + cloud_errors[0]
+        return True, "Bild lokal gespeichert. Für geräteübergreifende Synchronisierung zuerst cloud_portraits_schema.sql ausführen."
     except (requests.RequestException, OSError, ValueError) as exc:
         return False, f"Bild konnte nicht geladen werden ({type(exc).__name__}). Prüfe, ob die URL öffentlich erreichbar ist."
 
@@ -1002,6 +1106,292 @@ def _wiki_page_title_matches(returned_title: str, requested_title: str) -> bool:
     returned_base = returned_title.split("(", 1)[0].strip()
     requested_base = requested_title.replace("_", " ").split("(", 1)[0].strip()
     return normalize(returned_title) == normalize(requested_title.replace("_", " ")) or normalize(returned_base) == normalize(requested_base)
+
+
+# ---- Supabase Storage: shared character portrait library --------------------
+def _supabase_storage_headers(config: dict[str, str], content_type: str | None = None) -> dict[str, str]:
+    headers = {"apikey": config["key"], "Authorization": f"Bearer {config['key']}"}
+    if content_type:
+        headers["Content-Type"] = content_type
+    return headers
+
+
+def cloud_portrait_object_path(character_id: int) -> str:
+    return f"characters/{int(character_id):03d}.jpg"
+
+
+def _upload_cloud_portrait_object(config: dict[str, str], character_id: int, image_bytes: bytes) -> tuple[int, str, int, str | None]:
+    object_path = cloud_portrait_object_path(character_id)
+    url = f"{config['url']}/storage/v1/object/{PORTRAIT_BUCKET}/{quote(object_path, safe='/')}"
+    headers = _supabase_storage_headers(config, "image/jpeg")
+    headers["x-upsert"] = "true"
+    response = http_session().post(url, headers=headers, data=image_bytes, timeout=(5, 30))
+    response.raise_for_status()
+    return int(character_id), object_path, len(image_bytes), None
+
+
+def upload_cloud_portraits(items: list[dict[str, Any]]) -> tuple[int, list[str]]:
+    """Upload optimized JPEGs to the private bucket, then upsert their metadata in one DB request."""
+    config = supabase_config()
+    if not config:
+        return 0, ["Supabase ist nicht konfiguriert."]
+    if not items:
+        return 0, []
+    errors: list[str] = []
+    successful: list[tuple[dict[str, Any], str, int]] = []
+    def worker(item: dict[str, Any]):
+        return item, _upload_cloud_portrait_object(config, int(item["id"]), item["bytes"])
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(worker, item) for item in items]
+        for future in as_completed(futures):
+            try:
+                item, uploaded = future.result()
+                _cid, object_path, size, _ = uploaded
+                successful.append((item, object_path, size))
+            except Exception as exc:
+                errors.append(f"{type(exc).__name__}: Bild konnte nicht hochgeladen werden.")
+    if successful:
+        now = datetime.now(timezone.utc).isoformat()
+        metadata = [{
+            "character_id": int(item["id"]), "character_name": str(item["name"]),
+            "storage_path": object_path, "content_type": "image/jpeg", "file_size": size,
+            "source": str(item.get("source", "upload")), "updated_at": now,
+        } for item, object_path, size in successful]
+        try:
+            supabase_rest(
+                "POST", {"on_conflict": "character_id"}, metadata,
+                table=PORTRAIT_TABLE, prefer="resolution=merge-duplicates,return=minimal",
+            )
+        except Exception as exc:
+            errors.append(f"Bilddateien wurden übertragen, aber die Bildtabelle konnte nicht aktualisiert werden ({type(exc).__name__}). Bitte cloud_portraits_schema.sql prüfen.")
+            return 0, errors
+        _cloud_portrait_index.clear()
+        _cloud_portrait_bytes.clear()
+        _cloud_portrait_batch.clear()
+    return len(successful), errors
+
+
+@st.cache_data(show_spinner=False, ttl=45)
+def _cloud_portrait_index(url: str, key: str) -> dict[str, dict[str, Any]]:
+    """Cache the small metadata index; a missing table is cached as empty instead of hammering the API."""
+    headers = _supabase_storage_headers({"url": url, "key": key}, "application/json")
+    try:
+        response = http_session().get(
+            f"{url}/rest/v1/{PORTRAIT_TABLE}",
+            headers=headers, params={"select": "character_id,character_name,storage_path,updated_at,source", "limit": "500"},
+            timeout=(3.5, 8),
+        )
+        response.raise_for_status()
+        payload = response.json()
+        return {str(row["character_id"]): row for row in payload if isinstance(row, dict) and row.get("character_id") is not None}
+    except (requests.RequestException, ValueError, TypeError):
+        return {}
+
+
+@st.cache_data(show_spinner=False, ttl=3600, max_entries=256)
+def _cloud_portrait_bytes(url: str, key: str, storage_path: str, updated_at: str) -> bytes | None:
+    headers = _supabase_storage_headers({"url": url, "key": key})
+    response = http_session().get(
+        f"{url}/storage/v1/object/{PORTRAIT_BUCKET}/{quote(storage_path, safe='/')}",
+        headers=headers, timeout=(4, 12),
+    )
+    response.raise_for_status()
+    content = image_as_jpeg(response.content)
+    return content
+
+
+@st.cache_data(show_spinner=False, ttl=3600, max_entries=24)
+def _cloud_portrait_batch(url: str, key: str, items: tuple[tuple[str, str, str], ...]) -> dict[str, bytes]:
+    """Fetch only the currently visible portraits in parallel; bytes are cached as one batch."""
+    if not items:
+        return {}
+    headers = _supabase_storage_headers({"url": url, "key": key})
+    def fetch(item: tuple[str, str, str]):
+        character_id, storage_path, _updated_at = item
+        try:
+            response = http_session().get(
+                f"{url}/storage/v1/object/{PORTRAIT_BUCKET}/{quote(storage_path, safe='/')}",
+                headers=headers, timeout=(3.5, 10),
+            )
+            response.raise_for_status()
+            image_bytes = image_as_jpeg(response.content)
+            return character_id, image_bytes
+        except (requests.RequestException, ValueError, OSError):
+            return character_id, None
+    result: dict[str, bytes] = {}
+    with ThreadPoolExecutor(max_workers=min(8, len(items))) as executor:
+        futures = [executor.submit(fetch, item) for item in items]
+        for future in as_completed(futures):
+            character_id, image_bytes = future.result()
+            if image_bytes:
+                result[character_id] = image_bytes
+    return result
+
+
+def cloud_portraits_for_characters(characters: list[dict[str, Any]]) -> dict[str, bytes]:
+    """Prefetch cloud portraits for a visible set concurrently; skips newer local overrides."""
+    config = supabase_config()
+    if not config or not characters:
+        return {}
+    try:
+        index = _cloud_portrait_index(config["url"], config["key"])
+        items: list[tuple[str, str, str]] = []
+        for character in characters:
+            cid = str(int(character["id"]))
+            meta = index.get(cid)
+            if not meta:
+                continue
+            local_custom = next((p for p in (linked_portrait_path(character), manual_portrait_path(character)) if p.is_file()), None)
+            if local_custom:
+                try:
+                    local_mtime = local_custom.stat().st_mtime
+                    cloud_time = datetime.fromisoformat(str(meta.get("updated_at", "")).replace("Z", "+00:00")).timestamp() if meta.get("updated_at") else 0
+                    if local_mtime > cloud_time + 1:
+                        continue
+                except (OSError, ValueError, TypeError):
+                    pass
+            items.append((cid, str(meta.get("storage_path", "")), str(meta.get("updated_at", ""))))
+        return _cloud_portrait_batch(config["url"], config["key"], tuple(items)) if items else {}
+    except Exception:
+        return {}
+
+
+@st.cache_data(show_spinner=False, max_entries=512)
+def _portrait_thumbnail(image_bytes: bytes, max_width: int = 300, max_height: int = 380) -> bytes:
+    """Create compact card thumbnails, retaining the full-resolution portrait for detail views."""
+    try:
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+        output = io.BytesIO()
+        image.save(output, format="JPEG", quality=76, optimize=True, progressive=True)
+        return output.getvalue()
+    except Exception:
+        return image_bytes
+
+
+def character_portrait_thumbnail(character: dict[str, Any], cloud_batch: dict[str, bytes] | None = None) -> bytes:
+    return _portrait_thumbnail(character_portrait(character, cloud_batch), 300, 380)
+
+
+def cloud_portrait_for_character(character: dict[str, Any]) -> bytes | None:
+    config = supabase_config()
+    if not config:
+        return None
+    try:
+        index = _cloud_portrait_index(config["url"], config["key"])
+        meta = index.get(str(int(character["id"])))
+        if not meta:
+            return None
+        return _cloud_portrait_bytes(config["url"], config["key"], str(meta["storage_path"]), str(meta.get("updated_at", "")))
+    except Exception:
+        # Cloud images are an enhancement; a network/schema problem must not break game rendering.
+        return None
+
+
+@st.cache_data(show_spinner=False, ttl=60)
+def cloud_portrait_schema_ready() -> tuple[bool, str]:
+    try:
+        rows = supabase_rest("GET", {"select": "character_id", "limit": "1"}, table=PORTRAIT_TABLE)
+        return True, "Cloud-Bildertabelle erreichbar."
+    except Exception as exc:
+        return False, f"Cloud-Bildertabelle noch nicht bereit ({type(exc).__name__}). Bitte cloud_portraits_schema.sql ausführen."
+
+
+def delete_cloud_portrait(character_id: int) -> tuple[bool, str]:
+    config = supabase_config()
+    if not config:
+        return False, "Supabase ist nicht konfiguriert."
+    path = cloud_portrait_object_path(character_id)
+    headers = _supabase_storage_headers(config, "application/json")
+    try:
+        response = requests.delete(
+            f"{config['url']}/storage/v1/object/{PORTRAIT_BUCKET}",
+            headers=headers, json={"prefixes": [path]}, timeout=(4, 12),
+        )
+        if response.status_code not in (200, 404):
+            response.raise_for_status()
+        supabase_rest("DELETE", {"character_id": f"eq.{int(character_id)}"}, table=PORTRAIT_TABLE, prefer="return=minimal")
+        _cloud_portrait_index.clear(); _cloud_portrait_bytes.clear(); _cloud_portrait_batch.clear()
+        return True, "Cloud-Porträt entfernt."
+    except Exception as exc:
+        return False, f"Cloud-Bild konnte nicht entfernt werden ({type(exc).__name__})."
+
+
+def portrait_archive_items(zip_bytes: bytes) -> tuple[list[dict[str, Any]], list[str]]:
+    """Read a user ZIP without extracting paths; accept this app's portrait filename conventions."""
+    roster = {int(c["id"]): c for c in get_characters()}
+    chosen: dict[int, tuple[int, dict[str, Any]]] = {}
+    warnings: list[str] = []
+    total_size = 0
+    pattern = re.compile(r"^(manual_character|linked_character|character)_(\d{3})(?:_[a-f0-9]{8})?\.(?:jpg|jpeg|png|webp)$", re.I)
+    try:
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as archive:
+            files = [info for info in archive.infolist() if not info.is_dir()]
+            if len(files) > 300:
+                return [], ["Das ZIP enthält mehr als 300 Dateien; bitte nur den portraits-Ordner packen."]
+            for info in files:
+                name = info.filename.replace("\\", "/")
+                basename = name.rsplit("/", 1)[-1]
+                # Only accept files under a portraits path or files at the ZIP root.
+                if "/" in name and "portraits/" not in name.lower():
+                    continue
+                match = pattern.match(basename)
+                if not match:
+                    continue
+                char_id = int(match.group(2))
+                if char_id not in roster:
+                    continue
+                if info.file_size > 12 * 1024 * 1024:
+                    warnings.append(f"{basename}: größer als 12 MB, übersprungen.")
+                    continue
+                total_size += info.file_size
+                if total_size > 150 * 1024 * 1024:
+                    return [], ["Das ZIP ist größer als 150 MB entpackte Bilddaten. Bitte in kleinere Archive aufteilen."]
+                raw = archive.read(info)
+                normalized = image_as_jpeg(raw)
+                if not normalized:
+                    warnings.append(f"{basename}: kein gültiges Bild, übersprungen.")
+                    continue
+                prefix = match.group(1).lower()
+                priority = 3 if prefix == "manual_character" else (2 if prefix == "linked_character" else 1)
+                item = {"id": char_id, "name": roster[char_id]["name"], "bytes": normalized, "source": "zip_import"}
+                old = chosen.get(char_id)
+                if old is None or priority > old[0]:
+                    chosen[char_id] = (priority, item)
+    except (zipfile.BadZipFile, OSError, ValueError) as exc:
+        return [], [f"Das Bilderarchiv konnte nicht gelesen werden ({type(exc).__name__})."]
+    return [row[1] for row in chosen.values()], warnings
+
+
+def local_portrait_items() -> list[dict[str, Any]]:
+    roster = {int(c["id"]): c for c in get_characters()}
+    patterns = [
+        (re.compile(r"^manual_character_(\d{3})\.jpg$", re.I), "manual_upload"),
+        (re.compile(r"^linked_character_(\d{3})\.jpg$", re.I), "direct_link"),
+        (re.compile(r"^character_(\d{3})_[a-f0-9]{8}\.jpg$", re.I), "local_portrait"),
+    ]
+    picked: dict[int, tuple[int, dict[str, Any]]] = {}
+    for path in PORTRAIT_DIR.glob("*.jpg"):
+        for pattern, source in patterns:
+            match = pattern.match(path.name)
+            if not match:
+                continue
+            char_id = int(match.group(1))
+            if char_id not in roster:
+                continue
+            try:
+                raw = path.read_bytes()
+            except OSError:
+                continue
+            normalized = image_as_jpeg(raw)
+            if not normalized:
+                continue
+            priority = 3 if source == "manual_upload" else (2 if source == "direct_link" else 1)
+            old = picked.get(char_id)
+            if old is None or priority >= old[0]:
+                picked[char_id] = (priority, {"id": char_id, "name": roster[char_id]["name"], "bytes": normalized, "source": source})
+            break
+    return [row[1] for row in picked.values()]
 
 
 @st.cache_data(show_spinner=False, ttl=86400)
@@ -1118,29 +1508,69 @@ def _cached_portrait_bytes(path_text: str, modified_ns: int, name: str, faction:
     return placeholder_portrait({"name": name, "faction": faction})
 
 
-def character_portrait(character: dict[str, Any]) -> bytes:
-    """Fast, local-only portrait lookup. Network is used only after an explicit action."""
+def character_portrait(character: dict[str, Any], cloud_batch: dict[str, bytes] | None = None) -> bytes:
+    """Prefer the shared cloud override, then a newer local custom file, then the local base portrait."""
     overrides = st.session_state.get("portrait_link_overrides", {})
     link_meta = overrides.get(str(character["id"]), {}) if isinstance(overrides, dict) else {}
-    options: list[tuple[Path, str]] = [
+    local_custom_options = [
         (linked_portrait_path(character), "Eigenes Bild · aus Link gespeichert"),
         (manual_portrait_path(character), "Eigenes Bild · manuell hinzugefügt"),
-        (portrait_path(character), "Lokal gespeichertes Porträt"),
     ]
-    selected_path, source = next(
-        ((path, label) for path, label in options if path.is_file()),
-        (portrait_path(character), "Ersatzporträt · kein lokales Bild vorhanden"),
-    )
+    local_custom = next(((path, label) for path, label in local_custom_options if path.is_file()), None)
+    cloud_meta = None
+    config = supabase_config()
+    if config:
+        try:
+            cloud_meta = _cloud_portrait_index(config["url"], config["key"]).get(str(int(character["id"])))
+        except Exception:
+            cloud_meta = None
+    cloud_preferred = bool(cloud_meta)
+    if local_custom and cloud_meta:
+        try:
+            local_mtime = local_custom[0].stat().st_mtime
+            cloud_timestamp = datetime.fromisoformat(str(cloud_meta.get("updated_at", "")).replace("Z", "+00:00")).timestamp() if cloud_meta.get("updated_at") else 0
+            if local_mtime > cloud_timestamp + 1:
+                cloud_preferred = False
+        except (OSError, ValueError, TypeError):
+            pass
+    status = st.session_state.setdefault("portrait_status", {})
+    if cloud_preferred and cloud_meta and config:
+        try:
+            prefetched = (cloud_batch or {}).get(str(int(character["id"])))
+            cloud_image = prefetched or _cloud_portrait_bytes(config["url"], config["key"], str(cloud_meta["storage_path"]), str(cloud_meta.get("updated_at", "")))
+            if cloud_image:
+                status[character["name"]] = "Cloud-Porträt · Supabase Storage"
+                return cloud_image
+        except Exception:
+            pass
+    if local_custom:
+        path, source = local_custom
+        try:
+            modified_ns = path.stat().st_mtime_ns
+        except OSError:
+            modified_ns = 0
+        if link_meta.get("url") and path == linked_portrait_path(character):
+            status[character["name"]] = f"Eigenes Bild · Link: {link_meta['url']}"
+        else:
+            status[character["name"]] = source
+        return _cached_portrait_bytes(str(path), modified_ns, character["name"], character.get("faction", "One Piece"))
+    if cloud_meta and config:
+        try:
+            prefetched = (cloud_batch or {}).get(str(int(character["id"])))
+            cloud_image = prefetched or _cloud_portrait_bytes(config["url"], config["key"], str(cloud_meta["storage_path"]), str(cloud_meta.get("updated_at", "")))
+            if cloud_image:
+                status[character["name"]] = "Cloud-Porträt · Supabase Storage"
+                return cloud_image
+        except Exception:
+            pass
+    base_path = portrait_path(character)
     try:
-        modified_ns = selected_path.stat().st_mtime_ns if selected_path.is_file() else 0
+        modified_ns = base_path.stat().st_mtime_ns if base_path.is_file() else 0
     except OSError:
         modified_ns = 0
-    status = st.session_state.setdefault("portrait_status", {})
-    if link_meta.get("url") and selected_path == linked_portrait_path(character):
-        status[character["name"]] = f"Eigenes Bild · Link: {link_meta['url']}"
-    else:
-        status.setdefault(character["name"], source)
-    return _cached_portrait_bytes(str(selected_path), modified_ns, character["name"], character.get("faction", "One Piece"))
+    status.setdefault(character["name"], "Lokal gespeichertes Porträt" if base_path.is_file() else "Ersatzporträt · kein lokales Bild vorhanden")
+    return _cached_portrait_bytes(str(base_path), modified_ns, character["name"], character.get("faction", "One Piece"))
+
 
 
 def audit_all_portraits(progress_callback=None) -> dict[str, str]:
@@ -1252,7 +1682,7 @@ def return_owned_character(player_key: str, team_index: int) -> None:
 
 
 def reset_game() -> None:
-    for key in ["players", "remaining", "used", "history", "return_history", "returns_used", "phase", "round_no", "current_char", "spin_owner", "next_spinner", "auction", "last_winner", "game_seed"]:
+    for key in ["players", "remaining", "used", "history", "return_history", "returns_used", "phase", "round_no", "current_char", "spin_owner", "next_spinner", "auction", "last_winner", "game_seed", "classic_pending_draw_character", "classic_spin_id", "classic_spin_started_at"]:
         st.session_state.pop(key, None)
     init_game()
 
@@ -1263,8 +1693,8 @@ def init_game() -> None:
     characters = get_characters()
     ids = [c.get("id") for c in characters]
     names = [normalize(str(c.get("name", ""))) for c in characters]
-    if len(characters) != 125 or len(ids) != len(set(ids)) or len(names) != len(set(names)):
-        st.error("Die Charakterdatenbank muss 125 Figuren mit eindeutigen IDs und Namen enthalten. Bitte characters.json prüfen.")
+    if len(characters) != 140 or len(ids) != len(set(ids)) or len(names) != len(set(names)):
+        st.error("Die Charakterdatenbank muss 140 Figuren mit eindeutigen IDs und Namen enthalten. Bitte characters.json prüfen.")
         st.stop()
     mode = st.session_state.get("game_mode", "friend")
     player_a = st.session_state.get("name_input_a", "Spieler 1").strip() or "Spieler 1"
@@ -1299,7 +1729,8 @@ def active_spinner() -> str:
     return other(preferred)
 
 
-def draw_character(placeholder) -> None:
+def draw_character(placeholder=None) -> None:
+    """Choose the result on the server, then animate it client-side on both online devices."""
     remaining = st.session_state.remaining
     if not remaining:
         return
@@ -1307,23 +1738,45 @@ def draw_character(placeholder) -> None:
     if not online_can_control(spinner, "classic"):
         st.warning("Du kannst erst ziehen, wenn du in der Online-Partie an der Reihe bist.")
         return
-    st.session_state.spin_owner = spinner
     final = remaining[secrets.randbelow(len(remaining))]
-    spin_rng = random.Random(secrets.randbits(64))
-    start_angle = spin_rng.randrange(0, 360)
-    fake_names = [c["name"] for c in remaining if c["id"] != final["id"]]
-    for frame in range(19):
-        pick_name = final["name"] if frame == 18 or not fake_names else spin_rng.choice(fake_names)
-        angle = start_angle + frame * (27 + frame * 1.85)
-        wheel_html = f"""<div class=\"wheel-shell\"><div class=\"wheel-pointer\">▼</div><div class=\"wheel\" style=\"transform:rotate({angle}deg)\"><div class=\"wheel-hub\">☠</div></div><div class=\"wheel-caption\">{safe_text(pick_name)}</div><div class=\"small-muted\" style=\"margin-top:5px\">Das Los entscheidet …</div></div>"""
-        placeholder.markdown(wheel_html, unsafe_allow_html=True)
-        time.sleep(0.045 + frame * 0.004)
-    st.session_state.remaining = [c for c in remaining if c["id"] != final["id"]]
+    st.session_state.spin_owner = spinner
+    st.session_state.classic_pending_draw_character = final.copy()
+    st.session_state.classic_spin_id = f"{st.session_state.game_seed}-{st.session_state.round_no + 1}-{final['id']}-{secrets.token_hex(3)}"
+    st.session_state.classic_spin_started_at = time.time() + 2.50
+    st.session_state.phase = "spinning"
+    persist_game_state()
+    st.rerun()
+
+
+def complete_classic_spin() -> None:
+    """Commit a classic draw only on the controlling player's session after both clients had time to animate."""
+    if st.session_state.get("phase") != "spinning":
+        return
+    spinner = st.session_state.get("spin_owner", "A")
+    if not online_can_control(spinner, "classic"):
+        return
+    final = st.session_state.get("classic_pending_draw_character")
+    if not isinstance(final, dict):
+        st.session_state.phase = "ready"
+        st.session_state.classic_spin_id = None
+        st.session_state.classic_pending_draw_character = None
+        st.session_state.classic_spin_started_at = None
+        persist_game_state(); st.rerun()
+    remaining = st.session_state.remaining
+    if not any(c.get("id") == final.get("id") for c in remaining):
+        st.session_state.phase = "ready"
+        st.session_state.classic_spin_id = None
+        st.session_state.classic_pending_draw_character = None
+        st.session_state.classic_spin_started_at = None
+        persist_game_state(); st.rerun()
+    st.session_state.remaining = [c for c in remaining if c.get("id") != final.get("id")]
     st.session_state.used.append(final.copy())
-    st.session_state.current_char = final
+    st.session_state.current_char = final.copy()
+    st.session_state.classic_pending_draw_character = None
+    st.session_state.classic_spin_id = None
+    st.session_state.classic_spin_started_at = None
     st.session_state.round_no += 1
     st.session_state.phase = "drawn"
-    placeholder.empty()
     persist_game_state(); st.rerun()
 
 
@@ -1449,6 +1902,7 @@ def html_stat(label: str, value: str) -> str:
 def render_player(player_key: str) -> None:
     player = st.session_state.players[player_key]
     is_ai = is_ai_player(player_key)
+    cloud_batch = cloud_portraits_for_characters(player.get("team", []))
     label = "PLAYER 01" if player_key == "A" else "PLAYER 02"
     accent = "Dein Schiff" if player_key == "A" else ("KI-Rivale" if is_ai else "Freund-Modus")
     with st.container(border=True):
@@ -1462,7 +1916,7 @@ def render_player(player_key: str) -> None:
                 with col:
                     if idx < len(player["team"]):
                         ch = player["team"][idx]
-                        st.image(character_portrait(ch), use_container_width=True)
+                        st.image(character_portrait_thumbnail(ch, cloud_batch), width=118)
                         slot_role = role_for_slot(idx)
                         ch_profile = character_profile(ch)
                         haki_small = f"HAKI {int(ch_profile['haki_score'])}/100" if ch_profile.get("haki_score") is not None else "HAKI N. B."
@@ -1553,8 +2007,6 @@ def render_character_analysis(character: dict[str, Any]) -> None:
                     st.metric(label, f"{value}/100" if value is not None else "Nicht bestätigt")
                     if detail.get("status") == "bestätigt":
                         st.caption("Typ bestätigt · Zahl ist Modellschätzung")
-                    elif "Indizien" in str(detail.get("status", "")):
-                        st.caption("Starke Indizien · Typ nicht zweifelsfrei bestätigt")
                     elif "Typ bestätigt" in str(detail.get("status", "")) or "bestätigt; Meisterschaft" in str(detail.get("status", "")) or "Ausbruch bestätigt" in str(detail.get("status", "")):
                         st.caption("Typ belegt · Stärke unbekannt")
                     else:
@@ -1602,6 +2054,7 @@ def render_roster_browser() -> None:
     character_by_id = {int(c["id"]): c for c in characters}
     profiles_all = {int(c["id"]): character_profile(c) for c in characters}
     rank_profiles_all = {int(c["id"]): ranking_profile(c) for c in characters}
+    search_index = get_character_search_index()
     options = ["Alle Fraktionen"] + sorted({c["faction"] for c in characters})
     role_options = ["Alle Rollen"] + sorted({c.get("role", "Unbekannt") for c in characters})
     fcol, rolecol, scol, sortcol = st.columns([1, 1, 1.25, 1.25])
@@ -1649,12 +2102,7 @@ def render_roster_browser() -> None:
         rs = rank_profiles_all[int(character["id"])]
         if not (power_range[0] <= int(profile["power"]) <= power_range[1]):
             continue
-        searchable = " ".join(search_text(value) for value in (
-            character.get("name"), character.get("role"), character.get("faction"),
-            profile.get("ability_summary"), profile.get("haki_note"), profile.get("devil_fruit_name"),
-            rs.get("devil_fruit_rationale"), rs.get("haki_rationale"),
-            rs.get("strength_rationale"), rs.get("speed_rationale"), rs.get("battle_iq_rationale")
-        )).casefold()
+        searchable = search_index.get(int(character["id"]), "")
         if q and q not in searchable:
             continue
         haki_types = set(profile.get("haki_types") or [])
@@ -1701,9 +2149,10 @@ def render_roster_browser() -> None:
     cols = st.columns(4, gap="small")
     status = st.session_state.setdefault("portrait_status", {})
     selected_pool_id = st.session_state.get("pool_selected_character_id")
+    cloud_batch = cloud_portraits_for_characters(subset)
     for i, ch in enumerate(subset):
         with cols[i % 4]:
-            st.image(character_portrait(ch), use_container_width=True)
+            st.image(character_portrait_thumbnail(ch, cloud_batch), width=155)
             if ch["id"] in remaining_ids:
                 state_label, color = "IM LOSTOPF", "#8dddb0"
             elif ch["id"] == active_id:
@@ -1736,7 +2185,8 @@ def render_roster_browser() -> None:
         with st.container(border=True):
             photo_col, identity_col = st.columns([0.7, 2.3], gap="medium")
             with photo_col:
-                st.image(character_portrait(selected), use_container_width=True)
+                selected_cloud = cloud_portraits_for_characters([selected])
+                st.image(character_portrait(selected, selected_cloud), use_container_width=True)
             with identity_col:
                 st.markdown(f'<div class="character-name">{safe_text(selected["name"])}</div><div class="character-sub">{safe_text(selected.get("faction", ""))} · {safe_text(selected.get("role", ""))}</div>', unsafe_allow_html=True)
                 if st.button("Ausgewähltes Profil schließen", key=f"pool_close_profile_{int(selected['id'])}"):
@@ -1858,7 +2308,7 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         p_a = stored_probability if direct_orientation else 100.0 - stored_probability
         # Preserve the app's established non-certainty floor/ceiling. These are
         # model simulations, not canonically guaranteed fight outcomes.
-        p_a = max(0.01, min(99.99, p_a))
+        p_a = max(0.05, min(99.95, p_a))
         try:
             row_modifier = float(matchup.get("matchup_modifier", 0.0) or 0.0)
         except (TypeError, ValueError):
@@ -1877,17 +2327,17 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         special_factors = matchup.get("special_factors", [])
         if not isinstance(special_factors, list):
             special_factors = [str(special_factors)] if special_factors else []
-        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus den vorab berechneten Ergebnisziehungen.")
+        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus der v5.1-Matrix mit 15.000 Ergebnisziehungen.")
         # The probability and the displayed margin stay mathematically consistent.
-        p_unit = max(0.0001, min(0.9999, p_a / 100.0))
+        p_unit = max(0.0005, min(0.9995, p_a / 100.0))
         margin = 10.0 * math.log(p_unit / (1.0 - p_unit))
         source = "Power Matrix v5.1 · 15.000 Ergebnisziehungen"
     else:
         # Backward-compatible fallback for any future character absent from v4.4.
         modifier, reason = matchup_effect(character_a, character_b)
         margin = rating_a - rating_b + modifier
-        p_a = 100.0 / (1.0 + math.exp(max(-60, min(60, -margin / 5.5))))
-        p_a = max(0.01, min(99.99, p_a))
+        p_a = 100.0 / (1.0 + math.exp(max(-12, min(12, -margin / 10.0))))
+        p_a = max(0.05, min(99.95, p_a))
         simulations, confidence, wins_a, wins_b = 0, "Fallback", 0, 0
         special_factors = []
         source = "Lokale Fallback-Formel"
@@ -1991,10 +2441,9 @@ RANK_CATEGORY_LABELS = [item[0] for item in RANKING_CATEGORIES]
 RANK_CATEGORY_KEYS = {label: key for label, key, _ in RANKING_CATEGORIES}
 
 
-def ranking_profile(character: dict[str, Any]) -> dict[str, Any]:
-    """Fivefold values. Unknown Haki is displayed as '?' and internally neutralized to 50 only for the equal-weight mean."""
-    rating = get_rating_data().get("characters", {}).get(character.get("name", ""), {})
-    values = rating.get("ranking_stats", {})
+@st.cache_data(show_spinner=False, max_entries=512)
+def _ranking_profile_cached(character_name: str, values: dict[str, Any]) -> dict[str, Any]:
+    """Cached pure Fivefold profile; unknown Haki remains visible as '?' and neutral only in the mean."""
     result: dict[str, Any] = {}
     unknown_count = 0
     for label, key, description in RANKING_CATEGORIES:
@@ -2022,6 +2471,35 @@ def ranking_profile(character: dict[str, Any]) -> dict[str, Any]:
     result["unknown_count"] = unknown_count
     result["average_note"] = "Unbekannte Haki-Meisterschaft wird ausschließlich für den Fivefold-Gleichgewichtsschnitt intern neutral mit 50 angesetzt und als ? angezeigt." if result.get("haki_unknown") else "Alle fünf Kategorien besitzen einen Zahlenwert."
     return result
+
+
+def ranking_profile(character: dict[str, Any]) -> dict[str, Any]:
+    rating = get_rating_data().get("characters", {}).get(character.get("name", ""), {})
+    values = rating.get("ranking_stats", {}) if isinstance(rating, dict) else {}
+    return _ranking_profile_cached(str(character.get("name", "")), values if isinstance(values, dict) else {})
+
+
+@st.cache_data(show_spinner=False, max_entries=1)
+def get_character_search_index() -> dict[int, str]:
+    """Build the full-text index once; roster keystrokes then use simple substring checks."""
+    ratings = get_rating_data().get("characters", {})
+    result: dict[int, str] = {}
+    for character in get_characters():
+        rating = ratings.get(character.get("name", ""), {})
+        ranking = rating.get("ranking_stats", {}) if isinstance(rating, dict) else {}
+        searchable = [
+            character.get("name"), character.get("role"), character.get("faction"),
+            rating.get("ability_summary") if isinstance(rating, dict) else "",
+            rating.get("haki_note") if isinstance(rating, dict) else "",
+            rating.get("devil_fruit_name") if isinstance(rating, dict) else "",
+            ranking.get("devil_fruit_rationale"), ranking.get("haki_rationale"),
+            ranking.get("strength_rationale"), ranking.get("speed_rationale"),
+            ranking.get("battle_iq_rationale"), ranking.get("evidence"),
+            rating.get("haki_types") if isinstance(rating, dict) else [],
+        ]
+        result[int(character["id"])] = " ".join(search_text(value) for value in searchable).casefold()
+    return result
+
 
 
 def rank_is_ai_mode() -> bool:
@@ -2084,6 +2562,7 @@ def rank_init_game(force: bool = False) -> None:
     st.session_state.rank_current_char = None
     st.session_state.rank_pending_draw_character = None
     st.session_state.rank_spin_id = None
+    st.session_state.rank_spin_started_at = None
     starter = st.session_state.get("rank_next_start_player", "A")
     starter = starter if starter in {"A", "B"} else "A"
     st.session_state.rank_spin_owner = starter
@@ -2101,7 +2580,7 @@ def rank_reset_game() -> None:
     for key in [
         "rank_players", "rank_remaining", "rank_used", "rank_history", "rank_return_history", "rank_returns_used",
         "rank_phase", "rank_round_no", "rank_current_char", "rank_spin_owner", "rank_next_spinner", "rank_auction",
-        "rank_pending_draw_character", "rank_spin_id",
+        "rank_pending_draw_character", "rank_spin_id", "rank_spin_started_at",
         "rank_last_winner", "rank_pending_player", "rank_pending_character_id", "rank_game_seed",
     ]:
         st.session_state.pop(key, None)
@@ -2134,14 +2613,17 @@ def rank_draw_character() -> None:
     st.session_state.rank_spin_owner = spinner
     st.session_state.rank_pending_draw_character = final.copy()
     st.session_state.rank_spin_id = f"{st.session_state.rank_game_seed}-{st.session_state.rank_round_no + 1}-{final['id']}-{secrets.token_hex(3)}"
+    st.session_state.rank_spin_started_at = time.time() + 2.50
     st.session_state.rank_phase = "spinning"
     persist_game_state()
     st.rerun()
 
 
 def rank_complete_spin() -> None:
-    """Commit the selected character after the client-side wheel animation ends."""
+    """Commit only on the active spinner session; both browsers run the same animation."""
     if st.session_state.get("rank_phase") != "spinning":
+        return
+    if not online_can_control(st.session_state.get("rank_spin_owner", "A"), "ranking"):
         return
     final = st.session_state.get("rank_pending_draw_character")
     if not isinstance(final, dict):
@@ -2162,6 +2644,7 @@ def rank_complete_spin() -> None:
     st.session_state.rank_current_char = final.copy()
     st.session_state.rank_pending_draw_character = None
     st.session_state.rank_spin_id = None
+    st.session_state.rank_spin_started_at = None
     st.session_state.rank_phase = "drawn"
     persist_game_state()
     st.rerun()
@@ -2323,7 +2806,7 @@ def rank_probability(team_a: list[dict[str, Any]], team_b: list[dict[str, Any]])
     delta = score_a - score_b
     # Same capped logistic curve as the classic duel probability model (10-point scale).
     p_a = 100.0 / (1.0 + math.exp(max(-12.0, min(12.0, -delta / 10.0))))
-    p_a = max(0.01, min(99.99, p_a))
+    p_a = max(0.05, min(99.95, p_a))
     return {"score_a": score_a, "score_b": score_b, "delta": delta, "p_a": p_a, "p_b": 100.0 - p_a}
 
 
@@ -2365,6 +2848,7 @@ def rank_process_ai_automatic_actions() -> None:
 
 def rank_render_player(player_key: str) -> None:
     player = st.session_state.rank_players[player_key]
+    cloud_batch = cloud_portraits_for_characters(player.get("team", []))
     average = rank_team_average(player["team"])
     reveal_average = False  # Reveal the averages only in the final panel below the draft.
     color = "#e8bd64" if player_key == "A" else "#77c8ed"
@@ -2386,7 +2870,7 @@ def rank_render_player(player_key: str) -> None:
             score = ranking_profile(item)[key]
             cols = st.columns([1, 2.0])
             with cols[0]:
-                st.image(character_portrait(item), use_container_width=True)
+                st.image(character_portrait_thumbnail(item, cloud_batch), width=118)
             with cols[1]:
                 st.markdown(f'**{safe_text(item["name"])}**')
                 display_score = ranking_profile(item)[f'{key}_display']
@@ -2475,10 +2959,14 @@ def rank_render_mode() -> None:
                     spin_id=spin_id,
                     player=players[spinner]["name"],
                     round=st.session_state.rank_round_no + 1,
+                    variant="ranking", animation_ms=3200, broadcast_delay_ms=1200,
+                    start_at=st.session_state.get("rank_spin_started_at"),
                     key=f"rank_wheel_{spin_id}",
                     default=None,
                 )
-                if isinstance(spin_result, dict) and spin_result.get("event") == "spin_complete" and spin_result.get("spin_id") == spin_id:
+                if (isinstance(spin_result, dict) and spin_result.get("event") == "spin_complete"
+                        and spin_result.get("spin_id") == spin_id
+                        and online_can_control(spinner, "ranking")):
                     rank_complete_spin()
             elif phase == "drawn":
                 character = st.session_state.rank_current_char
@@ -2619,7 +3107,7 @@ Jeder Spieler besetzt jede der fünf Kategorien genau einmal. Der Endwert ist de
             for item in reversed(st.session_state.rank_return_history):
                 st.markdown(f"- {safe_text(item['player'])}: {safe_text(item['character'])} zurückgegeben · −{money(item['fee'])}")
     with st.expander("Quellen und Grenzen der Kategorie-Werte"):
-        st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1198 (09.11.2026).")
+        st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1198 (09.11.2026, deutsche Veröffentlichung).")
     if st.button("🏴‍☠️ Charakter-Explorer anzeigen / schließen", key="toggle_roster_ranking", use_container_width=True):
         st.session_state["show_roster_browser_ranking"] = not st.session_state.get("show_roster_browser_ranking", False)
         st.rerun()
@@ -2784,6 +3272,10 @@ st.session_state.setdefault("online_role", None)
 st.session_state.setdefault("online_revision", 0)
 st.session_state.setdefault("online_last_hash", None)
 st.session_state.setdefault("online_status", None)
+st.session_state.setdefault("classic_pending_draw_character", None)
+st.session_state.setdefault("classic_spin_id", None)
+st.session_state.setdefault("classic_spin_started_at", None)
+st.session_state.setdefault("rank_spin_started_at", None)
 st.session_state.setdefault("draft_variant", "classic")
 st.session_state.setdefault("rank_game_mode", "friend")
 st.session_state.setdefault("mode_selector", "Freund-Modus" if st.session_state.game_mode == "friend" else "Einzelspieler vs. KI")
@@ -2875,10 +3367,9 @@ with st.sidebar:
         st.markdown(f"- Startbudget: **{START_BUDGET} € je Spieler**\n- Teamgröße: **{TEAM_SIZE} Charaktere**\n- Alle Teamplätze sind gleichwertig\n- Rückgaben: **max. {MAX_RETURNS} × je 1 € Strafe**")
         st.caption("Gebote halten mindestens 1 € für jeden offenen Teamplatz zurück. Rückgaben erstatten nicht den Kaufpreis.")
     st.divider()
-    # The game is auto-saved locally on every completed run and before all reruns.
-    persist_game_state()
+    # The single end-of-run save below handles persistence once; do not hash/sync twice.
     export_data = current_game_state()
-    st.download_button("⬇ Vollständigen Spielstand exportieren", data=json.dumps(export_data, ensure_ascii=False, indent=2), file_name="grand_line_draft_3_6_spielstand.json", mime="application/json", use_container_width=True)
+    st.download_button("⬇ Vollständigen Spielstand exportieren", data=json.dumps(export_data, ensure_ascii=False, indent=2), file_name="grand_line_draft_5_0_3_spielstand.json", mime="application/json", use_container_width=True)
     if st.button("📦 Komplett-Backup erzeugen", key="create_portable_backup", use_container_width=True, help="Packt App, Bewertungsdaten, aktuellen Spielstand und bereits lokal gespeicherte Charakterporträts in eine ZIP-Datei."):
         st.session_state["backup_bundle_bytes"] = make_portable_backup()
         st.session_state["backup_bundle_created_at"] = datetime.now().astimezone().strftime("%d.%m.%Y %H:%M")
@@ -2887,7 +3378,7 @@ with st.sidebar:
         st.download_button("⬇ Komplett-Backup herunterladen", data=st.session_state["backup_bundle_bytes"], file_name="GrandLineDraft_3_6_Backup.zip", mime="application/zip", use_container_width=True, key=f"download_portable_backup_{st.session_state.get('backup_bundle_created_at', 'saved')}")
         st.caption(f"Backup erzeugt: {st.session_state.get('backup_bundle_created_at', 'Zeitpunkt unbekannt')}. Nach weiteren Spielzügen vor dem Download ein neues Backup erzeugen.")
     with st.expander("📂 Spielstand laden / wiederherstellen", expanded=False):
-        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0-Spielstand (JSON)", type=["json"], key="import_game_state_file")
+        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0/5.1-Spielstand (JSON)", type=["json"], key="import_game_state_file")
         if uploaded_save is not None and st.button("Spielstand laden und fortsetzen", key="import_game_state_button", use_container_width=True, type="primary"):
             try:
                 payload = json.loads(uploaded_save.getvalue().decode("utf-8"))
@@ -2944,7 +3435,19 @@ with st.sidebar:
             with st.spinner("Bildlink wird geprüft und lokal gespeichert …"):
                 ok, message = install_portrait_from_url(selected_portrait_character, image_url)
             if ok:
-                st.success(message)
+                try:
+                    uploaded_count, upload_errors = upload_cloud_portraits([{
+                        "id": int(selected_portrait_character["id"]), "name": selected_portrait_name,
+                        "bytes": selected_linked_path.read_bytes(), "source": "direct_link",
+                    }])
+                    if uploaded_count:
+                        st.success("Bild lokal gespeichert und in Supabase Storage synchronisiert. Es ist jetzt auf allen Geräten verfügbar.")
+                    elif upload_errors:
+                        st.warning("Bild lokal gespeichert, Cloud-Synchronisierung noch nicht möglich: " + upload_errors[0])
+                    else:
+                        st.success(message)
+                except OSError:
+                    st.warning("Bild lokal gespeichert; die Datei konnte für den Cloud-Upload nicht erneut gelesen werden.")
                 st.image(str(selected_linked_path), caption=f"Neues Bild gespeichert · {selected_portrait_name}", use_container_width=True)
             else:
                 st.error(message)
@@ -2975,7 +3478,16 @@ with st.sidebar:
                         st.session_state["portrait_link_overrides"] = portrait_links
                         st.session_state.setdefault("portrait_status", {})[selected_portrait_name] = "Eigenes Bild · manuell hinzugefügt"
                         _cached_portrait_bytes.clear()
-                        st.success(f"Eigenes Porträt für {selected_portrait_name} gespeichert.")
+                        uploaded_count, upload_errors = upload_cloud_portraits([{
+                            "id": int(selected_portrait_character["id"]), "name": selected_portrait_name,
+                            "bytes": normalized_image, "source": "manual_upload",
+                        }])
+                        if uploaded_count:
+                            st.success(f"Eigenes Porträt für {selected_portrait_name} gespeichert und mit allen Geräten synchronisiert.")
+                        elif upload_errors:
+                            st.warning(f"Lokal gespeichert, Cloud-Upload noch nicht möglich: {upload_errors[0]}")
+                        else:
+                            st.success(f"Eigenes Porträt für {selected_portrait_name} lokal gespeichert.")
                         persist_game_state(); st.rerun()
                     except OSError as exc:
                         st.error(f"Das Bild konnte nicht gespeichert werden: {exc}")
@@ -2990,18 +3502,66 @@ with st.sidebar:
                     st.session_state["portrait_link_overrides"] = portrait_links
                     st.session_state.setdefault("portrait_status", {}).pop(selected_portrait_name, None)
                     _cached_portrait_bytes.clear()
-                    st.success("Eigenes Bild entfernt. Danach wird ein vorhandenes lokales Porträt oder ein Ersatzbild verwendet.")
+                    cloud_ok, cloud_message = delete_cloud_portrait(int(selected_portrait_character["id"]))
+                    st.success("Eigenes Bild lokal entfernt. " + (cloud_message if cloud_ok else "Cloud-Hinweis: " + cloud_message))
                     persist_game_state(); st.rerun()
                 except OSError as exc:
                     st.error(f"Das eigene Bild konnte nicht entfernt werden: {exc}")
-        st.caption("Bilder über Links werden heruntergeladen und lokal zwischengespeichert. Die App lädt sie danach nicht bei jedem Zug erneut aus dem Internet.")
+        st.caption("Bilder über Links werden lokal zwischengespeichert und – sobald cloud_portraits_schema.sql eingerichtet ist – automatisch zu Supabase Storage hochgeladen.")
+
+    with st.expander("☁️ Gemeinsame Cloud-Bilderdatenbank · Supabase Storage", expanded=False):
+        st.write("Eigene Porträts werden zentral gespeichert und anschließend auf allen Geräten angezeigt. Der Bucket bleibt privat; Downloads laufen serverseitig über die Streamlit-Secrets.")
+        if not supabase_config():
+            st.warning("Supabase ist nicht konfiguriert. Die lokalen Bilder bleiben unverändert.")
+        else:
+            schema_ok, schema_message = cloud_portrait_schema_ready()
+            if schema_ok:
+                st.success(schema_message)
+                try:
+                    config = supabase_config()
+                    cloud_index = _cloud_portrait_index(config["url"], config["key"])
+                    st.metric("Bilder in der Cloud", len(cloud_index))
+                except Exception:
+                    st.caption("Die Bildübersicht konnte gerade nicht geladen werden.")
+            else:
+                st.warning(schema_message)
+                st.caption("Führe zuerst die neue Datei cloud_portraits_schema.sql im Supabase SQL Editor aus.")
+            st.markdown("**Vorhandene Bilder von deinem PC importieren**")
+            st.caption("Packe auf deinem PC den Inhalt des Ordners `portraits` als ZIP und lade das Archiv hier hoch. Die Dateien werden anhand ihrer Charakter-ID zugeordnet; es wird nichts unsicher in den Serverordner entpackt.")
+            cloud_archive = st.file_uploader("Lokales portraits-Archiv (.zip)", type=["zip"], key="cloud_portrait_archive_upload")
+            if cloud_archive is not None and st.button("📤 Bilderarchiv in die Cloud übertragen", key="cloud_portrait_archive_import", type="primary", use_container_width=True, disabled=not schema_ok):
+                with st.spinner("Bilder werden geprüft, optimiert und zu Supabase Storage übertragen …"):
+                    import_items, import_warnings = portrait_archive_items(cloud_archive.getvalue())
+                    uploaded_count, upload_errors = upload_cloud_portraits(import_items)
+                if uploaded_count:
+                    st.success(f"{uploaded_count} Charakterbilder erfolgreich in Supabase Storage gespeichert.")
+                if import_warnings:
+                    st.warning(" · ".join(import_warnings[:12]))
+                if upload_errors:
+                    st.error(" · ".join(upload_errors[:8]))
+                if uploaded_count:
+                    st.rerun()
+                if not import_items:
+                    st.info("Im ZIP wurden keine passenden Charakterbilder gefunden. Erwartet werden z. B. manual_character_001.jpg, linked_character_001.jpg oder character_001_<hash>.jpg im portraits-Ordner.")
+            if st.button("☁️ Bilder aus dem aktuellen Serverordner synchronisieren", key="cloud_portrait_local_sync", use_container_width=True, disabled=not schema_ok):
+                local_items = local_portrait_items()
+                with st.spinner(f"{len(local_items)} lokale Porträts werden übertragen …"):
+                    uploaded_count, upload_errors = upload_cloud_portraits(local_items)
+                if uploaded_count:
+                    st.success(f"{uploaded_count} lokale Bilder wurden in die Cloud übertragen.")
+                    st.rerun()
+                elif not local_items:
+                    st.info("Im aktuellen Serverordner portraits/ wurden keine echten Bilddateien gefunden. Lade stattdessen ein ZIP von deinem PC hoch.")
+                if upload_errors:
+                    st.error(" · ".join(upload_errors[:8]))
+            st.caption("Hinweis: In der Cloud-App sieht der Server nur Dateien, die im GitHub-Repository enthalten sind oder über dieses Upload-Feld importiert wurden. Lokale Bilder auf deinem PC müssen daher einmal als ZIP hochgeladen werden.")
 
     st.divider()
-    if st.button("🖼 Alle 125 Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
+    if st.button("🖼 Alle 140 Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
         bar = st.progress(0, text="Bildquellen werden geprüft …")
         def update_portrait_progress(fraction):
             bar.progress(min(1.0, max(0.0, fraction)), text=f"Bildquellen geprüft: {round(fraction * len(get_characters()))}/{len(get_characters())} …")
-        with st.spinner("Bis zu 125 Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
+        with st.spinner("Bis zu 140 Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
             results = audit_all_portraits(update_portrait_progress)
         real = sum(1 for value in results.values() if not value.startswith("Kein echtes Bild") and "fehlgeschlagen" not in value)
         missing = [name for name, value in results.items() if value.startswith("Kein echtes Bild") or "fehlgeschlagen" in value]
@@ -3033,7 +3593,7 @@ with st.sidebar:
 # ---- Hero ------------------------------------------------------------------
 hero_left, hero_right = st.columns([4, 1])
 with hero_left:
-    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.1 · POWER MATRIX v5.1 · MANGA-STAND KAPITEL 1198 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.1 · PEAK EDITION · MANGA-STAND KAPITEL 1198 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
     current_mode_for_badge = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
@@ -3056,7 +3616,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · POWER MATRIX v5.1 · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1198.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1198.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -3098,21 +3658,35 @@ with center_col:
         elif st.session_state.phase == "ready":
             spinner = active_spinner()
             st.markdown(f'<div class="round-banner"><span class="status-dot"></span><b>Runde {st.session_state.round_no + 1}</b><span class="small-muted"> · </span><span class="small-muted">{safe_text(players[spinner]["name"])} dreht das Rad</span></div>', unsafe_allow_html=True)
-            wheel_placeholder = st.empty()
-            wheel_placeholder.markdown("""<div class="wheel-shell"><div class="wheel-pointer">▼</div><div class="wheel"><div class="wheel-hub">☠</div></div><div class="wheel-caption">WER KOMMT AN BORD?</div><div class="small-muted" style="margin-top:5px">Jedes Los zählt gleich</div></div>""", unsafe_allow_html=True)
+            st.markdown("""<div class="wheel-shell"><div class="wheel-pointer">▼</div><div class="wheel"><div class="wheel-hub">☠</div></div><div class="wheel-caption">WER KOMMT AN BORD?</div><div class="small-muted" style="margin-top:5px">Jedes Los zählt gleich</div></div>""", unsafe_allow_html=True)
             pool_size = len(st.session_state.remaining)
             if pool_size:
                 st.markdown(f"<div class='analysis-note' style='text-align:center;margin:4px 0 10px'><b>Faire Ziehung:</b> Jede der {pool_size} Figuren im Lostopf hat exakt die gleiche Chance von <b>{100 / pool_size:.2f}%</b> (1/{pool_size}). Bereits versteigerte Figuren sind nicht im Lostopf.</div>", unsafe_allow_html=True)
             if is_ai_player(spinner):
                 st.info("Die KI zieht automatisch …")
                 if pool_size:
-                    draw_character(wheel_placeholder)
+                    draw_character()
             elif st.button("🎡  AM RAD DREHEN", key="spin_wheel", type="primary", use_container_width=True, disabled=(not st.session_state.remaining or not online_can_control(spinner, "classic"))):
-                draw_character(wheel_placeholder)
+                draw_character()
             st.markdown('<div class="small-muted" style="text-align:center;margin-top:6px">Gleichverteilte Ziehung · die Animation beeinflusst nicht das Los.</div>', unsafe_allow_html=True)
             if st.session_state.last_winner:
                 last = st.session_state.last_winner
                 st.markdown(f'<div style="margin-top:12px;border-top:1px solid rgba(210,226,243,.1);padding-top:11px"><div class="panel-label">LETZTER DEAL</div><b>{safe_text(last["character"])}</b><span class="small-muted"> · gewonnen von {safe_text(players[last["player"]]["name"])} für </span><span style="color:#e8bd64;font-weight:900">{money(last["price"])}</span></div>', unsafe_allow_html=True)
+
+        elif st.session_state.phase == "spinning":
+            spinner = st.session_state.spin_owner
+            spin_id = st.session_state.get("classic_spin_id") or f"classic-{st.session_state.round_no + 1}"
+            spin_result = FIVEFOLD_WIDGET(
+                mode="wheel", variant="classic", spin_id=spin_id,
+                player=players[spinner]["name"], round=st.session_state.round_no + 1,
+                animation_ms=3200, broadcast_delay_ms=1200,
+                start_at=st.session_state.get("classic_spin_started_at"),
+                key=f"classic_wheel_{spin_id}", default=None,
+            )
+            if (isinstance(spin_result, dict) and spin_result.get("event") == "spin_complete"
+                    and spin_result.get("spin_id") == spin_id
+                    and online_can_control(spinner, "classic")):
+                complete_classic_spin()
 
         elif st.session_state.phase == "drawn":
             ch = st.session_state.current_char
@@ -3283,7 +3857,7 @@ with st.container(border=True):
             st.markdown(f'<div class="analysis-note">{safe_text(battle_text(players["A"]["name"], team_a, players["B"]["name"], team_b, matchups))}</div>', unsafe_allow_html=True)
             st.caption("Die Einzelduell-Prognosen stammen aus der beigefügten Power Matrix v5.1 (15.000 Ergebnisziehungen pro Paarung). Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
             st.markdown("### ⚔️ Taktisches Matchmaking · Einzelduelle")
-            st.caption(f"Der Matchmaker nutzt die v5.1-Matrix für alle 7.750 eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
+            st.caption(f"Der Matchmaker nutzt die v5.1-Matrix für alle 9.730 eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
             for duel in matchups:
                 left, center, right = st.columns([1.15, 1.35, 1.15], gap="small")
                 with left:
@@ -3318,12 +3892,12 @@ with st.container(border=True):
 - Intelligenz bleibt ein kleiner Bonus bis maximal +0,45 Punkte für das Team. Teamchemie ist bei 50 neutral und kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status fließen nicht in die Gesamtwertung ein.
 
 **So wird Haki behandelt**
-Jedes der 125 Profile enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
+Jedes der 140 Profile enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
 
 **Taktisches Matchmaking:** Das Modell stellt passende Einzelduelle zusammen und kann Konter wie Ruffy gegen Enel oder Sanji gegen Nami berücksichtigen. Die Slot-Reihenfolge bringt keinen Vorteil.
 
 **Stand und Quellenprüfung**
-- Bewertungsstichtag: **Manga-Kapitel 1198 vom 9. November 2026**. Kapitel 1198 ist veröffentlicht; Kapitel 1199 war am 16. November 2026 noch nicht erschienen.
+- Bewertungsstichtag: **Manga-Kapitel 1198 vom 9. November 2026**. Kapitel 1199 ist nach der aktuellen Kapitelübersicht für den 22. November 2026 angekündigt; in der Woche vom 16. November erscheint kein neues Kapitel.
 - **Kanon vor Community:** bestätigte Manga-Feats, bestätigte Haki-Arten und im Manga gezeigte Technik stehen über Titeln, Kopfgeld, Anime-Inszenierung und Fan-Rankings. Anime-Zusatzmaterial und Filme zählen nicht automatisch als Beleg.
 - OPwiki und One Piece Wiki dienen dem Nachschlagen von Charakteren, Techniken und Haki-Arten. Analysen wie Library of Ohara, YouTube-Rankings und Fan-Foren dienen als zusätzliche Perspektiven – nicht als Beweis für eine offizielle Rangfolge.
 - Die **Shanks-über-Kaido-Einordnung (97 zu 96)** ist eine bewusste Modellentscheidung: Shanks' Spitzen-Königshaki, Zukunftssicht/Observation-Killing und sein Kid-Feat geben ihm im Draft einen kleinen Vorsprung. Das ist kein im Manga endgültig bestätigter Satz, dass Shanks jedes Duell gegen Kaido gewinnen würde; Kaidos Ausdauer, Körper, Frucht und Wano-Kampfbelastung bleiben berücksichtigt. Gear-5-Ruffy liegt bei 95, mit klaren Zeit-/Energiegrenzen und noch nicht dauerhaft belegter Dominanz über fitte Top-Tiers.
@@ -3357,7 +3931,7 @@ with log_right:
         st.markdown("""<div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">01</div><div><b>Los ziehen</b><div class="small-muted">Jedes verbleibende Los hat dieselbe Chance. Die Animation verändert das Ergebnis nicht.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">02</div><div><b>Bieten</b><div class="small-muted">Der ziehende Spieler eröffnet. Danach wird abwechselnd erhöht oder gepasst.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">03</div><div><b>Team führen</b><div class="small-muted">Alle fünf Plätze sind gleichwertig; die Reihenfolge bringt keinen Bonus.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">04</div><div><b>Rückgabe mit Strafe</b><div class="small-muted">Jeder Spieler kann maximal drei Karten für je 1 € zurück in den Lostopf legen. Der Kaufpreis wird nicht erstattet.</div></div></div>""", unsafe_allow_html=True)
         st.caption("Jeder Kauf lässt mindestens 1 € für jeden noch offenen Teamplatz übrig. Rückgaben müssen diese Reserve ebenfalls erhalten.")
 
-if st.button("🏴‍☠️ Charakterpool durchsuchen · 125 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
+if st.button("🏴‍☠️ Charakterpool durchsuchen · 140 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
     st.session_state["show_roster_browser_classic"] = not st.session_state.get("show_roster_browser_classic", False)
     st.rerun()
 if st.session_state.get("show_roster_browser_classic", False):
@@ -3397,7 +3971,7 @@ with st.expander(f"📚 Spielhistorie ({len(st.session_state.get('classic_match_
                 st.session_state.confirm_clear_classic_history = False
                 st.rerun()
 
-st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · POWER MATRIX v5.1 · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
 
 
 # Persist each fully rendered state as a safety net; key transitions also save before reruns.

@@ -842,37 +842,162 @@
   },
   {
     "id": 151,
-    "name": "Kyros",
-    "faction": "Dressrosa / Riku-Armee",
-    "role": "Ehemaliger Gladiatorenkönig",
-    "wiki_slug": "Kyros"
+    "name": "Charlotte Smoothie",
+    "faction": "Big-Mom-Piraten",
+    "role": "Sweet Commander",
+    "wiki_slug": "Charlotte_Smoothie",
+    "image_url": ""
   },
   {
     "id": 152,
-    "name": "Ashura Doji",
-    "faction": "Akazaya Neun / Wano",
-    "role": "Roter Schwertscheide / Shutenmaru",
-    "wiki_slug": "Ashura_Doji"
+    "name": "Charlotte Oven",
+    "faction": "Big-Mom-Piraten",
+    "role": "Minister der Öfen / Kämpfer",
+    "wiki_slug": "Charlotte_Oven",
+    "image_url": ""
   },
   {
     "id": 153,
-    "name": "Gecko Moria",
-    "faction": "Thriller Bark / Ehemaliger Samurai",
-    "role": "Kapitän / Nutzer der Schatten-Frucht",
-    "wiki_slug": "Gecko_Moria"
+    "name": "Charlotte Daifuku",
+    "faction": "Big-Mom-Piraten",
+    "role": "Kämpfer / Genie-Nutzer",
+    "wiki_slug": "Charlotte_Daifuku",
+    "image_url": ""
   },
   {
     "id": 154,
-    "name": "Vergo",
-    "faction": "Marine / Donquixote-Familie",
-    "role": "Vizeadmiral / Demon Bamboo",
-    "wiki_slug": "Vergo"
+    "name": "Charlotte Snack",
+    "faction": "Big-Mom-Piraten",
+    "role": "Ehemaliger Sweet Commander",
+    "wiki_slug": "Charlotte_Snack",
+    "image_url": ""
   },
   {
     "id": 155,
     "name": "Urouge",
-    "faction": "Fallen Monk-Piraten / Supernovae",
-    "role": "Kapitän / Mad Monk",
-    "wiki_slug": "Urouge"
+    "faction": "Gefallene Mönch-Piraten",
+    "role": "Kapitän / Schlimmste Generation",
+    "wiki_slug": "Urouge",
+    "image_url": ""
+  },
+  {
+    "id": 156,
+    "name": "Edward Weevil",
+    "faction": "Ehemaliger Sieben Samurai der Meere",
+    "role": "Kämpfer / Selbsternannter Whitebeard-Sohn",
+    "wiki_slug": "Edward_Weevil",
+    "image_url": ""
+  },
+  {
+    "id": 157,
+    "name": "Vista",
+    "faction": "Whitebeard-Piraten",
+    "role": "Kommandant der 5. Division / Schwertkämpfer",
+    "wiki_slug": "Vista",
+    "image_url": ""
+  },
+  {
+    "id": 158,
+    "name": "Jozu",
+    "faction": "Whitebeard-Piraten",
+    "role": "Kommandant der 3. Division",
+    "wiki_slug": "Jozu",
+    "image_url": ""
+  },
+  {
+    "id": 159,
+    "name": "S-Hawk",
+    "faction": "Seraphim / Weltregierung",
+    "role": "Seraphim / Mihawk-Klon",
+    "wiki_slug": "S-Hawk",
+    "image_url": ""
+  },
+  {
+    "id": 160,
+    "name": "S-Snake",
+    "faction": "Seraphim / Weltregierung",
+    "role": "Seraphim / Hancock-Klon",
+    "wiki_slug": "S-Snake",
+    "image_url": ""
+  },
+  {
+    "id": 161,
+    "name": "S-Bear",
+    "faction": "Seraphim / Weltregierung",
+    "role": "Seraphim / Kuma-Klon",
+    "wiki_slug": "S-Bear",
+    "image_url": ""
+  },
+  {
+    "id": 162,
+    "name": "S-Shark",
+    "faction": "Seraphim / Weltregierung",
+    "role": "Seraphim / Jinbe-Klon",
+    "wiki_slug": "S-Shark",
+    "image_url": ""
+  },
+  {
+    "id": 163,
+    "name": "Limejuice",
+    "faction": "Rothaar-Piraten",
+    "role": "Senior-Offizier / Luftkämpfer",
+    "wiki_slug": "Limejuice",
+    "image_url": ""
+  },
+  {
+    "id": 164,
+    "name": "Shepherd Sommers",
+    "faction": "Ritter der Götter",
+    "role": "Ritter der Götter / Iba-Iba-Nutzer",
+    "wiki_slug": "Shepherd_Sommers",
+    "image_url": ""
+  },
+  {
+    "id": 165,
+    "name": "Rimoshifu Killingham",
+    "faction": "Ritter der Götter",
+    "role": "Ritter der Götter / Traum-Kirin",
+    "wiki_slug": "Rimoshifu_Killingham",
+    "image_url": ""
+  },
+  {
+    "id": 166,
+    "name": "Gecko Moria",
+    "faction": "Thriller Bark / Ehemaliger Samurai",
+    "role": "Kapitän der Thriller Bark / Schattenmeister",
+    "wiki_slug": "Gecko_Moria",
+    "image_url": ""
+  },
+  {
+    "id": 167,
+    "name": "Kyros",
+    "faction": "Dressrosa / Riku-Familie",
+    "role": "Ehemaliger Gladiator / Leibwächter",
+    "wiki_slug": "Kyros",
+    "image_url": ""
+  },
+  {
+    "id": 168,
+    "name": "Ashura Doji",
+    "faction": "Wano / Akazaya Neun",
+    "role": "Daimyo von Kuri / Samurai",
+    "wiki_slug": "Ashura_Doji",
+    "image_url": ""
+  },
+  {
+    "id": 169,
+    "name": "Vergo",
+    "faction": "Marine / Donquixote-Piraten",
+    "role": "Vizeadmiral / ehemaliger rechte Hand Doflamingos",
+    "wiki_slug": "Vergo",
+    "image_url": ""
+  },
+  {
+    "id": 170,
+    "name": "Kawamatsu",
+    "faction": "Wano / Akazaya Neun",
+    "role": "Kappa-Samurai / Yokozuna",
+    "wiki_slug": "Kawamatsu",
+    "image_url": ""
   }
 ]
