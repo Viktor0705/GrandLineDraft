@@ -11,7 +11,7 @@ def test_matchups_are_split_from_startup_rating_payload():
     assert (BASE / "matchup_results.json.gz").stat().st_size < 800_000
     with gzip.open(BASE / "matchup_results.json.gz", "rt", encoding="utf-8") as handle:
         rows = json.load(handle)
-    assert len(rows) == 135 * 134 // 2 == 9045
+    assert len(rows) == 140 * 139 // 2 == 9730
 
 
 def test_profiles_and_portrait_prefetch_are_cached_in_code():

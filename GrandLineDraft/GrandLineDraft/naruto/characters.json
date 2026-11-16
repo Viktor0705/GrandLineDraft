@@ -1,0 +1,754 @@
+[
+  {
+    "id": 1001,
+    "name": "Kaguya Ōtsutsuki",
+    "faction": "Ōtsutsuki-Clan",
+    "role": "Urmutter des Chakras",
+    "wiki_slug": "Kaguya_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1002,
+    "name": "Hagoromo Ōtsutsuki",
+    "faction": "Ōtsutsuki / Gründer des Ninshū",
+    "role": "Weiser der sechs Pfade",
+    "wiki_slug": "Hagoromo_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1003,
+    "name": "Madara Uchiha (Jūbi-Jinchūriki)",
+    "faction": "Uchiha / Jūbi",
+    "role": "Zehnschwänziger-Jinchūriki",
+    "wiki_slug": "Madara_Uchiha_Jubi-Jinchuriki",
+    "image_url": ""
+  },
+  {
+    "id": 1004,
+    "name": "Naruto Uzumaki (The Last)",
+    "faction": "Konohagakure / Uzumaki",
+    "role": "Sechs-Pfade-Senjutsu · vollständiger Kurama",
+    "wiki_slug": "Naruto_Uzumaki_The_Last",
+    "image_url": ""
+  },
+  {
+    "id": 1005,
+    "name": "Sasuke Uchiha (The Last)",
+    "faction": "Uchiha / Konohagakure",
+    "role": "Rinnegan · Ewiges Mangekyō Sharingan",
+    "wiki_slug": "Sasuke_Uchiha_The_Last",
+    "image_url": ""
+  },
+  {
+    "id": 1006,
+    "name": "Hamura Ōtsutsuki",
+    "faction": "Ōtsutsuki-Clan",
+    "role": "Mitversiegeler Kaguyas",
+    "wiki_slug": "Hamura_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1007,
+    "name": "Obito Uchiha (Jūbi-Jinchūriki)",
+    "faction": "Uchiha / Jūbi",
+    "role": "Zehnschwänziger-Jinchūriki",
+    "wiki_slug": "Obito_Uchiha_Jubi-Jinchuriki",
+    "image_url": ""
+  },
+  {
+    "id": 1008,
+    "name": "Ashura Ōtsutsuki",
+    "faction": "Ōtsutsuki-Clan",
+    "role": "Erbe des Ninshū · Asura-Chakra",
+    "wiki_slug": "Ashura_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1009,
+    "name": "Toneri Ōtsutsuki",
+    "faction": "Ōtsutsuki / Mond",
+    "role": "Tenseigan-Chakra-Modus",
+    "wiki_slug": "Toneri_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1010,
+    "name": "Kakashi Hatake (DMS)",
+    "faction": "Konohagakure",
+    "role": "Doppeltes Mangekyō · Susanoo",
+    "wiki_slug": "Kakashi_Hatake_DMS",
+    "image_url": ""
+  },
+  {
+    "id": 1011,
+    "name": "Might Guy (Acht Tore)",
+    "faction": "Konohagakure",
+    "role": "Achtes inneres Tor · Nacht Guy",
+    "wiki_slug": "Might_Guy_Acht_Tore",
+    "image_url": ""
+  },
+  {
+    "id": 1012,
+    "name": "Hashirama Senju (Prime)",
+    "faction": "Senju / Konohagakure",
+    "role": "Sennin-Modus · Mokuton",
+    "wiki_slug": "Hashirama_Senju_Prime",
+    "image_url": ""
+  },
+  {
+    "id": 1013,
+    "name": "Indra Ōtsutsuki",
+    "faction": "Ōtsutsuki-Clan",
+    "role": "Erster Uchiha · perfektes Susanoo",
+    "wiki_slug": "Indra_Otsutsuki",
+    "image_url": ""
+  },
+  {
+    "id": 1014,
+    "name": "Tobirama Senju (Prime)",
+    "faction": "Senju / Konohagakure",
+    "role": "Zweiter Hokage · Hiraishin-Erfinder",
+    "wiki_slug": "Tobirama_Senju_Prime",
+    "image_url": ""
+  },
+  {
+    "id": 1015,
+    "name": "Hiruzen Sarutobi (Prime)",
+    "faction": "Sarutobi / Konohagakure",
+    "role": "Dritter Hokage · Professor",
+    "wiki_slug": "Hiruzen_Sarutobi_Prime",
+    "image_url": ""
+  },
+  {
+    "id": 1016,
+    "name": "Nagato (Prime)",
+    "faction": "Uzumaki / Akatsuki",
+    "role": "Rinnegan · sechs Pfade des Pain",
+    "wiki_slug": "Nagato_Prime",
+    "image_url": ""
+  },
+  {
+    "id": 1017,
+    "name": "Minato Namikaze (KCM · Edo)",
+    "faction": "Konohagakure",
+    "role": "Vierter Hokage · Kyuubi-Chakra-Modus",
+    "wiki_slug": "Minato_Namikaze_KCM___Edo",
+    "image_url": ""
+  },
+  {
+    "id": 1018,
+    "name": "Itachi Uchiha (Edo Tensei)",
+    "faction": "Uchiha",
+    "role": "Edo-Tensei · Susanoo · Izanami",
+    "wiki_slug": "Itachi_Uchiha_Edo_Tensei",
+    "image_url": ""
+  },
+  {
+    "id": 1019,
+    "name": "Kabuto Yakushi (Sennin-Modus)",
+    "faction": "Otogakure / Sound Five",
+    "role": "Drachen-Sennin-Modus",
+    "wiki_slug": "Kabuto_Yakushi_Sennin-Modus",
+    "image_url": ""
+  },
+  {
+    "id": 1020,
+    "name": "Pain (Sechs Pfade)",
+    "faction": "Akatsuki",
+    "role": "Sechs Körper des Rinnegan",
+    "wiki_slug": "Pain_Sechs_Pfade",
+    "image_url": ""
+  },
+  {
+    "id": 1021,
+    "name": "Jiraiya (Sennin-Modus)",
+    "faction": "Konohagakure / Sannin",
+    "role": "Eremitenmodus",
+    "wiki_slug": "Jiraiya_Sennin-Modus",
+    "image_url": ""
+  },
+  {
+    "id": 1022,
+    "name": "Orochimaru (Kriegsbogen)",
+    "faction": "Otogakure / Sannin",
+    "role": "Schlangen-Techniken · Körpertransfer",
+    "wiki_slug": "Orochimaru_Kriegsbogen",
+    "image_url": ""
+  },
+  {
+    "id": 1023,
+    "name": "Killer B",
+    "faction": "Kumogakure / Jinchūriki",
+    "role": "Acht-Schwänze-Jinchūriki",
+    "wiki_slug": "Killer_B",
+    "image_url": ""
+  },
+  {
+    "id": 1024,
+    "name": "Dritter Raikage",
+    "faction": "Kumogakure",
+    "role": "Blitzrüstung · stärkste Verteidigung",
+    "wiki_slug": "Dritter_Raikage",
+    "image_url": ""
+  },
+  {
+    "id": 1025,
+    "name": "Shisui Uchiha",
+    "faction": "Uchiha / Konohagakure",
+    "role": "Kotoamatsukami · Body Flicker",
+    "wiki_slug": "Shisui_Uchiha",
+    "image_url": ""
+  },
+  {
+    "id": 1026,
+    "name": "Kisame Hoshigaki",
+    "faction": "Akatsuki / Kirigakure",
+    "role": "Samehada · Chakra-Absorption",
+    "wiki_slug": "Kisame_Hoshigaki",
+    "image_url": ""
+  },
+  {
+    "id": 1027,
+    "name": "Mū (Zweiter Tsuchikage)",
+    "faction": "Iwagakure",
+    "role": "Jinton · Unsichtbarkeit",
+    "wiki_slug": "Mu_Zweiter_Tsuchikage",
+    "image_url": ""
+  },
+  {
+    "id": 1028,
+    "name": "Gengetsu Hōzuki (Zweiter Mizukage)",
+    "faction": "Kirigakure",
+    "role": "Dampf-Muschel · Genjutsu",
+    "wiki_slug": "Gengetsu_Hozuki_Zweiter_Mizukage",
+    "image_url": ""
+  },
+  {
+    "id": 1029,
+    "name": "Hanzō",
+    "faction": "Amegakure",
+    "role": "Salamander-Gift · legendärer Shinobi",
+    "wiki_slug": "Hanzo",
+    "image_url": ""
+  },
+  {
+    "id": 1030,
+    "name": "Sakumo Hatake",
+    "faction": "Konohagakure",
+    "role": "Konoha-Weißzahn",
+    "wiki_slug": "Sakumo_Hatake",
+    "image_url": ""
+  },
+  {
+    "id": 1031,
+    "name": "Tsunade (Byakugō)",
+    "faction": "Senju / Konohagakure",
+    "role": "Sannin · hundert Heilungen",
+    "wiki_slug": "Tsunade_Byakugo",
+    "image_url": ""
+  },
+  {
+    "id": 1032,
+    "name": "Sakura Haruno (Byakugō)",
+    "faction": "Konohagakure",
+    "role": "Byakugō-Siegel · medizinische Meisterin",
+    "wiki_slug": "Sakura_Haruno_Byakugo",
+    "image_url": ""
+  },
+  {
+    "id": 1033,
+    "name": "Gaara (Vierter Shinobi-Krieg)",
+    "faction": "Sunagakure",
+    "role": "Kazekage · Sandkontrolle",
+    "wiki_slug": "Gaara_Vierter_Shinobi-Krieg",
+    "image_url": ""
+  },
+  {
+    "id": 1034,
+    "name": "Vierter Raikage (A)",
+    "faction": "Kumogakure",
+    "role": "Blitzrüstung",
+    "wiki_slug": "Vierter_Raikage_A",
+    "image_url": ""
+  },
+  {
+    "id": 1035,
+    "name": "Danzo Shimura",
+    "faction": "Konohagakure / Root",
+    "role": "Izanagi · Kotoamatsukami",
+    "wiki_slug": "Danzo_Shimura",
+    "image_url": ""
+  },
+  {
+    "id": 1036,
+    "name": "Kakashi Hatake (Kriegsbogen)",
+    "faction": "Konohagakure",
+    "role": "Mangekyō Sharingan · Kamui",
+    "wiki_slug": "Kakashi_Hatake_Kriegsbogen",
+    "image_url": ""
+  },
+  {
+    "id": 1037,
+    "name": "Konan",
+    "faction": "Akatsuki / Amegakure",
+    "role": "Papier-Ninjutsu",
+    "wiki_slug": "Konan",
+    "image_url": ""
+  },
+  {
+    "id": 1038,
+    "name": "Sasori",
+    "faction": "Akatsuki / Sunagakure",
+    "role": "Puppenspieler · dritter Kazekage",
+    "wiki_slug": "Sasori",
+    "image_url": ""
+  },
+  {
+    "id": 1039,
+    "name": "Deidara",
+    "faction": "Akatsuki / Iwagakure",
+    "role": "Explosions-Ton",
+    "wiki_slug": "Deidara",
+    "image_url": ""
+  },
+  {
+    "id": 1040,
+    "name": "Kakuzu",
+    "faction": "Akatsuki / Takigakure",
+    "role": "Fünf Herzen · fünf Naturen",
+    "wiki_slug": "Kakuzu",
+    "image_url": ""
+  },
+  {
+    "id": 1041,
+    "name": "Onoki (Dritter Tsuchikage)",
+    "faction": "Iwagakure",
+    "role": "Jinton · Gewichtskontrolle",
+    "wiki_slug": "Onoki_Dritter_Tsuchikage",
+    "image_url": ""
+  },
+  {
+    "id": 1042,
+    "name": "Rasa (Vierter Kazekage)",
+    "faction": "Sunagakure",
+    "role": "Goldstaub-Manipulation",
+    "wiki_slug": "Rasa_Vierter_Kazekage",
+    "image_url": ""
+  },
+  {
+    "id": 1043,
+    "name": "Darui",
+    "faction": "Kumogakure",
+    "role": "Schwarzer Blitz · Sturmfreisetzung",
+    "wiki_slug": "Darui",
+    "image_url": ""
+  },
+  {
+    "id": 1044,
+    "name": "Yamato",
+    "faction": "Konohagakure",
+    "role": "Mokuton · Hashirama-Zellen",
+    "wiki_slug": "Yamato",
+    "image_url": ""
+  },
+  {
+    "id": 1045,
+    "name": "Chiyo",
+    "faction": "Sunagakure",
+    "role": "Puppenspielerin · Medizin-Ninjutsu",
+    "wiki_slug": "Chiyo",
+    "image_url": ""
+  },
+  {
+    "id": 1046,
+    "name": "Kimimaro",
+    "faction": "Otogakure / Kaguya-Clan",
+    "role": "Knochen-Kekkei-Genkai",
+    "wiki_slug": "Kimimaro",
+    "image_url": ""
+  },
+  {
+    "id": 1047,
+    "name": "Zabuza Momochi",
+    "faction": "Kirigakure",
+    "role": "Dämon des versteckten Nebels",
+    "wiki_slug": "Zabuza_Momochi",
+    "image_url": ""
+  },
+  {
+    "id": 1048,
+    "name": "Haku",
+    "faction": "Kirigakure / Yuki-Clan",
+    "role": "Eisfreisetzung · Spiegeltechnik",
+    "wiki_slug": "Haku",
+    "image_url": ""
+  },
+  {
+    "id": 1049,
+    "name": "Mifune",
+    "faction": "Land des Eisens",
+    "role": "Samurai-General · Iaido",
+    "wiki_slug": "Mifune",
+    "image_url": ""
+  },
+  {
+    "id": 1050,
+    "name": "Fugaku Uchiha",
+    "faction": "Uchiha / Konohagakure",
+    "role": "Uchiha-Clanführer · Mangekyō (Databook-/Lore-Basis)",
+    "wiki_slug": "Fugaku_Uchiha",
+    "image_url": ""
+  },
+  {
+    "id": 1051,
+    "name": "Yugito Nii",
+    "faction": "Kumogakure / Jinchūriki",
+    "role": "Zwei-Schwänze-Jinchūriki",
+    "wiki_slug": "Yugito_Nii",
+    "image_url": ""
+  },
+  {
+    "id": 1052,
+    "name": "Yagura Karatachi",
+    "faction": "Kirigakure / Jinchūriki",
+    "role": "Drei-Schwänze-Jinchūriki",
+    "wiki_slug": "Yagura_Karatachi",
+    "image_url": ""
+  },
+  {
+    "id": 1053,
+    "name": "Rōshi",
+    "faction": "Iwagakure / Jinchūriki",
+    "role": "Vier-Schwänze-Jinchūriki",
+    "wiki_slug": "Roshi",
+    "image_url": ""
+  },
+  {
+    "id": 1054,
+    "name": "Han",
+    "faction": "Iwagakure / Jinchūriki",
+    "role": "Fünf-Schwänze-Jinchūriki",
+    "wiki_slug": "Han",
+    "image_url": ""
+  },
+  {
+    "id": 1055,
+    "name": "Utakata",
+    "faction": "Kirigakure / Jinchūriki",
+    "role": "Sechs-Schwänze-Jinchūriki",
+    "wiki_slug": "Utakata",
+    "image_url": ""
+  },
+  {
+    "id": 1056,
+    "name": "Fū",
+    "faction": "Takigakure / Jinchūriki",
+    "role": "Sieben-Schwänze-Jinchūriki",
+    "wiki_slug": "Fu",
+    "image_url": ""
+  },
+  {
+    "id": 1057,
+    "name": "Kinkaku",
+    "faction": "Kumogakure",
+    "role": "Neun-Schwänze-Chakra-Mantel",
+    "wiki_slug": "Kinkaku",
+    "image_url": ""
+  },
+  {
+    "id": 1058,
+    "name": "Ginkaku",
+    "faction": "Kumogakure",
+    "role": "Neun-Schwänze-Chakra-Mantel",
+    "wiki_slug": "Ginkaku",
+    "image_url": ""
+  },
+  {
+    "id": 1059,
+    "name": "Jūgo",
+    "faction": "Otogakure",
+    "role": "Fluchmal · Naturenergie",
+    "wiki_slug": "Jugo",
+    "image_url": ""
+  },
+  {
+    "id": 1060,
+    "name": "Suigetsu Hōzuki",
+    "faction": "Otogakure / Kirigakure",
+    "role": "Hydrifizierung · Schwertkampf",
+    "wiki_slug": "Suigetsu_Hozuki",
+    "image_url": ""
+  },
+  {
+    "id": 1061,
+    "name": "Rock Lee (Siebtes Tor)",
+    "faction": "Konohagakure",
+    "role": "Taijutsu-Spezialist",
+    "wiki_slug": "Rock_Lee_Siebtes_Tor",
+    "image_url": ""
+  },
+  {
+    "id": 1062,
+    "name": "Neji Hyūga",
+    "faction": "Konohagakure / Hyūga",
+    "role": "Byakugan · Jūken",
+    "wiki_slug": "Neji_Hyuga",
+    "image_url": ""
+  },
+  {
+    "id": 1063,
+    "name": "Hinata Hyūga (The Last)",
+    "faction": "Konohagakure / Hyūga",
+    "role": "Byakugan · Hamura-Chakra",
+    "wiki_slug": "Hinata_Hyuga_The_Last",
+    "image_url": ""
+  },
+  {
+    "id": 1064,
+    "name": "Shikamaru Nara (Kriegsbogen)",
+    "faction": "Konohagakure / Nara",
+    "role": "Schattenbesitz · taktischer Stratege",
+    "wiki_slug": "Shikamaru_Nara_Kriegsbogen",
+    "image_url": ""
+  },
+  {
+    "id": 1065,
+    "name": "Temari",
+    "faction": "Sunagakure",
+    "role": "Windfreisetzung · Fächer",
+    "wiki_slug": "Temari",
+    "image_url": ""
+  },
+  {
+    "id": 1066,
+    "name": "Kankurō",
+    "faction": "Sunagakure",
+    "role": "Puppenspieler",
+    "wiki_slug": "Kankuro",
+    "image_url": ""
+  },
+  {
+    "id": 1067,
+    "name": "Hidan",
+    "faction": "Akatsuki",
+    "role": "Jashin-Ritual · Unsterblichkeit",
+    "wiki_slug": "Hidan",
+    "image_url": ""
+  },
+  {
+    "id": 1068,
+    "name": "Asuma Sarutobi",
+    "faction": "Konohagakure",
+    "role": "Chakra-Klingen · Windfreisetzung",
+    "wiki_slug": "Asuma_Sarutobi",
+    "image_url": ""
+  },
+  {
+    "id": 1069,
+    "name": "Choji Akimichi (Schmetterlingsmodus)",
+    "faction": "Konohagakure / Akimichi",
+    "role": "Kalorienumwandlung · Riesenmodus",
+    "wiki_slug": "Choji_Akimichi_Schmetterlingsmodus",
+    "image_url": ""
+  },
+  {
+    "id": 1070,
+    "name": "Sai",
+    "faction": "Konohagakure / Root",
+    "role": "Tintenninjutsu · Siegeltiere",
+    "wiki_slug": "Sai",
+    "image_url": ""
+  },
+  {
+    "id": 1071,
+    "name": "Shino Aburame",
+    "faction": "Konohagakure / Aburame",
+    "role": "Insekten-Ninjutsu",
+    "wiki_slug": "Shino_Aburame",
+    "image_url": ""
+  },
+  {
+    "id": 1072,
+    "name": "Kiba Inuzuka",
+    "faction": "Konohagakure / Inuzuka",
+    "role": "Ninken · Fang über Fang",
+    "wiki_slug": "Kiba_Inuzuka",
+    "image_url": ""
+  },
+  {
+    "id": 1073,
+    "name": "Ino Yamanaka",
+    "faction": "Konohagakure / Yamanaka",
+    "role": "Gedankenübertragung · Sensorik",
+    "wiki_slug": "Ino_Yamanaka",
+    "image_url": ""
+  },
+  {
+    "id": 1074,
+    "name": "Tenten",
+    "faction": "Konohagakure",
+    "role": "Waffen-Ninjutsu · Rikūdō-Werkzeuge",
+    "wiki_slug": "Tenten",
+    "image_url": ""
+  },
+  {
+    "id": 1075,
+    "name": "Kurenai Yūhi",
+    "faction": "Konohagakure",
+    "role": "Genjutsu-Spezialistin",
+    "wiki_slug": "Kurenai_Yuhi",
+    "image_url": ""
+  },
+  {
+    "id": 1076,
+    "name": "Shizune",
+    "faction": "Konohagakure",
+    "role": "Medizin-Ninjutsu · Gift",
+    "wiki_slug": "Shizune",
+    "image_url": ""
+  },
+  {
+    "id": 1077,
+    "name": "Anko Mitarashi",
+    "faction": "Konohagakure",
+    "role": "Schlangen-Ninjutsu · Fluchmal",
+    "wiki_slug": "Anko_Mitarashi",
+    "image_url": ""
+  },
+  {
+    "id": 1078,
+    "name": "Konohamaru Sarutobi (Shippuden)",
+    "faction": "Konohagakure",
+    "role": "Rasengan · Schattenklone",
+    "wiki_slug": "Konohamaru_Sarutobi_Shippuden",
+    "image_url": ""
+  },
+  {
+    "id": 1079,
+    "name": "Genma Shiranui",
+    "faction": "Konohagakure",
+    "role": "Tokubetsu-Jōnin · Senbon",
+    "wiki_slug": "Genma_Shiranui",
+    "image_url": ""
+  },
+  {
+    "id": 1080,
+    "name": "Aoba Yamashiro",
+    "faction": "Konohagakure",
+    "role": "Jōnin · Krähen-/Genjutsu",
+    "wiki_slug": "Aoba_Yamashiro",
+    "image_url": ""
+  },
+  {
+    "id": 1081,
+    "name": "Ibiki Morino",
+    "faction": "Konohagakure",
+    "role": "Folter- und Verhörspezialist",
+    "wiki_slug": "Ibiki_Morino",
+    "image_url": ""
+  },
+  {
+    "id": 1082,
+    "name": "Mei Terumī",
+    "faction": "Kirigakure",
+    "role": "Fünfte Mizukage · Lava-/Dampffreisetzung",
+    "wiki_slug": "Mei_Terumi",
+    "image_url": ""
+  },
+  {
+    "id": 1083,
+    "name": "Chōjūrō",
+    "faction": "Kirigakure",
+    "role": "Sechster Mizukage · Hiramekarei",
+    "wiki_slug": "Chojuro",
+    "image_url": ""
+  },
+  {
+    "id": 1084,
+    "name": "Ao",
+    "faction": "Kirigakure",
+    "role": "Byakugan-Implantat · Sensorik",
+    "wiki_slug": "Ao",
+    "image_url": ""
+  },
+  {
+    "id": 1085,
+    "name": "Karin Uzumaki",
+    "faction": "Uzumaki / Taka",
+    "role": "Sensorik · Adamantine Sealing Chains",
+    "wiki_slug": "Karin_Uzumaki",
+    "image_url": ""
+  },
+  {
+    "id": 1086,
+    "name": "Manda",
+    "faction": "Otogakure / Beschwörung",
+    "role": "Riesenschlange",
+    "wiki_slug": "Manda",
+    "image_url": ""
+  },
+  {
+    "id": 1087,
+    "name": "Gamabunta",
+    "faction": "Myōboku / Beschwörung",
+    "role": "Krötenboss",
+    "wiki_slug": "Gamabunta",
+    "image_url": ""
+  },
+  {
+    "id": 1088,
+    "name": "Kurama",
+    "faction": "Bijū",
+    "role": "Neunschwänziger",
+    "wiki_slug": "Kurama",
+    "image_url": ""
+  },
+  {
+    "id": 1089,
+    "name": "Son Gokū (Vier-Schwänze)",
+    "faction": "Bijū",
+    "role": "Vier-Schwänziger",
+    "wiki_slug": "Son_Goku_Vier-Schwänze",
+    "image_url": ""
+  },
+  {
+    "id": 1090,
+    "name": "Gyūki (Acht-Schwänze)",
+    "faction": "Bijū",
+    "role": "Acht-Schwänziger",
+    "wiki_slug": "Gyuki_Acht-Schwänze",
+    "image_url": ""
+  },
+  {
+    "id": 1091,
+    "name": "Shukaku",
+    "faction": "Bijū",
+    "role": "Einschwänziger",
+    "wiki_slug": "Shukaku",
+    "image_url": ""
+  },
+  {
+    "id": 1092,
+    "name": "Might Duy",
+    "faction": "Konohagakure",
+    "role": "Acht Tore · Vater von Might Guy",
+    "wiki_slug": "Might_Duy",
+    "image_url": ""
+  },
+  {
+    "id": 1093,
+    "name": "Chōza Akimichi",
+    "faction": "Konohagakure / Akimichi",
+    "role": "Akimichi-Clan · Riesenmodus",
+    "wiki_slug": "Choza_Akimichi",
+    "image_url": ""
+  },
+  {
+    "id": 1094,
+    "name": "Iruka Umino",
+    "faction": "Konohagakure",
+    "role": "Chūnin-Ausbilder",
+    "wiki_slug": "Iruka_Umino",
+    "image_url": ""
+  }
+]

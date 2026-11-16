@@ -1,0 +1,11 @@
+Grand Line Draft · Dual Anime Edition 6.0
+
+Game engine: based on the user-provided GrandLineDraft 5.0.4 ZIP.
+Universes: One Piece (140 characters) and Naruto Shippuden + The Last (94 characters; no Boruto).
+Total: 234 characters, 14,101 unique pairings, 15,000 aggregated binomial Monte Carlo draws per pairing.
+One Piece cutoff: Manga chapter 1198, published 2026-11-08.
+Naruto cutoff: Naruto Shippuden + The Last: Naruto the Movie.
+
+Game rules preserved: classic auction draft and Fivefold Ranking; 20 € start budget, five slots per team, max. three returns at 1 € penalty, local 2-player, AI and Supabase online modes.
+
+Security: .streamlit/secrets.toml is intentionally not included.

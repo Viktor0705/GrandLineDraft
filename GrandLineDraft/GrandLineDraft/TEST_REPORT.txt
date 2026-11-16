@@ -1,0 +1,24 @@
+GRAND LINE DRAFT · DUAL ANIME EDITION 6.0
+TEST REPORT
+Date: 2026-11-16
+
+Build checks
+- Python syntax: PASS (python -m py_compile app.py)
+- Pytest suite: PASS (40 passed)
+- unittest suite: PASS (12 passed)
+- Clean extracted ZIP validation: PASS (re-run from extracted project directory)
+- One Piece roster: 140 characters; all 135 original 5.0.4 names and IDs preserved; five additions verified.
+- Naruto roster: 94 characters; no Boruto roster entries; The Last cutoff verified.
+- One Piece matchups: 9,730 unique pairs, 15,000 draws per pair.
+- Naruto matchups: 4,371 unique pairs, 15,000 draws per pair.
+- Total: 14,101 unique pairs and 211,515,000 aggregated binomial Monte Carlo draws.
+- Kaguya/Hagoromo: Power, Chakra, Abilities, all Fivefold categories and combat substats = 100.
+- Separate data, saves, matchup loading and online-room universe validation: PASS (static regression checks).
+- Naruto-specific browser categories, AI label, Chakra display, portrait imports with four-digit IDs: PASS.
+- Fivefold Naruto icons: PASS.
+
+Runtime limitation
+The build container does not have Streamlit installed, so no live browser/Streamlit session was launched here. Install dependencies with `python -m pip install -r requirements.txt`, then run `streamlit run app.py` or `Start_GrandLineDraft.bat` on Windows for an interactive runtime check.
+
+Secrets
+No .streamlit/secrets.toml or service-role key is included in this distribution. Keep the existing deployment secrets private.

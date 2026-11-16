@@ -959,5 +959,40 @@
     "role": "Ritter der Götter / Traum-Kirin",
     "wiki_slug": "Rimoshifu_Killingham",
     "image_url": ""
+  },
+  {
+    "id": 166,
+    "name": "Kyros",
+    "faction": "Dressrosa / Riku-Familie",
+    "role": "Gladiator / ehemaliger Kommandant",
+    "wiki_slug": "Kyros"
+  },
+  {
+    "id": 167,
+    "name": "Ashura Doji",
+    "faction": "Neun Akazaya / Wano",
+    "role": "Samurai / ehemaliger Yakuza-Boss",
+    "wiki_slug": "Ashura_Doji"
+  },
+  {
+    "id": 168,
+    "name": "Gecko Moria (Prime)",
+    "faction": "Thriller Bark / ehemalige Rocks-Ära-Rivalität",
+    "role": "Kapitän / ehemalige Kaido-Rivalität · Prime-Schätzung",
+    "wiki_slug": "Gecko_Moria"
+  },
+  {
+    "id": 169,
+    "name": "Vergo",
+    "faction": "Marine / Donquixote-Familie",
+    "role": "Vizeadmiral / Full-Body-Haki",
+    "wiki_slug": "Vergo"
+  },
+  {
+    "id": 170,
+    "name": "Kanjuro",
+    "faction": "Wano / Neun Akazaya",
+    "role": "Samurai / Spion / Fude-Fude-Nutzer",
+    "wiki_slug": "Kurozumi_Kanjuro"
   }
 ]

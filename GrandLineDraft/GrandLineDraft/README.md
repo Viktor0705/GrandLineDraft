@@ -1,111 +1,124 @@
-# Grand Line Draft 5.0.3 — Peak Edition
+# Grand Line Draft · Dual Anime Edition 6.0
 
-One-Piece-Draft-App auf Python/Streamlit-Basis. Sie enthält den klassischen Auktions-Draft und den separaten Fivefold-Ranking-Modus. Beide nutzen denselben Pool aus **135 eindeutigen Charakter-IDs** und eine gemeinsame Power-/Matchup-Matrix. Spielumgebung und Draft-Spielmodus sind getrennt wählbar.
+Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece** und **Naruto Shippuden**. Der Name und das Auktions-/Draft-Prinzip bleiben erhalten. Charaktere, Bewertungen, Matchups und Spielstände sind pro Universum getrennt. Naruto endet bei **Naruto Shippuden + The Last: Naruto the Movie**; **Boruto ist ausgeschlossen**.
+
+## Umfang
+
+| Universum | Figuren | Eindeutige Matchups | Ziehungen je Paar | Modellziehungen gesamt |
+|---|---:|---:|---:|---:|
+| One Piece · Manga bis Kapitel 1198 (08.11.2026) | 140 | 9.730 | 15.000 | 145.950.000 |
+| Naruto Shippuden + The Last | 94 | 4.371 | 15.000 | 65.565.000 |
+| **Gesamt** | **234** | **14.101** | — | **211.515.000** |
+
+Die Ziehungen sind aggregierte Binomial-Monte-Carlo-Stichproben aus dem Matchup-Modell. Sie sind keine 211,5 Millionen kanonischen Kämpfe und machen eine Fan-Schätzung nicht zu einer offiziellen Rangliste.
 
 ## Windows-Start
 
 1. ZIP vollständig entpacken.
 2. Python 3.10 oder neuer installieren.
 3. `Start_GrandLineDraft.bat` starten.
-4. Lokal läuft die App standardmäßig unter `http://127.0.0.1:8501`.
+4. Lokal läuft die App unter `http://127.0.0.1:8501`.
 
-## Spielumgebung
+Alternativ manuell im Projektordner:
 
-- **Lokal · 2 Spieler:** beide Spieler verwenden denselben Browser/dieselbe Sitzung.
-- **Gegen KI:** regelbasierte KI auf Spieler-B-Seite.
-- **Online · Lobby:** Raum erstellen oder per achtstelligem Code beitreten. Erfordert einmalige Supabase-Konfiguration; siehe `ONLINE_SETUP.md`.
+```bash
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-## Draft-Spielmodus 1: Classic Grand Line Draft
+## Spielprinzip (für beide Anime gleich)
 
-- 20 € Budget je Spieler, fünf Charaktere je Team.
-- Bestehende Ziehungs- und Auktionsregeln bleiben erhalten.
-- Maximal drei Rückgaben je Spieler, je Rückgabe 1 € Strafkosten; Kaufpreis wird nicht erstattet.
-- Teamvergleich und Ergebnisprognose basieren auf Charakterprofilen und den hinterlegten Matchup-Wahrscheinlichkeiten.
+- 20 € Startbudget pro Spieler und fünf Teamplätze.
+- Lokal zu zweit, gegen KI oder online über eine Supabase-Lobby.
+- Maximal drei Rückgaben je Spieler; jede kostet 1 €. Der ursprüngliche Kaufpreis wird nicht erstattet.
+- Klassischer Draft und Fivefold Ranking sind weiterhin getrennte Spielmodi.
+- Online-Räume sind an das gewählte Anime-Universum gebunden. Ein One-Piece-Spiel kann nicht versehentlich als Naruto-Spiel geladen werden.
+- Die Autosaves liegen getrennt unter `saves/` und `saves/naruto/`.
 
-## Draft-Spielmodus 2: Fivefold Ranking
+## Classic-Teamwertung
 
-- Gleicher 135er-Charakterpool, 20 € Budget je Spieler, gleiche Auktion, maximal drei Rückgaben je Spieler für je 1 €.
-- Der Gewinner einer Karte weist diese einer freien Kategorie zu: Teufelsfrucht, Haki, Stärke, Geschwindigkeit oder Battle IQ.
-- Jede Kategorie zählt 20 %. Der Durchschnitt ist 0–100 (nicht 500).
-- Der Enddurchschnitt und die Gewinnwahrscheinlichkeit werden erst am Ende offengelegt.
-- Kein bestätigter Fruchtbesitz bedeutet 0 in der Teufelsfrucht-Kategorie, nicht 0 Kampfstärke.
-- **Unbekannte Haki-Meisterschaft wird als `?` angezeigt.** Für die Fivefold-Mittelwertberechnung wird intern ein neutraler Platzhalter 50 verwendet, damit die Kategorien gleich gewichtet sind. Der Wert 50 wird nicht als Kanon-Hakiwert ausgegeben. Im klassischen Modus wird unbekanntes Haki aus dem Haki-Schnitt ausgeschlossen.
+**One Piece:** Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 %, Vielseitigkeit 4 %. Nicht quantifizierbares Haki bleibt unbekannt und wird aus dem Haki-Schnitt ausgeschlossen; falls kein Teammitglied einen belastbaren Wert hat, wird der Haki-Anteil ausgelassen und der Rest proportional normalisiert.
 
-## Power Matrix v5.0
+**Naruto:** Power Level 68 %, Chakra 16 %, Fähigkeiten 16 %. Chakra ist ein relativer Fan-Schätzwert aus Reserven/Kontrolle und kein offizieller Databook-Wert. Hamuras Fähigkeitswert bleibt in der Anzeige unbekannt; intern wird zur Berechnung neutral 50 verwendet und nicht als kanonischer Score ausgegeben.
 
-Bewertungsstichtag: **Manga-Kapitel 1197, veröffentlicht am 1. November 2026**. Kapitel 1198 ist am 4. November 2026 noch nicht veröffentlicht.
+Beide Universen verwenden zusätzlich einen begrenzten Intelligenzbonus und Teamchemie. Kopfgeld wird im Naruto-Universum nicht verwendet.
 
-Die Power-Level sind Fan-Modellschätzungen, keine offiziellen Oda-Werte. Manga-Feats und belegte Aussagen haben Vorrang vor Wikis, Foren, YouTube-Rankings und Fan-Theorien. Community-Material dient nur als ergänzende Perspektive. Bei widersprüchlichen oder unzureichenden Belegen wird die Konfidenz abgesenkt bzw. Haki-Meisterschaft als unbekannt belassen.
+## Fivefold Ranking
 
-### Vom Nutzer gesetzte Peak-Anker
+Die gleiche Auktion und die gleiche Kategorie-Zuordnung gelten für beide Welten. Jede der fünf Disziplinen zählt 20 %.
 
-| Charakter | Power Level |
-|---|---:|
-| Imu / Joy Boy | 100 |
-| Rocks D. Xebec | 99 |
-| Roger / Prime Whitebeard / Prime Garp | 98 |
-| Shanks / Mihawk | 97 |
-| Kaido | 96 |
-| Gear-5-Ruffy | 95 |
-| Katakuri | 89 |
-| Queen | 85 |
-| Doflamingo | 83 |
+**One Piece:** Teufelsfrucht · Haki · Stärke · Geschwindigkeit · Battle IQ.
 
-Mihawk und Shanks erhalten dieselbe Gesamtstufe; Mihawk führt bei reiner Schwertkunst, Shanks bei den klar gezeigten Haki-Spitzenleistungen. Kaido wird in einem unbelasteten, gesunden 1-gegen-1 knapp vor Gear-5-Ruffy geführt. Diese Werte entscheiden nicht jedes situative Matchup automatisch.
+**Naruto:** Ninjutsu · Chakra · Taijutsu · Geschwindigkeit · Battle IQ.
 
-## Haki-Daten
+Unbekannte Werte bleiben sichtbar als `?`; für die Mittelwertbildung wird ein neutraler Platzhalter verwendet. Das ist keine Behauptung, dass die Figur exakt 50 Punkte besitzt.
 
-Ein bestätigter Haki-Typ ist nicht automatisch eine bestätigte quantitative Meisterschaft. Der Gesamt-Haki-Wert wird nur angezeigt, wenn die Daten eine individuelle Meisterschaftsschätzung tragen. Nicht quantifizierbare Werte bleiben `null`/`?`; sie werden nicht künstlich als 0 interpretiert. Benn Beckmans in SBS Band 8 gepriesene Intelligenz wird separat als Intelligenz-/Taktikhinweis geführt und nicht als Haki-Beleg.
+## Naruto-Bewertungsanker
+
+Die Naruto-Datenbank enthält 94 Figuren aus der vom Nutzer bereitgestellten Tierlist. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
+
+| Figur / Peak-Form | Power | Chakra | Fähigkeiten |
+|---|---:|---:|---:|
+| Kaguya Ōtsutsuki | 100 | 100 | 100 |
+| Hagoromo Ōtsutsuki · Jūbi-/Six-Paths-Peak | 100 | 100 | 100 |
+| Madara · Jūbi-Jinchūriki | 98 | 100 | 100 |
+| Naruto · The Last | 97 | 98 | 97 |
+| Sasuke · The Last | 97 | 95 | 98 |
+| Hamura Ōtsutsuki | 96 | 99 | unbekannt |
+| Obito · Jūbi-Jinchūriki | 95 | 99 | 95 |
+| Ashura Ōtsutsuki | 95 | 98 | 98 |
+| Indra Ōtsutsuki | 94 | 97 | 96 |
+| Toneri Ōtsutsuki | 94 | 98 | 97 |
+| Kakashi · DMS | 94 | 96 | 98 |
+| Might Guy · Acht Tore | 93 | 84 | 97 |
+| Hashirama · Prime | 92 | 97 | 91 |
+| Tobirama / Hiruzen · Prime | 91 | 95 / 94 | 97 / 96 |
+| Nagato · Prime | 90 | 98 | 100 |
+| Minato · KCM/Edo | 90 | 96 | 97 |
+| Itachi · Edo Tensei | 90 | 94 | 98 |
+| Kabuto · Sennin-Modus | 89 | 94 | 97 |
+| Pain · Sechs Pfade | 88 | 96 | 97 |
+
+Alle Kaguya-/Hagoromo-Fivefold-Disziplinen und sichtbaren Kampf-Teilwerte stehen auf 100, wie vom Nutzer gewünscht. Kanon-Kontext: Kaguya wurde von **Hagoromo und Hamura gemeinsam** versiegelt; das wird nicht als Hagoromos Solo-Sieg beschrieben. Hagoromos 100er-Peak ist die vom Nutzer gesetzte spätere Jūbi-/Six-Paths-Deckenbewertung.
+
+Die Eight-Gates-Matchup-Notiz für Might Guy würdigt Night Guy als beinahe tödlichen Treffer gegen Jūbi-Madara. Der zeitlich extrem begrenzte und lebensgefährliche Zustand macht daraus aber keinen automatischen Gesamtsieg; Madara bleibt im Modell knapp favorisiert.
+
+## One-Piece-Stand
+
+Die hochgeladene 5.0.4-Datenbank mit 135 Charakteren wurde beibehalten und um fünf Charaktere auf **140** erweitert: **Kyros, Ashura Doji, Gecko Moria (Prime), Vergo und Kanjuro**. Luffy steht bei Power Level 96 mit der neuen, noch nicht offiziell benannten affenartigen Nika-Darstellung aus Kapitel 1198; sie wird nicht als bestätigtes Gear 6 bezeichnet. Nusjuro hat einen Haki-Gesamtwert und alle drei Teilbereiche. Katakuri bleibt bei Gesamt-Haki 89 (Observation 98, Armament 89, Conqueror 80). Gecko Moria Prime steht bei Power 89 mit niedriger Evidenzsicherheit: seine frühere Rivalität mit Kaido ist bekannt, der konkrete Kampf ist nicht vollständig dargestellt und die Bewertung behauptet keine Gleichwertigkeit.
 
 ## Matchup-Modell
 
-- 135 Charaktere ergeben 9.045 eindeutige 1-gegen-1-Paarungen.
-- Je Paarung: 15.000 vorab berechnete Monte-Carlo-Ergebnisziehungen (135.675.000 insgesamt).
-- Die Datenbank speichert die Paarungen; beim Öffnen eines Matchups wird nicht live simuliert.
-- Diese Ergebnisziehungen sind statistische Stichproben aus einem Wahrscheinlichkeitsmodell, keine 135 Millionen unabhängig simulierten, panelgetreuen Manga-Kämpfe.
-- Die Anzahl der Samples stabilisiert nur den numerischen Schätzwert; sie erhöht nicht die Kanon-Evidenz. Konfidenz beschreibt die Quellenqualität.
+- Jede Paarung wird genau einmal gespeichert, mit identischer Gegenpaar-Orientierung im UI.
+- Die Rating-Basis enthält Power, bestätigtes Haki bzw. Chakra, Fähigkeiten, Vielseitigkeit, Angriff, Defensive, Tempo, Ausdauer und Battle IQ.
+- Situative Vorteile (z. B. Chiyo/Sasori, Shikamaru/Hidan oder Naruto/Toneri) werden nur als begrenzte Matchup-Modifikatoren modelliert.
+- Die Wahrscheinlichkeitskurve ist steil genug, damit extreme Leistungsunterschiede keine absurden Upsets mit mehreren Prozentpunkten erzeugen. Ein minimaler Rest bleibt, weil Modellwahrscheinlichkeiten keine absolute Kanon-Wahrheit darstellen.
+- Konfidenz beschreibt die Quellen- und Feat-Sicherheit, nicht die Zahl der Monte-Carlo-Stichproben.
 
-## Charakterporträts und Bilder
+## Online-Modus und Secrets
 
-Bereits lokal gespeicherte oder hochgeladene Porträts werden verwendet. Bilder können über den Bildmanager aus einer direkten Bild-URL ergänzt/ersetzt werden. Es sind nicht automatisch alle 135 Rechteinhaber-Bilder im ZIP eingebettet; neue Bilder werden nur auf ausdrückliche Aktion geladen und lokal gecacht.
+Für den Online-Modus siehe `ONLINE_SETUP.md`. `.streamlit/secrets.toml` ist absichtlich nicht Bestandteil des ZIPs. Eigene Supabase-Secrets bleiben lokal bzw. als sichere Hosting-Secrets. Niemals einen `service_role`-Key in GitHub oder in eine clientseitige Datei hochladen.
+
+## Charakterbilder und Backups
+
+Die Porträts liegen gemeinsam unter `portraits/`; die One-Piece-IDs und Naruto-IDs überschneiden sich nicht. Naruto-IDs mit vier Ziffern werden vom Bildarchiv-Importer unterstützt. Portables Backup umfasst beide Anime-Datenbanken und beide getrennten Autosaves. Die Cloud-Bilderbibliothek bleibt privat und erfordert `cloud_portraits_schema.sql`.
 
 ## Tests
 
 Im Projektordner:
 
 ```bash
-python -m unittest discover -s tests -v
 python -m py_compile app.py
+python -m pytest -q
+python -m unittest discover -s tests -v
 ```
 
-Die Oberfläche wurde im Build-Kontext syntaktisch geprüft. Da in der Erstellungsumgebung Streamlit nicht installiert ist, ist ein vollständiger Browser-Live-Test nicht Bestandteil der bereitgestellten Prüfung.
+Die Tests prüfen getrennte Roster, vollständige Paarungsmatrizen, die vom Nutzer vorgegebenen Peak-Anker, Haki-/Chakra-Labels, keine Boruto-Figuren sowie Online-/Cloud-Sicherheitsfunktionen. Ein browserbasierter Live-Test setzt eine installierte Streamlit-Laufzeit und konfigurierte Secrets voraus.
 
-## Quellen / Methodenhinweise
+## Quellen / Bewertungsgrenzen
 
-- Offizielle Kapitelübersicht: https://www.viz.com/shonenjump/chapters/one-piece
-- Kapitel 1197: https://www.viz.com/shonenjump/one-piece-chapter-1197/chapter/52017
-- One Piece Official Character Profiles: https://one-piece.com/character/
-- SBS Band 8 – Beckmans Intelligenz (historisch begrenzte Formulierung): https://onepiece.fandom.com/wiki/SBS_Volume_8
-- Haki-System-Übersicht: https://onepiece.fandom.com/wiki/Haki
-- One Piece Wiki, OPwiki, Foren und Community-Videoanalysen werden nur als sekundäre Interpretationen verwendet.
+Naruto: [Offizielle Naruto-Seite – Shippuden](https://naruto-official.com/en/anime/naruto2) · [Origins of Ninshu / Indra und Ashura](https://naruto-official.com/en/anime/naruto2/list?episode=the_origins_of_ninshu_the_two_souls%2C_indra_and_ashura&page=1) · [Six Paths / Finale](https://naruto-official.com/en/news/01_1355) · [Hashirama](https://naruto-official.com/en/news/01_1627) · [Tobirama](https://naruto-official.com/de/news/01_1694) · [Minato](https://naruto-official.com/en/news/01_1517) · [Might Guy](https://naruto-official.com/en/news/01_1673) · [Madara](https://naruto-official.com/en/news/01_1333) · [DMS Kakashi](https://naruto-official.com/en/anime/naruto2/list/01_859) · [The Last](https://naruto.fandom.com/wiki/The_Last:_Naruto_the_Movie).
 
-Fanprojekt, nicht mit Eiichiro Oda, Shueisha, VIZ oder anderen Rechteinhabern verbunden.
+One Piece: [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52017) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Haki-Übersicht](https://onepiece.fandom.com/wiki/Haki).
 
-
-## 5.0.2 – Online-Performance und gemeinsame Bilder
-
-- Online-Polling lädt im Normalfall nur Raum-Metadaten; vollständige Payloads werden nur bei einer neuen Revision geladen.
-- Classic und Fivefold verwenden eine browserseitige gemeinsame Rad-Animation.
-- Lokale Autosaves werden bei unverändertem Spielzustand nicht erneut auf die Festplatte geschrieben.
-- Supabase Storage kann über `cloud_portraits_schema.sql` für einen privaten, geräteübergreifenden Charakterbildspeicher eingerichtet werden.
-- Eigene Bilder per URL oder Datei werden bei konfigurierter Cloud-Bilderdatenbank automatisch hochgeladen. Bestehende PC-Bilder können per ZIP importiert werden.
-
-
-## Grand Line Draft 5.0.2 – Online Performance & Cloud Portraits
-
-Diese Version synchronisiert Classic- und Fivefold-Rad-Animationen über einen gemeinsamen Startzeitpunkt, reduziert die Online-Polling-Last auf kompakte Metadaten und nutzt Supabase Storage für gemeinsame Charakterporträts. Vor der ersten Bildsynchronisierung einmal `cloud_portraits_schema.sql` im Supabase SQL Editor ausführen. Danach in der App den Cloud-Bilder-Expander verwenden. Siehe `ONLINE_SETUP.md`.
-
-
-## Performance Edition 5.0.3
-
-Die Matchup-Tabelle liegt separat in `matchup_results.json.gz` und wird erst beim Teamvergleich geladen. Charakter-/Fivefold-Profile und der Suchindex sind gecacht; sichtbare Cloud-Porträts werden parallel vorgeladen und als kompakte Thumbnails gerendert.
+Alle Punktwerte und Siegchancen sind eigene Fan-Schätzungen. Offizielle Quellen belegen Handlungen, Fähigkeiten und Feats, nicht die hier verwendete 0–100-Skala. Fanprojekt, keine Verbindung zu den Rechteinhabern.
