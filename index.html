@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://unpkg.com/streamlit-component-lib@1.4.0/dist/index.js"></script>
+  <style>
+    :root { color-scheme: dark; --gold:#e8bd64; --muted:#9db0c2; --panel:#101d2b; --line:rgba(210,226,243,.14); }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:8px 2px; color:#eef4fa; background:transparent; font:14px system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .shell { border:1px solid var(--line); border-radius:16px; padding:16px; background:linear-gradient(145deg,rgba(16,29,43,.98),rgba(7,15,24,.98)); }
+    .kicker { color:var(--gold); font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    .title { margin:7px 0 4px; font-weight:850; font-size:19px; }
+    .sub { color:var(--muted); font-size:12px; }
+    .wheel-wrap { display:flex; justify-content:center; padding:22px 0 14px; }
+    .wheel { width:148px; height:148px; border-radius:50%; border:9px solid #d3a34d; background:conic-gradient(#182c40 0 20%,#314b5d 20% 40%,#182c40 40% 60%,#314b5d 60% 80%,#182c40 80% 100%); box-shadow:0 0 0 7px rgba(232,189,100,.10),0 12px 34px rgba(0,0,0,.25); display:grid; place-items:center; position:relative; }
+    .wheel:after { content:"☠"; display:grid; place-items:center; width:60px;height:60px;border-radius:50%; color:#0a1420;background:linear-gradient(145deg,#f4d78d,#bb8530);font-size:28px;font-weight:900; }
+    .wheel.spinning { animation:spin 1.35s cubic-bezier(.12,.72,.19,1) forwards; }
+    @keyframes spin { from { transform:rotate(0deg); } to { transform:rotate(1440deg); } }
+    .foot { text-align:center; color:var(--muted); font-size:12px; }
+    .character { display:flex; align-items:center; gap:14px; margin:14px 0; padding:10px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.025); }
+    .character img { width:64px;height:80px;object-fit:cover;border-radius:8px;background:#0a1420; }
+    .character strong { display:block;font-size:16px; }
+    .price { color:var(--gold);font-weight:800;margin-top:4px; }
+    .categories { display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-top:12px; }
+    button { width:100%; min-height:75px; text-align:left; border:1px solid rgba(232,189,100,.30); border-radius:11px; padding:10px 12px; color:#eef4fa;background:#152638;cursor:pointer; }
+    button:hover:not(:disabled) { border-color:var(--gold);background:#20374b; }
+    button:disabled { opacity:.35;cursor:not-allowed; }
+    .cat { display:block;font-weight:850;margin-bottom:5px; }
+    .score { display:block;color:var(--gold);font-size:18px;font-weight:850; }
+    .desc { display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:3px; }
+    .hint { color:var(--muted);font-size:12px;margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div id="root" class="shell"><div class="kicker">Grand Line Draft · Fivefold</div><div class="title">Lade Komponente …</div></div>
+  <script>
+    const root = document.getElementById('root');
+    let activeSpinId = null;
+    let completedSpins = new Set();
+    function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function resize() { window.Streamlit?.setFrameHeight(Math.max(120, document.documentElement.scrollHeight)); }
+    function renderWheel(args) {
+      const spinId = String(args.spin_id ?? '');
+      root.innerHTML = `<div class="kicker">Fivefold Ranking · Runde ${esc(args.round ?? '')}</div><div class="title">${esc(args.player ?? 'Spieler')} zieht die nächste Figur</div><div class="sub">Das Rad wird gedreht. Die Ziehung selbst bleibt serverseitig zufällig.</div><div class="wheel-wrap"><div id="wheel" class="wheel"></div></div><div class="foot">Los wird ermittelt …</div>`;
+      resize();
+      if (!spinId || activeSpinId === spinId || completedSpins.has(spinId)) return;
+      activeSpinId = spinId;
+      const wheel = document.getElementById('wheel');
+      requestAnimationFrame(() => wheel?.classList.add('spinning'));
+      window.setTimeout(() => {
+        if (activeSpinId !== spinId) return;
+        completedSpins.add(spinId);
+        window.Streamlit?.setComponentValue({event:'spin_complete', spin_id:spinId});
+      }, 1450);
+    }
+    function renderAssign(args) {
+      activeSpinId = null;
+      const ch = args.character || {};
+      const image = typeof ch.image_data === 'string' && ch.image_data.startsWith('data:image/') ? ch.image_data : '';
+      const categories = Array.isArray(args.categories) ? args.categories : [];
+      root.innerHTML = `<div class="kicker">Fivefold Ranking · Kategorie wählen</div><div class="title">${esc(args.player ?? 'Spieler')}, ordne deine Karte zu</div><div class="character">${image ? `<img src="${image}" alt="">` : ''}<div><strong>${esc(ch.name ?? 'Charakter')}</strong><div class="price">${esc(ch.price_text ?? '')}</div></div></div><div class="sub">Wähle einen freien Platz. Jede Kategorie darf pro Team nur einmal belegt werden.</div><div class="categories">${categories.map((c,i)=>`<button data-index="${i}" ${c.available ? '' : 'disabled'}><span class="cat">${esc(c.label)}</span><span class="score">${esc(c.score)}/100</span><span class="desc">${esc(c.description ?? '')}</span></button>`).join('')}</div><div class="hint">Bereits belegte Kategorien sind deaktiviert.</div>`;
+      root.querySelectorAll('button[data-index]').forEach(btn => btn.addEventListener('click', () => {
+        const c = categories[Number(btn.dataset.index)];
+        if (!c || !c.available) return;
+        window.Streamlit?.setComponentValue({event:'assign', character_id:Number(ch.id), category:c.label});
+      }));
+      resize();
+    }
+    function onRender(event) {
+      const args = event.detail?.args || {};
+      if (args.mode === 'wheel') renderWheel(args);
+      else if (args.mode === 'assign') renderAssign(args);
+      else { root.innerHTML = '<div class="title">Fivefold-Komponente bereit.</div>'; resize(); }
+    }
+    window.Streamlit?.events.addEventListener(window.Streamlit.RENDER_EVENT, onRender);
+    window.Streamlit?.setComponentReady();
+    window.Streamlit?.setFrameHeight(150);
+  </script>
+</body>
+</html>

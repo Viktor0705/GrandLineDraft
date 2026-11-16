@@ -1,0 +1,9 @@
+.streamlit/secrets.toml
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+saves/*
+!saves/.gitkeep
+portraits/*
+!portraits/.gitkeep
