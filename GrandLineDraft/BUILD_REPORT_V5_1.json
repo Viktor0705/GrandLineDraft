@@ -1,0 +1,25 @@
+{
+  "characters": 140,
+  "unique_ids": 140,
+  "matchups": 9730,
+  "simulations_per_pair": 15000,
+  "total_simulated_fights": 145950000,
+  "shanks_vs_usopp": 99.8667,
+  "shanks_vs_nami": 99.9467,
+  "shanks_vs_mihawk": 50.8,
+  "kaido_vs_luffy": 55.3067,
+  "kaido_vs_moria": 78.05330000000001,
+  "average_profile_ratings": {
+    "Shanks": 97.41,
+    "Usopp": 58.21,
+    "Nami": 56.3,
+    "Monkey D. Luffy": 96.6,
+    "Kaido": 96.82,
+    "Gecko Moria": 89.89,
+    "Ashura Doji": 86.81,
+    "Kyros": 80.79,
+    "Vergo": 84.93,
+    "Kawamatsu": 85.26,
+    "Ethanbaron V. Nusjuro": 94.16
+  }
+}

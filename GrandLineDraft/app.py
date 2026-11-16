@@ -41,7 +41,7 @@ MAX_RETURNS = 3
 RETURN_PENALTY = 1
 API_BASE = "https://onepieceapi.com/api/characters"
 FANDOM_API = "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/5.0.4 (fan game; Katakuri Haki recalibration)"
+USER_AGENT = "GrandLineDraft/5.1.0 (fan game; chapter 1198 and 140-character roster)"
 PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Keep-alive HTTP sessions are local to each Streamlit worker thread. This avoids
@@ -57,7 +57,7 @@ def http_session() -> requests.Session:
     return session
 
 st.set_page_config(
-    page_title="Grand Line Draft 5.0.4 | Peak Edition",
+    page_title="Grand Line Draft 5.1 | Peak Edition",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -407,7 +407,7 @@ def _pair_key(a: str, b: str) -> tuple[str, str]:
 
 @st.cache_data(show_spinner=False)
 def get_matchup_index() -> dict[tuple[str, str], dict[str, Any]]:
-    """Build a constant-time lookup for the supplied v5.0 pairwise simulations."""
+    """Build a constant-time lookup for the supplied v5.1 pairwise simulations."""
     rows = get_matchup_rows()
     index: dict[tuple[str, str], dict[str, Any]] = {}
     if isinstance(rows, list):
@@ -859,7 +859,7 @@ def online_can_control(player_key: str, variant: str | None = None) -> bool:
 
 def current_game_state() -> dict[str, Any]:
     state = {key: st.session_state.get(key) for key in GAME_STATE_KEYS if key in st.session_state}
-    return {"app": "Grand Line Draft 5.0", "schema_version": 3,
+    return {"app": "Grand Line Draft 5.1", "schema_version": 3,
             "saved_at": datetime.now().astimezone().isoformat(timespec="seconds"), "state": state}
 
 
@@ -943,7 +943,7 @@ def migrate_saved_character_pool() -> None:
 def import_game_state(payload: dict[str, Any]) -> tuple[bool, str]:
     state = payload.get("state") if isinstance(payload, dict) else None
     if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
-        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6- oder 5.0-Export verwenden."
+        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6-, 5.0- oder 5.1-Export verwenden."
     try:
         players = state["players"]
         if set(players.keys()) != {"A", "B"}:
@@ -972,7 +972,7 @@ def make_portable_backup() -> bytes:
     persist_game_state()
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
-        wanted = ["app.py", "characters.json", "character_ratings.json", "matchup_results.json.gz", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_5_0.md", "ONLINE_SETUP.md", "online_schema.sql", "cloud_portraits_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "Start_GrandLineDraft.bat", "CHANGELOG_5_0_2.md"]
+        wanted = ["app.py", "characters.json", "character_ratings.json", "matchup_results.json.gz", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_5_0.md", "ONLINE_SETUP.md", "online_schema.sql", "cloud_portraits_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "Start_GrandLineDraft.bat", "CHANGELOG_5_0_2.md", "CHANGELOG_5_1.md", "BUILD_REPORT_V5_1.json", "POWER_MATRIX_V5_MATCHUPS.csv", "POWER_MATRIX_V5_RANKINGS.csv", "CHANGELOG_5_0_3.md", "CHANGELOG_5_0_4.md"]
         for filename in wanted:
             item = BASE_DIR / filename
             if item.exists():
@@ -1693,8 +1693,8 @@ def init_game() -> None:
     characters = get_characters()
     ids = [c.get("id") for c in characters]
     names = [normalize(str(c.get("name", ""))) for c in characters]
-    if len(characters) != 135 or len(ids) != len(set(ids)) or len(names) != len(set(names)):
-        st.error("Die Charakterdatenbank muss 135 Figuren mit eindeutigen IDs und Namen enthalten. Bitte characters.json prüfen.")
+    if len(characters) != 140 or len(ids) != len(set(ids)) or len(names) != len(set(names)):
+        st.error("Die Charakterdatenbank muss 140 Figuren mit eindeutigen IDs und Namen enthalten. Bitte characters.json prüfen.")
         st.stop()
     mode = st.session_state.get("game_mode", "friend")
     player_a = st.session_state.get("name_input_a", "Spieler 1").strip() or "Spieler 1"
@@ -1951,7 +1951,7 @@ def render_character_analysis(character: dict[str, Any]) -> None:
     profile = character_profile(character)
     # Card always exposes the four draft-defining details requested: Power, bounty, Haki and abilities.
     st.markdown(
-        f'<div class="draft-card-banner"><div class="draft-card-kicker">PEAK FORM · MANGA BIS KAPITEL 1197</div>'
+        f'<div class="draft-card-banner"><div class="draft-card-kicker">PEAK FORM · MANGA BIS KAPITEL 1198</div>'
         f'<div class="draft-card-name">{safe_text(character.get("name", "Unbekannt"))}</div>'
         f'<div class="draft-card-sub">{safe_text(character.get("faction", ""))} · {safe_text(character.get("role", ""))}</div>'
         f'<div class="score-pills"><span class="score-pill">POWER {int(profile["power"])}/100</span>'
@@ -2039,7 +2039,7 @@ def render_character_analysis(character: dict[str, Any]) -> None:
             st.caption("Spezialisierte Vergleichswerte werden nur als zusätzliche Profilinformation gezeigt und ändern die klassische Teamformel nicht separat.")
     if profile.get("version_label"):
         st.caption(f"Bewertungsform: {profile['version_label']} · Evidenzsicherheit: {profile.get('confidence', 'Niedrig')}")
-    st.caption(profile.get("rationale", "Fan-Schätzung auf Basis der bis Manga-Kapitel 1197 bekannten Story-Feats."))
+    st.caption(profile.get("rationale", "Fan-Schätzung auf Basis der bis Manga-Kapitel 1198 bekannten Story-Feats."))
     if profile.get("bounty_state") == "cross_guild":
         st.caption("Einordnung: Dieses Kopfgeld stammt von der Cross Guild, die Marineangehörige zu Zielen erklärt. Es ist kein von der Weltregierung gegen einen Piraten verhängtes Kopfgeld.")
     if profile.get("bounty_source") == "live":
@@ -2285,7 +2285,7 @@ def duel_rating(character: dict[str, Any]) -> float:
     return min(100.0, max(0.0, base))
 
 def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dict[str, Any]:
-    """Return a duel prediction using the v5.0 all-pairs simulations when available.
+    """Return a duel prediction using the v5.1 all-pairs simulations when available.
 
     Probabilities in the matrix are oriented to its stored `a` and `b`. This
     function always reorients them to the caller's character_a/character_b order.
@@ -2308,7 +2308,7 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         p_a = stored_probability if direct_orientation else 100.0 - stored_probability
         # Preserve the app's established non-certainty floor/ceiling. These are
         # model simulations, not canonically guaranteed fight outcomes.
-        p_a = max(2.0, min(98.0, p_a))
+        p_a = max(0.05, min(99.95, p_a))
         try:
             row_modifier = float(matchup.get("matchup_modifier", 0.0) or 0.0)
         except (TypeError, ValueError):
@@ -2327,17 +2327,17 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         special_factors = matchup.get("special_factors", [])
         if not isinstance(special_factors, list):
             special_factors = [str(special_factors)] if special_factors else []
-        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus den vorab berechneten Ergebnisziehungen.")
+        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus der v5.1-Matrix mit 15.000 Ergebnisziehungen.")
         # The probability and the displayed margin stay mathematically consistent.
-        p_unit = max(0.02, min(0.98, p_a / 100.0))
+        p_unit = max(0.0005, min(0.9995, p_a / 100.0))
         margin = 10.0 * math.log(p_unit / (1.0 - p_unit))
-        source = "Power Matrix v5.0 · 15.000 Ergebnisziehungen"
+        source = "Power Matrix v5.1 · 15.000 Ergebnisziehungen"
     else:
         # Backward-compatible fallback for any future character absent from v4.4.
         modifier, reason = matchup_effect(character_a, character_b)
         margin = rating_a - rating_b + modifier
         p_a = 100.0 / (1.0 + math.exp(max(-12, min(12, -margin / 10.0))))
-        p_a = max(2.0, min(98.0, p_a))
+        p_a = max(0.05, min(99.95, p_a))
         simulations, confidence, wins_a, wins_b = 0, "Fallback", 0, 0
         special_factors = []
         source = "Lokale Fallback-Formel"
@@ -2360,7 +2360,7 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
 
 
 def calculate_matchmaking(team_a: list[dict[str, Any]], team_b: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Pair team members to create the closest projected duels using v5.0 odds."""
+    """Pair team members to create the closest projected duels using v5.1 odds."""
     count = min(len(team_a), len(team_b), TEAM_SIZE)
     if count <= 0:
         return []
@@ -2379,7 +2379,7 @@ def calculate_matchmaking(team_a: list[dict[str, Any]], team_b: list[dict[str, A
         objective = 0.0
         for a_char, b_char in zip(a_team, order):
             predicted_probability = float(pair_results[(a_char.get("name", ""), b_char.get("name", ""))]["p_a"])
-            # Prefer close fights around 50:50, using the actual v5.0 pairwise
+            # Prefer close fights around 50:50, using the actual v5.1 pairwise
             # estimate rather than a second, inconsistent formula.
             objective += -abs(predicted_probability - 50.0)
         if objective > best_value:
@@ -2806,7 +2806,7 @@ def rank_probability(team_a: list[dict[str, Any]], team_b: list[dict[str, Any]])
     delta = score_a - score_b
     # Same capped logistic curve as the classic duel probability model (10-point scale).
     p_a = 100.0 / (1.0 + math.exp(max(-12.0, min(12.0, -delta / 10.0))))
-    p_a = max(2.0, min(98.0, p_a))
+    p_a = max(0.05, min(99.95, p_a))
     return {"score_a": score_a, "score_b": score_b, "delta": delta, "p_a": p_a, "p_b": 100.0 - p_a}
 
 
@@ -3107,7 +3107,7 @@ Jeder Spieler besetzt jede der fünf Kategorien genau einmal. Der Endwert ist de
             for item in reversed(st.session_state.rank_return_history):
                 st.markdown(f"- {safe_text(item['player'])}: {safe_text(item['character'])} zurückgegeben · −{money(item['fee'])}")
     with st.expander("Quellen und Grenzen der Kategorie-Werte"):
-        st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1197 (01.11.2026).")
+        st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1198 (09.11.2026, deutsche Veröffentlichung).")
     if st.button("🏴‍☠️ Charakter-Explorer anzeigen / schließen", key="toggle_roster_ranking", use_container_width=True):
         st.session_state["show_roster_browser_ranking"] = not st.session_state.get("show_roster_browser_ranking", False)
         st.rerun()
@@ -3378,7 +3378,7 @@ with st.sidebar:
         st.download_button("⬇ Komplett-Backup herunterladen", data=st.session_state["backup_bundle_bytes"], file_name="GrandLineDraft_3_6_Backup.zip", mime="application/zip", use_container_width=True, key=f"download_portable_backup_{st.session_state.get('backup_bundle_created_at', 'saved')}")
         st.caption(f"Backup erzeugt: {st.session_state.get('backup_bundle_created_at', 'Zeitpunkt unbekannt')}. Nach weiteren Spielzügen vor dem Download ein neues Backup erzeugen.")
     with st.expander("📂 Spielstand laden / wiederherstellen", expanded=False):
-        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0-Spielstand (JSON)", type=["json"], key="import_game_state_file")
+        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0/5.1-Spielstand (JSON)", type=["json"], key="import_game_state_file")
         if uploaded_save is not None and st.button("Spielstand laden und fortsetzen", key="import_game_state_button", use_container_width=True, type="primary"):
             try:
                 payload = json.loads(uploaded_save.getvalue().decode("utf-8"))
@@ -3557,11 +3557,11 @@ with st.sidebar:
             st.caption("Hinweis: In der Cloud-App sieht der Server nur Dateien, die im GitHub-Repository enthalten sind oder über dieses Upload-Feld importiert wurden. Lokale Bilder auf deinem PC müssen daher einmal als ZIP hochgeladen werden.")
 
     st.divider()
-    if st.button("🖼 Alle 135 Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
+    if st.button("🖼 Alle 140 Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
         bar = st.progress(0, text="Bildquellen werden geprüft …")
         def update_portrait_progress(fraction):
             bar.progress(min(1.0, max(0.0, fraction)), text=f"Bildquellen geprüft: {round(fraction * len(get_characters()))}/{len(get_characters())} …")
-        with st.spinner("Bis zu 135 Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
+        with st.spinner("Bis zu 140 Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
             results = audit_all_portraits(update_portrait_progress)
         real = sum(1 for value in results.values() if not value.startswith("Kein echtes Bild") and "fehlgeschlagen" not in value)
         missing = [name for name, value in results.items() if value.startswith("Kein echtes Bild") or "fehlgeschlagen" in value]
@@ -3593,7 +3593,7 @@ with st.sidebar:
 # ---- Hero ------------------------------------------------------------------
 hero_left, hero_right = st.columns([4, 1])
 with hero_left:
-    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.0.4 · PEAK EDITION · MANGA-STAND KAPITEL 1197 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.1 · PEAK EDITION · MANGA-STAND KAPITEL 1198 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
     current_mode_for_badge = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
@@ -3616,7 +3616,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.4 · PEAK EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1197.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1198.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -3753,7 +3753,7 @@ with center_col:
 st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
 with st.container(border=True):
     st.markdown('<div class="panel-label">POWER LEVEL · PRIME-FORMEN & MATCHMAKING</div><h2>Die Team-Bewertung</h2>', unsafe_allow_html=True)
-    st.markdown('<div class="analysis-note">Stand: Manga-Kapitel 1197 (01.11.2026); alle Figuren in ihrer stärksten belegten Peak-/Prime-Form. Teamwertung: Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 % und Vielseitigkeit 4 %. Einzelduelle nutzen die importierte Power Matrix v5.0 mit 15.000 vorab berechnete Ergebnisziehungen je Paarung; Angriff, Defensive, Tempo, Ausdauer und Kampftaktik sind Teil der Ausgangsprofile. Der Haki-Wert wird ausschließlich aus den Teammitgliedern mit bestätigter Haki-Anwendung gemittelt. Nicht bestätigte/unklare Haki-Daten werden nicht als 0 gewertet und nicht in den Nenner aufgenommen. Wenn für keinen Charakter Haki bestätigt ist, entfällt der Haki-Faktor und die übrigen Gewichte werden proportional normalisiert. Intelligenz ist nur ein kleiner Bonus bis +0,45 Punkte; Teamchemie kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status bestimmen nie direkt die Gesamtwertung.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="analysis-note">Stand: Manga-Kapitel 1198 (09.11.2026); alle Figuren in ihrer stärksten belegten Peak-/Prime-Form. Teamwertung: Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 % und Vielseitigkeit 4 %. Einzelduelle nutzen die importierte Power Matrix v5.1 mit 15.000 vorab berechnete Ergebnisziehungen je Paarung; Angriff, Defensive, Tempo, Ausdauer und Kampftaktik sind Teil der Ausgangsprofile. Der Haki-Wert wird ausschließlich aus den Teammitgliedern mit bestätigter Haki-Anwendung gemittelt. Nicht bestätigte/unklare Haki-Daten werden nicht als 0 gewertet und nicht in den Nenner aufgenommen. Wenn für keinen Charakter Haki bestätigt ist, entfällt der Haki-Faktor und die übrigen Gewichte werden proportional normalisiert. Intelligenz ist nur ein kleiner Bonus bis +0,45 Punkte; Teamchemie kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status bestimmen nie direkt die Gesamtwertung.</div>', unsafe_allow_html=True)
     team_a = analyze_team(st.session_state.players["A"]["team"])
     team_b = analyze_team(st.session_state.players["B"]["team"])
     if not team_a["profiles"] and not team_b["profiles"]:
@@ -3855,9 +3855,9 @@ with st.container(border=True):
             st.markdown(f'<div class="result-wrap"><div class="eyebrow">GEWINN-TENDENZ · ZUSÄTZLICH ZUM PUNKTESTAND</div><h3>{safe_text(leader if leader == "Unentschieden" else leader + " liegt nach Power Level und Kontern vorn")}</h3><div style="display:flex;justify-content:space-between;gap:12px;margin:8px 0 6px"><b>{safe_text(players["A"]["name"])}: {p_a:.0f}%</b><b>{safe_text(players["B"]["name"])}: {p_b:.0f}%</b></div></div>', unsafe_allow_html=True)
             st.progress(p_a / 100, text="Modell-Tendenz aus Teamstärke, Teamchemie und zugeordneten Einzelduellen – keine objektive Siegwahrscheinlichkeit")
             st.markdown(f'<div class="analysis-note">{safe_text(battle_text(players["A"]["name"], team_a, players["B"]["name"], team_b, matchups))}</div>', unsafe_allow_html=True)
-            st.caption("Die Einzelduell-Prognosen stammen aus der beigefügten Power Matrix v5.0 (15.000 Ergebnisziehungen pro Paarung). Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
+            st.caption("Die Einzelduell-Prognosen stammen aus der beigefügten Power Matrix v5.1 (15.000 Ergebnisziehungen pro Paarung). Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
             st.markdown("### ⚔️ Taktisches Matchmaking · Einzelduelle")
-            st.caption(f"Der Matchmaker nutzt die v5.0-Matrix für alle 9.045 eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
+            st.caption(f"Der Matchmaker nutzt die v5.1-Matrix für alle 9.730 eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
             for duel in matchups:
                 left, center, right = st.columns([1.15, 1.35, 1.15], gap="small")
                 with left:
@@ -3892,19 +3892,19 @@ with st.container(border=True):
 - Intelligenz bleibt ein kleiner Bonus bis maximal +0,45 Punkte für das Team. Teamchemie ist bei 50 neutral und kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status fließen nicht in die Gesamtwertung ein.
 
 **So wird Haki behandelt**
-Jedes der 135 Profile enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
+Jedes der 140 Profile enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
 
 **Taktisches Matchmaking:** Das Modell stellt passende Einzelduelle zusammen und kann Konter wie Ruffy gegen Enel oder Sanji gegen Nami berücksichtigen. Die Slot-Reihenfolge bringt keinen Vorteil.
 
 **Stand und Quellenprüfung**
-- Bewertungsstichtag: **Manga-Kapitel 1197 vom 1. November 2026**. Die aktuelle Kapitelübersicht listet Kapitel 1197 vom 1. November 2026; Kapitel 1198 ist für den 8. November 2026 angekündigt und noch nicht erschienen.
+- Bewertungsstichtag: **Manga-Kapitel 1198 vom 9. November 2026**. Kapitel 1199 ist nach der aktuellen Kapitelübersicht für den 22. November 2026 angekündigt; in der Woche vom 16. November erscheint kein neues Kapitel.
 - **Kanon vor Community:** bestätigte Manga-Feats, bestätigte Haki-Arten und im Manga gezeigte Technik stehen über Titeln, Kopfgeld, Anime-Inszenierung und Fan-Rankings. Anime-Zusatzmaterial und Filme zählen nicht automatisch als Beleg.
 - OPwiki und One Piece Wiki dienen dem Nachschlagen von Charakteren, Techniken und Haki-Arten. Analysen wie Library of Ohara, YouTube-Rankings und Fan-Foren dienen als zusätzliche Perspektiven – nicht als Beweis für eine offizielle Rangfolge.
 - Die **Shanks-über-Kaido-Einordnung (97 zu 96)** ist eine bewusste Modellentscheidung: Shanks' Spitzen-Königshaki, Zukunftssicht/Observation-Killing und sein Kid-Feat geben ihm im Draft einen kleinen Vorsprung. Das ist kein im Manga endgültig bestätigter Satz, dass Shanks jedes Duell gegen Kaido gewinnen würde; Kaidos Ausdauer, Körper, Frucht und Wano-Kampfbelastung bleiben berücksichtigt. Gear-5-Ruffy liegt bei 95, mit klaren Zeit-/Energiegrenzen und noch nicht dauerhaft belegter Dominanz über fitte Top-Tiers.
 - Imu und Joy Boy liegen auf 100 als gesetzte Obergrenze, Rocks D. Xebec bei 99, Roger und Prime-Whitebeard bei 98, Prime-Garp bei 98 sowie Shanks und Mihawk bei 97. Mihawk liegt in der reinen Schwertkunst vor Shanks; Shanks führt im separaten Haki-Teilwert.
 - Die Skala ist **kein offizieller Oda-Wert**. 1 Punkt ist keine mathematisch exakte Siegwahrscheinlichkeit; nahe Werte markieren dieselbe Spitzenklasse, keine sichere Reihenfolge.
 
-**Quellen & Gegenpositionen:** [Haki – One Piece Wiki](https://onepiece.fandom.com/wiki/Haki) · [Observationshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Observation_Haki_Users) · [Rüstungshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Armament_Haki_Users) · [Königshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Supreme_King_Haki_Users) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1197](https://www.viz.com/shonenjump/one-piece-chapter-1197/chapter/52017) · [Haki-Analyse bis 1194](https://abysscurrent.com/ranking/strongest-haki-users) · [Zoros Königshaki-Fortschritt](https://abysscurrent.com/manga/does-zoro-have-conquerors-haki) · [Library of Ohara: Analyse zu 1195–1196](https://thelibraryofohara.com/2026/10/20/chapter-secrets-one-piece-chapters-1195-1196-in-depth-analysis/) · [YouTube-Ranking 2026](https://www.youtube.com/watch?v=TxAoXMaavG8) · [YouTube: Top 50 (2026)](https://www.youtube.com/watch?v=vf1M513rCwA) · [Worstgen-Debatte zu 1191](https://worstgen.alwaysdata.net/forum/threads/one-piece-chapter-spoiler-1191-spoilers-discussion.86950/page-53) · [Reddit-Debatte Shanks vs. Kaido](https://www.reddit.com/r/OnePiecePowerScaling/comments/1jwbtjz) · [Deutsches Pirateboard: Loki vs. Kaido](https://www.pirateboard.net/index.php?postID=1003731&thread%2F14472-kapitel-1174-die-st%C3%A4rkste-kreatur-der-welt%2F=)
+**Quellen & Gegenpositionen:** [Haki – One Piece Wiki](https://onepiece.fandom.com/wiki/Haki) · [Observationshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Observation_Haki_Users) · [Rüstungshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Armament_Haki_Users) · [Königshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Supreme_King_Haki_Users) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52163) · [Haki-Analyse bis 1194](https://abysscurrent.com/ranking/strongest-haki-users) · [Zoros Königshaki-Fortschritt](https://abysscurrent.com/manga/does-zoro-have-conquerors-haki) · [Library of Ohara: Analyse zu 1195–1196](https://thelibraryofohara.com/2026/10/20/chapter-secrets-one-piece-chapters-1195-1196-in-depth-analysis/) · [YouTube-Ranking 2026](https://www.youtube.com/watch?v=TxAoXMaavG8) · [YouTube: Top 50 (2026)](https://www.youtube.com/watch?v=vf1M513rCwA) · [Worstgen-Debatte zu 1191](https://worstgen.alwaysdata.net/forum/threads/one-piece-chapter-spoiler-1191-spoilers-discussion.86950/page-53) · [Reddit-Debatte Shanks vs. Kaido](https://www.reddit.com/r/OnePiecePowerScaling/comments/1jwbtjz) · [Deutsches Pirateboard: Loki vs. Kaido](https://www.pirateboard.net/index.php?postID=1003731&thread%2F14472-kapitel-1174-die-st%C3%A4rkste-kreatur-der-welt%2F=)
 
 Die Kampfkraft-, Haki-, Intelligenz- und Chemiewerte sind begründete Fan-Schätzungen, keine offiziellen Zahlen. Porträts werden über direkte Bildlinks, Uploads oder eine explizit gestartete Sammelprüfung lokal im Ordner `portraits/` gespeichert. Die normale Anzeige führt keine Netzwerkabfragen aus. Das Komplett-Backup nimmt diese Bilder samt Link-Metadaten mit; ein normales JSON-Spielstand-Export enthält nur den Spielstatus.
 """)
@@ -3931,7 +3931,7 @@ with log_right:
         st.markdown("""<div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">01</div><div><b>Los ziehen</b><div class="small-muted">Jedes verbleibende Los hat dieselbe Chance. Die Animation verändert das Ergebnis nicht.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">02</div><div><b>Bieten</b><div class="small-muted">Der ziehende Spieler eröffnet. Danach wird abwechselnd erhöht oder gepasst.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">03</div><div><b>Team führen</b><div class="small-muted">Alle fünf Plätze sind gleichwertig; die Reihenfolge bringt keinen Bonus.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">04</div><div><b>Rückgabe mit Strafe</b><div class="small-muted">Jeder Spieler kann maximal drei Karten für je 1 € zurück in den Lostopf legen. Der Kaufpreis wird nicht erstattet.</div></div></div>""", unsafe_allow_html=True)
         st.caption("Jeder Kauf lässt mindestens 1 € für jeden noch offenen Teamplatz übrig. Rückgaben müssen diese Reserve ebenfalls erhalten.")
 
-if st.button("🏴‍☠️ Charakterpool durchsuchen · 135 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
+if st.button("🏴‍☠️ Charakterpool durchsuchen · 140 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
     st.session_state["show_roster_browser_classic"] = not st.session_state.get("show_roster_browser_classic", False)
     st.rerun()
 if st.session_state.get("show_roster_browser_classic", False):
@@ -3971,7 +3971,7 @@ with st.expander(f"📚 Spielhistorie ({len(st.session_state.get('classic_match_
                 st.session_state.confirm_clear_classic_history = False
                 st.rerun()
 
-st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.0.4 · PEAK EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
 
 
 # Persist each fully rendered state as a safety net; key transitions also save before reruns.

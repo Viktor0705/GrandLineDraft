@@ -959,5 +959,45 @@
     "role": "Ritter der Götter / Traum-Kirin",
     "wiki_slug": "Rimoshifu_Killingham",
     "image_url": ""
+  },
+  {
+    "id": 166,
+    "name": "Gecko Moria",
+    "faction": "Thriller Bark / Ehemaliger Samurai",
+    "role": "Kapitän der Thriller Bark / Schattenmeister",
+    "wiki_slug": "Gecko_Moria",
+    "image_url": ""
+  },
+  {
+    "id": 167,
+    "name": "Kyros",
+    "faction": "Dressrosa / Riku-Familie",
+    "role": "Ehemaliger Gladiator / Leibwächter",
+    "wiki_slug": "Kyros",
+    "image_url": ""
+  },
+  {
+    "id": 168,
+    "name": "Ashura Doji",
+    "faction": "Wano / Akazaya Neun",
+    "role": "Daimyo von Kuri / Samurai",
+    "wiki_slug": "Ashura_Doji",
+    "image_url": ""
+  },
+  {
+    "id": 169,
+    "name": "Vergo",
+    "faction": "Marine / Donquixote-Piraten",
+    "role": "Vizeadmiral / ehemaliger rechte Hand Doflamingos",
+    "wiki_slug": "Vergo",
+    "image_url": ""
+  },
+  {
+    "id": 170,
+    "name": "Kawamatsu",
+    "faction": "Wano / Akazaya Neun",
+    "role": "Kappa-Samurai / Yokozuna",
+    "wiki_slug": "Kawamatsu",
+    "image_url": ""
   }
 ]
