@@ -1,4 +1,4 @@
-# Grand Line Draft · Dual Anime Edition 6.0
+# Grand Line Draft · Dual Anime Edition 6.0.2
 
 Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece** und **Naruto Shippuden**. Der Name und das Auktions-/Draft-Prinzip bleiben erhalten. Charaktere, Bewertungen, Matchups und Spielstände sind pro Universum getrennt. Naruto endet bei **Naruto Shippuden + The Last: Naruto the Movie**; **Boruto ist ausgeschlossen**.
 
@@ -7,8 +7,8 @@ Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece*
 | Universum | Figuren | Eindeutige Matchups | Ziehungen je Paar | Modellziehungen gesamt |
 |---|---:|---:|---:|---:|
 | One Piece · Manga bis Kapitel 1198 (08.11.2026) | 140 | 9.730 | 15.000 | 145.950.000 |
-| Naruto Shippuden + The Last | 94 | 4.371 | 15.000 | 65.565.000 |
-| **Gesamt** | **234** | **14.101** | — | **211.515.000** |
+| Naruto Shippuden + The Last | 93 | 4.278 | 15.000 | 64.170.000 |
+| **Gesamt** | **233** | **14.008** | — | **210.120.000** |
 
 Die Ziehungen sind aggregierte Binomial-Monte-Carlo-Stichproben aus dem Matchup-Modell. Sie sind keine 211,5 Millionen kanonischen Kämpfe und machen eine Fan-Schätzung nicht zu einer offiziellen Rangliste.
 
@@ -32,7 +32,7 @@ streamlit run app.py
 - Lokal zu zweit, gegen KI oder online über eine Supabase-Lobby.
 - Maximal drei Rückgaben je Spieler; jede kostet 1 €. Der ursprüngliche Kaufpreis wird nicht erstattet.
 - Klassischer Draft und Fivefold Ranking sind weiterhin getrennte Spielmodi.
-- Online-Räume sind an das gewählte Anime-Universum gebunden. Ein One-Piece-Spiel kann nicht versehentlich als Naruto-Spiel geladen werden.
+- Online-Räume sind an das Anime-Universum des Hosts gebunden. Beim Beitritt wechselt der Gast automatisch zu One Piece oder Naruto, lädt die passende Datenbank und verbindet sich anschließend; manuelle Vorauswahl ist nicht nötig. Die Online-Handoff-Korrektur aus 6.0.1 ist enthalten; die Tierlisten- und Datenbankkorrekturen aus 6.0.2 sind zusätzlich enthalten.
 - Die Autosaves liegen getrennt unter `saves/` und `saves/naruto/`.
 
 ## Classic-Teamwertung
@@ -55,7 +55,7 @@ Unbekannte Werte bleiben sichtbar als `?`; für die Mittelwertbildung wird ein n
 
 ## Naruto-Bewertungsanker
 
-Die Naruto-Datenbank enthält 94 Figuren aus der vom Nutzer bereitgestellten Tierlist. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
+Die aktive Naruto-Datenbank enthält 93 Profile. Das bereitgestellte, nicht beschriftete Tierlistenbild zeigt 87 sichtbare Portrait-Kacheln. Eine vollständige 1:1-Namenszuordnung der Kacheln ist daraus nicht zweifelsfrei möglich; nach dem Identitätscheck wurde die unbestätigte zusätzliche Kakashi-Kriegsbogen-Variante entfernt, Sakumo bleibt eigenständig. Weitere Figuren wurden nicht ohne sichere Zuordnung gelöscht. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
 
 | Figur / Peak-Form | Power | Chakra | Fähigkeiten |
 |---|---:|---:|---:|
@@ -78,6 +78,7 @@ Die Naruto-Datenbank enthält 94 Figuren aus der vom Nutzer bereitgestellten Tie
 | Itachi · Edo Tensei | 90 | 94 | 98 |
 | Kabuto · Sennin-Modus | 89 | 94 | 97 |
 | Pain · Sechs Pfade | 88 | 96 | 97 |
+| Killer B · Gyūki-Jinchūriki | 88 | 98 | 94 |
 
 Alle Kaguya-/Hagoromo-Fivefold-Disziplinen und sichtbaren Kampf-Teilwerte stehen auf 100, wie vom Nutzer gewünscht. Kanon-Kontext: Kaguya wurde von **Hagoromo und Hamura gemeinsam** versiegelt; das wird nicht als Hagoromos Solo-Sieg beschrieben. Hagoromos 100er-Peak ist die vom Nutzer gesetzte spätere Jūbi-/Six-Paths-Deckenbewertung.
 
@@ -95,9 +96,15 @@ Die hochgeladene 5.0.4-Datenbank mit 135 Charakteren wurde beibehalten und um f�
 - Die Wahrscheinlichkeitskurve ist steil genug, damit extreme Leistungsunterschiede keine absurden Upsets mit mehreren Prozentpunkten erzeugen. Ein minimaler Rest bleibt, weil Modellwahrscheinlichkeiten keine absolute Kanon-Wahrheit darstellen.
 - Konfidenz beschreibt die Quellen- und Feat-Sicherheit, nicht die Zahl der Monte-Carlo-Stichproben.
 
+## Tierlisten-Korrekturen 6.0.2
+
+- Kakashi ist nur als DMS-Peak vertreten; der unbestätigte zusätzliche Kriegsbogen-Datensatz wurde entfernt. Sakumo Hatake bleibt eine eigenständige Person und nicht eine Kakashi-Variante.
+- Kakuzu steht mit Power 84 leicht über Sasori (83). Sasoris Gift und Puppen bleiben ein situativer Matchup-Vorteil.
+- Killer B steht auf Power 88; Chakra 98 und Fähigkeiten 94 werden getrennt betrachtet.
+
 ## Online-Modus und Secrets
 
-Für den Online-Modus siehe `ONLINE_SETUP.md`. `.streamlit/secrets.toml` ist absichtlich nicht Bestandteil des ZIPs. Eigene Supabase-Secrets bleiben lokal bzw. als sichere Hosting-Secrets. Niemals einen `service_role`-Key in GitHub oder in eine clientseitige Datei hochladen.
+Für den Online-Modus siehe `ONLINE_SETUP.md`. Beim Beitritt übernimmt der Gast automatisch das Anime-Universum des Hosts (einschließlich Wechsel der getrennten Datenbank und Spielstand-Umgebung). `.streamlit/secrets.toml` ist absichtlich nicht Bestandteil des ZIPs. Eigene Supabase-Secrets bleiben lokal bzw. als sichere Hosting-Secrets. Niemals einen `service_role`-Key in GitHub oder in eine clientseitige Datei hochladen.
 
 ## Charakterbilder und Backups
 
@@ -113,7 +120,7 @@ python -m pytest -q
 python -m unittest discover -s tests -v
 ```
 
-Die Tests prüfen getrennte Roster, vollständige Paarungsmatrizen, die vom Nutzer vorgegebenen Peak-Anker, Haki-/Chakra-Labels, keine Boruto-Figuren sowie Online-/Cloud-Sicherheitsfunktionen. Ein browserbasierter Live-Test setzt eine installierte Streamlit-Laufzeit und konfigurierte Secrets voraus.
+Die Tests prüfen getrennte Roster, vollständige Paarungsmatrizen, die vom Nutzer vorgegebenen Peak-Anker, Kakuzu/Sasori-Reihenfolge, Killer-B-Wert 88, die Kakashi-/Sakumo-Identitätskorrektur, Haki-/Chakra-Labels, keine Boruto-Figuren sowie Online-/Cloud-Sicherheitsfunktionen. Ein browserbasierter Live-Test setzt eine installierte Streamlit-Laufzeit und konfigurierte Secrets voraus.
 
 ## Quellen / Bewertungsgrenzen
 

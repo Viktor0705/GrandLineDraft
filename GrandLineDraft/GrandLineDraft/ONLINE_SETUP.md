@@ -1,6 +1,11 @@
 # Online-Modus einrichten (Supabase)
 
-Grand Line Draft · Dual Anime Edition 6.0 enthält einen serverseitigen Online-Lobby-Prototyp für Classic Draft und Fivefold Ranking. Lokales Spiel und KI-Modus funktionieren ohne Online-Dienst. Für echte Verbindungen zwischen zwei Geräten ist eine Supabase-Datenbank erforderlich.
+Grand Line Draft · Dual Anime Edition 6.0.1 enthält einen serverseitigen Online-Lobby-Prototyp für Classic Draft und Fivefold Ranking. Lokales Spiel und KI-Modus funktionieren ohne Online-Dienst. Für echte Verbindungen zwischen zwei Geräten ist eine Supabase-Datenbank erforderlich.
+
+
+### Anime-Auswahl beim Online-Beitritt (Version 6.0.1)
+
+Der Raum legt das Anime-Universum des Hosts fest. Spieler B muss vorher nicht denselben Anime auswählen: Beim Beitritt speichert die App zunächst den lokalen Spielstand des bisherigen Universums, wechselt automatisch zum Anime des Raums und lädt anschließend dessen Charakter- und Matchup-Dateien. Dafür muss nur der aktualisierte App-Code deployt werden; das bestehende `gld_online_rooms`-Schema bleibt unverändert.
 
 ## 1. Supabase-Projekt
 
@@ -60,7 +65,7 @@ Die Cloud-Bildertabelle enthält Charakter-ID, Anzeigename, Storage-Pfad, Dateig
 - Die Bilder sind im privaten Bucket; Zugriff erfolgt serverseitig über Streamlit Secrets. Den Service-Role-Key niemals in GitHub oder clientseitigen Code hochladen.
 
 
-## 7. Dual-Anime-Lobbys (Edition 6.0)
+## 7. Dual-Anime-Lobbys (Edition 6.0.1)
 
 - One Piece und Naruto Shippuden verwenden getrennte Charakterpools, Bewertungen und Matchup-Dateien.
 - Jede gespeicherte Online-Spielrunde enthält die Universe-ID. Das Laden einer Runde im falschen Anime wird abgewiesen; Räume werden beim Wechsel des Anime lokal verlassen.

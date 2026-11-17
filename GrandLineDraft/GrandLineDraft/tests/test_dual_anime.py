@@ -27,9 +27,9 @@ def test_two_universes_have_independent_complete_rosters_and_matchups():
     op_rows = read_gzip_json(BASE / "matchup_results.json.gz")
     naruto_rows = read_gzip_json(BASE / "naruto" / "matchup_results.json.gz")
     assert len(one_piece) == 140
-    assert len(naruto) == 94
+    assert len(naruto) == 93
     assert len(op_rows) == 140 * 139 // 2
-    assert len(naruto_rows) == 94 * 93 // 2
+    assert len(naruto_rows) == 93 * 92 // 2
     assert len({pair_key(row) for row in op_rows}) == len(op_rows)
     assert len({pair_key(row) for row in naruto_rows}) == len(naruto_rows)
     assert all(row["simulations_per_pair"] == 15000 for row in op_rows + naruto_rows)
@@ -39,7 +39,7 @@ def test_universe_ids_do_not_overlap():
     op_ids = {int(item["id"]) for item in read_json(BASE / "characters.json")}
     naruto_ids = {int(item["id"]) for item in read_json(BASE / "naruto" / "characters.json")}
     assert len(op_ids) == 140
-    assert len(naruto_ids) == 94
+    assert len(naruto_ids) == 93
     assert op_ids.isdisjoint(naruto_ids)
 
 
@@ -50,6 +50,25 @@ def test_naruto_cutoff_excludes_boruto():
     assert "Boruto" in ratings["anime_cutoff"]
     assert all("boruto" not in json.dumps(item, ensure_ascii=False).casefold() for item in characters)
     assert all("boruto" not in name.casefold() for name in ratings["characters"])
+
+
+def test_tierlist_identity_and_order_corrections():
+    roster = read_json(BASE / "naruto" / "characters.json")
+    ratings = read_json(BASE / "naruto" / "character_ratings.json")["characters"]
+    names = [item["name"] for item in roster]
+    ids = [int(item["id"]) for item in roster]
+    assert len(names) == len(set(names)) == 93
+    assert len(ids) == len(set(ids)) == 93
+    # The apparent extra War-Arc Kakashi tile was not confirmed as a separate Kakashi version.
+    # Keep Sakumo as his own character and Kakashi only at the user's DMS peak.
+    assert "Kakashi Hatake (Kriegsbogen)" not in names
+    assert "Kakashi Hatake (DMS)" in names
+    assert "Sakumo Hatake" in names
+    assert ratings["Kakuzu"]["power"] == 84
+    assert ratings["Sasori"]["power"] == 83
+    assert ratings["Kakuzu"]["power"] > ratings["Sasori"]["power"]
+    assert ratings["Killer B"]["power"] == 88
+    assert ratings["Killer B"]["chakra_score"] == 98
 
 
 def test_user_requested_naruto_anchor_values_are_preserved():
@@ -80,7 +99,7 @@ def test_user_requested_naruto_anchor_values_are_preserved():
 def test_naruto_fivefold_has_five_distinct_categories():
     ratings = read_json(BASE / "naruto" / "character_ratings.json")["characters"]
     required = {"ninjutsu", "chakra", "taijutsu", "speed", "battle_iq"}
-    assert len(ratings) == 94
+    assert len(ratings) == 93
     for character in ratings.values():
         stats = character["ranking_stats"]
         assert required.issubset(stats)

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2",
-  "model_name": "Grand Line Draft · Naruto Shippuden / The Last Power Matrix 1.2",
+  "model_name": "Grand Line Draft · Naruto Shippuden / The Last Power Matrix 1.3 · Tierlisten-Korrektur",
   "last_reviewed": "2026-11-16",
   "anime_cutoff": "Naruto Shippuden + The Last: Naruto the Movie; no Boruto material",
   "weights": {
@@ -31,16 +31,25 @@
     "official_dms_two_mangekyo": "https://naruto-official.com/en/anime/naruto2/list/01_859",
     "official_madara_war": "https://naruto-official.com/en/news/01_1355",
     "official_four_hokage": "https://naruto-official.com/en/anime/naruto2/list/01_810",
-    "official_last_toneri_reference": "https://naruto.fandom.com/wiki/The_Last:_Naruto_the_Movie"
+    "official_last_toneri_reference": "https://naruto.fandom.com/wiki/The_Last:_Naruto_the_Movie",
+    "official_sakumo_profile": "https://naruto-official.com/de/news/01_1875",
+    "official_kakashi_profile": "https://naruto-official.com/de/news/01_1903",
+    "official_sasori_puppetry": "https://naruto-official.com/en/news/01_1641",
+    "kakuzu_profile_reference": "https://www.narutohq.com/characters/kakuzu"
   },
   "review_summary": {
-    "characters": 94,
+    "characters": 93,
     "source_policy": "Canon feats and official Naruto materials prioritized; fan scaling sources used only as comparative context, not as evidence for precise numerical values.",
     "top_anchors_note": "Kaguya und Hagoromo sind auf Wunsch des Nutzers 100er-Deckenanker: Power, Chakra, Fähigkeiten, alle fünf Fivefold-Disziplinen sowie Angriff, Defensive, Tempo, Ausdauer, Kampftaktik und Chakra-Kontrolle stehen auf 100. Die gemeinsame Versiegelung Kaguyas durch Hagoromo und Hamura wird nicht als Hagoromo-Solo-Sieg ausgegeben.",
-    "unique_matchups": 4371,
+    "unique_matchups": 4278,
     "simulations_per_pair": 15000,
-    "total_simulated_fights": 65565000,
-    "confidence_rule": "Confidence is evidence quality, not Monte Carlo sample size."
+    "total_simulated_fights": 64170000,
+    "confidence_rule": "Confidence is evidence quality, not Monte Carlo sample size.",
+    "date": "2026-11-16",
+    "kakashi_deduplication": "Eine einzige Kakashi-Version bleibt aktiv: DMS-Peak. Die separate Kriegsbogen-Version wurde entfernt; Sakumo Hatake bleibt als Kakashis Vater eigenständig erhalten.",
+    "kakuzu_sasori_order": "Kakuzu 84 > Sasori 83; Poison/Puppenspiel bleibt ein möglicher Matchup-Konter.",
+    "killer_b_power": "Killer B Power Level 88; Chakra 98 und Fähigkeiten 94 bleiben separat.",
+    "screenshot_audit": "Das bereitgestellte Tierlistenbild enthält 87 sichtbare Portrait-Kacheln. Die vorherige Datenbasis enthielt 94 Naruto-Datensätze; eine vollständige 1:1-Bildzuordnung aller Kacheln ist aus dem unlabeled Screenshot nicht beweisbar. Die bestätigte Kakashi-Doppelversion wurde entfernt; weitere nicht belegte Löschungen wurden vermieden."
   },
   "characters": {
     "Kaguya Ōtsutsuki": {
@@ -485,7 +494,7 @@
       "chakra_status": "geschätzt",
       "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
       "confidence": "Mittel",
-      "rationale": "94/100: zeitlich extrem begrenzte Doppel-Mangekyō-/Obito-Chakra-Form. Kamui-Intangibilität, Kamui-Shuriken und perfektes Susanoo geben ihm außergewöhnliche Spezialfähigkeiten; die geringe Dauer verhindert einen höheren Gesamtwert.",
+      "rationale": "94/100: Kakashis kurzzeitiger Doppel-Mangekyō-Peak mit Kamui-Intangibilität, Kamui-Shuriken und perfektem Susanoo. Es gibt im aktiven Draft nur diesen einen Kakashi-Datensatz; eine zusätzliche Kriegsbogen-Version wurde entfernt.",
       "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
       "ability_summary": "Doppeltes Mangekyō Sharingan, Kamui, Kamui-Shuriken, Susanoo und Six-Paths-verstärkte Reaktionen.",
       "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
@@ -1109,7 +1118,7 @@
       "chakra_status": "geschätzt",
       "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
       "confidence": "Hoch",
-      "rationale": "88/100 Power, 98/100 Chakra und 94/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
+      "rationale": "88/100 Power Level: bewusst unter den stärksten Kage-/High-Commander-Ankern gehalten. Killer B bleibt durch perfekte Bijū-Synchronisation, Kenjutsu und enorme Reserven gefährlich; sein außergewöhnliches Chakra (98) wird separat bewertet und hebt nicht automatisch sein Power Level an.",
       "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
       "ability_summary": "Acht-Schwänze-Jinchūriki. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
       "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
@@ -1445,7 +1454,7 @@
       "chakra_status": "geschätzt",
       "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
       "confidence": "Niedrig",
-      "rationale": "85/100 Power, 88/100 Chakra und 91/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
+      "rationale": "85/100: Sakumo ist Kakashis Vater und der als Konoha-Weißzahn bekannte Shinobi. Er wird als eigenständiger Charakter geführt; seine silberweiße Haarfarbe und Chakra-Klinge dürfen nicht mit Kakashis maskierter Kriegsbogen- oder DMS-Version verwechselt werden. Die exakte Zahl bleibt eine Fan-Schätzung.",
       "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
       "ability_summary": "Konoha-Weißzahn. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
       "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
@@ -1723,54 +1732,6 @@
       "specialty_stats": {},
       "matchup_reviewed": true
     },
-    "Kakashi Hatake (Kriegsbogen)": {
-      "power": 83,
-      "abilities": 95,
-      "abilities_unknown": false,
-      "versatility": 97,
-      "intelligence": 97,
-      "chakra_score": 89,
-      "chakra_status": "geschätzt",
-      "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
-      "confidence": "Hoch",
-      "rationale": "83/100 Power, 89/100 Chakra und 95/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
-      "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Mangekyō Sharingan · Kamui. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-      "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
-      "combat_stats": {
-        "offense": 88,
-        "defense": 89,
-        "speed": 94,
-        "endurance": 89,
-        "battle_iq": 97,
-        "chakra_control": 89
-      },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
-      "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
-      "ranking_stats": {
-        "ninjutsu": 96,
-        "chakra": 89,
-        "taijutsu": 89,
-        "speed": 94,
-        "battle_iq": 97,
-        "evidence": {
-          "ninjutsu": "Breite und Beherrschung der Jutsu, Kekkei Genkai, Dōjutsu, Spezialeffekte und Reichweite; Fan-Schätzung.",
-          "chakra": "Relative Reserven, Kontrolle, Effizienz, Zugriff auf Bijū-/Six-Paths-Chakra; Fan-Schätzung.",
-          "taijutsu": "Nahkampf, physische Kraft, Technik und Kampfstil; Fan-Schätzung.",
-          "speed": "Reaktionszeit, Bewegung, Raum-Zeit-Techniken und Mobilität; Fan-Schätzung.",
-          "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
-        },
-        "rationale": {
-          "ninjutsu": "Mangekyō Sharingan · Kamui. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 89/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 89/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 94/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 97/100; Kampftaktik und Anpassung."
-        }
-      },
-      "specialty_stats": {},
-      "matchup_reviewed": true
-    },
     "Konan": {
       "power": 83,
       "abilities": 94,
@@ -1916,7 +1877,7 @@
       "matchup_reviewed": true
     },
     "Kakuzu": {
-      "power": 82,
+      "power": 84,
       "abilities": 94,
       "abilities_unknown": false,
       "versatility": 96,
@@ -1925,19 +1886,19 @@
       "chakra_status": "geschätzt",
       "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
       "confidence": "Hoch",
-      "rationale": "82/100 Power, 96/100 Chakra und 94/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
+      "rationale": "84/100 Power, 96/100 Chakra und 94/100 Fähigkeiten. Kakuzu wird bewusst leicht über Sasori eingeordnet: Fünf Herzen, mehrere Elementnaturen, hohe Ausdauer und die Fähigkeit, nach schweren Treffern weiterzukämpfen, geben ihm im neutralen direkten Duell den etwas höheren Gesamtwert. Sasoris Gift, Puppenarsenal und der Dritte-Kazekage-Puppe bleiben ein gefährlicher Matchup-Vorteil; das ist kein automatischer Sieg für Kakuzu.",
       "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Fünf Herzen · fünf Naturen. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
+      "ability_summary": "Jiongu / Earth Grudge Fear · fünf Herzen · Feuer-, Wind-, Blitz-, Wasser- und Erd-Naturverwandlungen. Die fünf Herzen erlauben mehrere unabhängige Angriffe und eine außergewöhnlich hohe Kampfausdauer.",
       "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
       "combat_stats": {
-        "offense": 87,
-        "defense": 89,
+        "offense": 90,
+        "defense": 91,
         "speed": 85,
-        "endurance": 93,
+        "endurance": 96,
         "battle_iq": 90,
         "chakra_control": 96
       },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
+      "weaknesses": "Kakuzus Herzen und die Fäden seines Earth-Grudge-Fear-Körpers sind verwundbare Angriffspunkte. Sasoris Gift und Fernkampf-Puppenspiel können je nach Vorbereitung und Distanz ein ernstes Konterfenster schaffen.",
       "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
       "ranking_stats": {
         "ninjutsu": 98,
@@ -1953,11 +1914,11 @@
           "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
         },
         "rationale": {
-          "ninjutsu": "Fünf Herzen · fünf Naturen. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 96/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 86/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 85/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 90/100; Kampftaktik und Anpassung."
+          "ninjutsu": "Ninjutsu 98/100; fünf Elementnaturen und mehrere Herz-Körper als breites Offensivarsenal.",
+          "chakra": "Chakra 96/100; außergewöhnliche Reserven und Ausdauer durch mehrere Herzen.",
+          "taijutsu": "Taijutsu 86/100; solide Nahkampfstärke, aber kein primärer Spezialist.",
+          "speed": "Geschwindigkeit 85/100; gute Reaktionen, aber nicht auf Blitz-/Hiraishin-Niveau.",
+          "battle_iq": "Battle IQ 90/100; erfahren, pragmatisch und kampferprobt."
         }
       },
       "specialty_stats": {},
@@ -4557,13 +4518,12 @@
     }
   },
   "matchup_method": {
-    "version": "naruto-v1.2-retuned-logistic-5.8",
-    "unique_pairs": 4371,
+    "version": "Naruto-Matrix 1.3 · 93-character recalibration",
+    "unique_pairs": 4278,
     "simulations_per_pair": 15000,
-    "total_simulated_fights": 65565000,
-    "model": "All 94 figures are paired once. The game engine compares Power Level, estimated Chakra, abilities, versatility, offense, defense, speed, endurance, Battle IQ and a small tactical bonus. Pair-specific effects are only added for grounded counters or distinctive one-off forms.",
-    "probability_floor": "0.05% to 99.95%; no mathematically absolute win. Monte-Carlo binomial draws per pair.",
-    "evidence_cutoff": "Naruto Shippuden + The Last: Naruto the Movie; no Boruto material",
-    "limitations": "Power, Chakra, abilities and matchup odds are fan estimates. The exact 0–100 values are not official databook statistics. Short-lived forms (e.g., Eight Gates, DMS) retain form-duration and survival limitations in the reasons."
+    "total_simulated_fights": 64170000,
+    "model": "Power Level, Chakra, abilities, versatility, offense, defense, speed, endurance and Battle IQ; matchup-specific counterplay remains limited and evidence-based.",
+    "probability_floor": "0.05% to 99.95%; not a guaranteed outcome.",
+    "manga_cutoff": "Naruto Shippuden + The Last: Naruto the Movie; no Boruto"
   }
 }

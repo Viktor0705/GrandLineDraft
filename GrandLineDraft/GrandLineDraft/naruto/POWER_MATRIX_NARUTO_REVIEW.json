@@ -1,133 +1,13 @@
 {
   "universe": "Naruto Shippuden + The Last; Boruto excluded",
-  "characters": 94,
-  "unique_matchups": 4371,
+  "characters": 93,
+  "unique_matchups": 4278,
   "simulations_per_matchup": 15000,
-  "total_simulated_fights": 65565000,
+  "total_simulated_fights": 64170000,
   "seed": 20261116,
   "important_note": "All score numbers are original fan-model estimates. Canon sources establish feats and abilities, not official numerical 0-100 stats.",
-  "top_anchors": {
-    "Kaguya Ōtsutsuki": {
-      "power": 100,
-      "chakra": 100,
-      "abilities": 100,
-      "abilities_unknown": false
-    },
-    "Hagoromo Ōtsutsuki": {
-      "power": 100,
-      "chakra": 100,
-      "abilities": 100,
-      "abilities_unknown": false
-    },
-    "Madara Uchiha (Jūbi-Jinchūriki)": {
-      "power": 98,
-      "chakra": 100,
-      "abilities": 100,
-      "abilities_unknown": false
-    },
-    "Naruto Uzumaki (The Last)": {
-      "power": 97,
-      "chakra": 98,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Sasuke Uchiha (The Last)": {
-      "power": 97,
-      "chakra": 95,
-      "abilities": 98,
-      "abilities_unknown": false
-    },
-    "Hamura Ōtsutsuki": {
-      "power": 96,
-      "chakra": 99,
-      "abilities": 50,
-      "abilities_unknown": true
-    },
-    "Obito Uchiha (Jūbi-Jinchūriki)": {
-      "power": 95,
-      "chakra": 99,
-      "abilities": 95,
-      "abilities_unknown": false
-    },
-    "Ashura Ōtsutsuki": {
-      "power": 95,
-      "chakra": 98,
-      "abilities": 98,
-      "abilities_unknown": false
-    },
-    "Indra Ōtsutsuki": {
-      "power": 94,
-      "chakra": 97,
-      "abilities": 96,
-      "abilities_unknown": false
-    },
-    "Toneri Ōtsutsuki": {
-      "power": 94,
-      "chakra": 98,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Kakashi Hatake (DMS)": {
-      "power": 94,
-      "chakra": 96,
-      "abilities": 98,
-      "abilities_unknown": false
-    },
-    "Might Guy (Acht Tore)": {
-      "power": 93,
-      "chakra": 84,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Hashirama Senju (Prime)": {
-      "power": 92,
-      "chakra": 97,
-      "abilities": 91,
-      "abilities_unknown": false
-    },
-    "Tobirama Senju (Prime)": {
-      "power": 91,
-      "chakra": 95,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Hiruzen Sarutobi (Prime)": {
-      "power": 91,
-      "chakra": 94,
-      "abilities": 96,
-      "abilities_unknown": false
-    },
-    "Nagato (Prime)": {
-      "power": 90,
-      "chakra": 98,
-      "abilities": 100,
-      "abilities_unknown": false
-    },
-    "Minato Namikaze (KCM · Edo)": {
-      "power": 90,
-      "chakra": 96,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Itachi Uchiha (Edo Tensei)": {
-      "power": 90,
-      "chakra": 94,
-      "abilities": 98,
-      "abilities_unknown": false
-    },
-    "Kabuto Yakushi (Sennin-Modus)": {
-      "power": 89,
-      "chakra": 94,
-      "abilities": 97,
-      "abilities_unknown": false
-    },
-    "Pain (Sechs Pfade)": {
-      "power": 88,
-      "chakra": 96,
-      "abilities": 97,
-      "abilities_unknown": false
-    }
-  },
+  "tierlist_screenshot_visible_portraits": 87,
+  "tierlist_mapping_note": "The supplied image has no text labels; 87 visible portraits were counted. Do not treat the 93 remaining character profiles as a fully verified one-to-one label transcription.",
   "special_matchups": [
     {
       "pair": [
@@ -136,7 +16,7 @@
       ],
       "favored": "Shikamaru Nara (Kriegsbogen)",
       "modifier": 14,
-      "reason": "Shikamarus Planung und die bekannte Schatten-/Ritual-Konterstrategie geben ihm mit Vorbereitung einen taktischen Vorteil; ohne Vorbereitung wäre das Duell deutlich enger."
+      "reason": "Shikamarus bekannte Schatten-/Ritual-Konterstrategie gibt ihm mit Vorbereitung einen taktischen Vorteil; ohne Vorbereitung wäre das Duell deutlich enger."
     },
     {
       "pair": [
@@ -163,7 +43,7 @@
       ],
       "favored": "Might Guy (Acht Tore)",
       "modifier": 5,
-      "reason": "Night Guy verletzte Jūbi-Madara schwer und brachte ihn beinahe um. Der Bonus honoriert diese extreme einmalige Durchschlagskraft, bleibt aber begrenzt: Guy brauchte Unterstützung, das Acht-Tore-Fenster ist tödlich kurz, und Madara bleibt im Gesamtprofil Favorit."
+      "reason": "Night Guy verletzte Jūbi-Madara schwer und brachte ihn beinahe um. Der Bonus bleibt begrenzt, da Guy Unterstützung brauchte und das Acht-Tore-Fenster tödlich kurz ist."
     },
     {
       "pair": [
@@ -172,7 +52,7 @@
       ],
       "favored": "Sasuke Uchiha (The Last)",
       "modifier": 5,
-      "reason": "Sasukes Blitz-Ninjutsu ist ein belegter Konter gegen Deidaras explosiven Ton; der große Form- und Power-Abstand wird ohnehin über die Basiswerte abgebildet."
+      "reason": "Sasukes Blitz-Ninjutsu ist ein belegter Konter gegen Deidaras explosiven Ton."
     },
     {
       "pair": [
@@ -181,7 +61,7 @@
       ],
       "favored": "Chiyo",
       "modifier": 4,
-      "reason": "Chiyo kennt Sasoris Puppenspiel und Giftmethoden aus nächster Nähe; das ist ein begrenzter Wissens- und Matchup-Vorteil."
+      "reason": "Chiyo kennt Sasoris Puppenspiel und Giftmethoden aus nächster Nähe; begrenzter Wissens- und Matchup-Vorteil."
     },
     {
       "pair": [
@@ -199,7 +79,7 @@
       ],
       "favored": "Madara Uchiha (Jūbi-Jinchūriki)",
       "modifier": 6,
-      "reason": "Diese Matchup-Karte vergleicht die Peak-Formen. Der historische Rivalitätskampf fand ohne Madaras späteres Jūbi-Power-up statt; deshalb ist das Form-Upgrade wichtiger als das frühere direkte Duell."
+      "reason": "Peak-Formenvergleich: Madaras Jūbi-Power-up geht über die historische Rivalität hinaus."
     },
     {
       "pair": [
@@ -208,7 +88,7 @@
       ],
       "favored": "Kisame Hoshigaki",
       "modifier": 2,
-      "reason": "Samehada kann Chakra absorbieren und ist gegen einen Jinchūriki besonders gefährlich; Killer Bs Bijū-Synchronisation und Kenjutsu halten das Duell eng."
+      "reason": "Samehada kann Chakra absorbieren und ist gegen einen Jinchūriki gefährlich; Killer Bs Bijū-Synchronisation und Kenjutsu halten das Duell eng."
     },
     {
       "pair": [
@@ -217,7 +97,16 @@
       ],
       "favored": "Obito Uchiha (Jūbi-Jinchūriki)",
       "modifier": 2,
-      "reason": "Jūbi-Chakra und Truth-Seeking Orbs übersteigen Minatos gewöhnliches Kamui-Matchup; Minatos Hiraishin und Reaktionsvermögen bleiben relevant."
+      "reason": "Jūbi-Chakra und Truth-Seeking Orbs übersteigen Minatos gewöhnliches Kamui-Matchup; Minatos Hiraishin bleibt relevant."
+    },
+    {
+      "pair": [
+        "Kakuzu",
+        "Sasori"
+      ],
+      "favored": "Kakuzu",
+      "modifier": 2.0,
+      "reason": "Kakuzu liegt im Gesamtprofil leicht vor Sasori: fünf Herzen, mehrere Elementnaturen und hohe Ausdauer. Sasoris Gift und Puppenarsenal bleiben ein gefährliches Konterfenster, besonders mit Vorbereitung oder passender Distanz."
     }
   ]
 }

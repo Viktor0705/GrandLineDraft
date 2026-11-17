@@ -1,24 +1,39 @@
-GRAND LINE DRAFT · DUAL ANIME EDITION 6.0
+GRAND LINE DRAFT · DUAL ANIME EDITION 6.0.2
 TEST REPORT
 Date: 2026-11-16
 
 Build checks
 - Python syntax: PASS (python -m py_compile app.py)
-- Pytest suite: PASS (40 passed)
+- Pytest suite: PASS (49 passed)
 - unittest suite: PASS (12 passed)
-- Clean extracted ZIP validation: PASS (re-run from extracted project directory)
-- One Piece roster: 140 characters; all 135 original 5.0.4 names and IDs preserved; five additions verified.
-- Naruto roster: 94 characters; no Boruto roster entries; The Last cutoff verified.
-- One Piece matchups: 9,730 unique pairs, 15,000 draws per pair.
-- Naruto matchups: 4,371 unique pairs, 15,000 draws per pair.
-- Total: 14,101 unique pairs and 211,515,000 aggregated binomial Monte Carlo draws.
-- Kaguya/Hagoromo: Power, Chakra, Abilities, all Fivefold categories and combat substats = 100.
-- Separate data, saves, matchup loading and online-room universe validation: PASS (static regression checks).
-- Naruto-specific browser categories, AI label, Chakra display, portrait imports with four-digit IDs: PASS.
-- Fivefold Naruto icons: PASS.
+- Fresh ZIP extraction and project-file validation: performed separately before release.
+
+Data integrity
+- One Piece: 140 characters; all 135 original 5.0.4 names and IDs preserved; five additions verified.
+- One Piece matchups: 9,730 unique pairs, 15,000 model draws per pair.
+- Naruto: 93 active profiles; The Last cutoff retained; no Boruto roster entries.
+- Naruto matchups: 4,278 unique pairs, 15,000 model draws per pair.
+- Total: 14,008 unique pairs and 210,120,000 aggregated binomial Monte Carlo draws.
+- Naruto ID/name uniqueness: PASS; no repeated names or IDs.
+
+User corrections
+- Kakashi: one active Kakashi record remains (DMS peak); unconfirmed extra War-Arc record removed.
+- Sakumo Hatake: remains a separate character and is described as Kakashi's father / Konoha White Fang.
+- Kakuzu Power Level 84 > Sasori Power Level 83; matchup includes only a limited Kakuzu lean while Sasori poison/puppet counterplay remains noted.
+- Killer B Power Level 88; Chakra 98 and abilities 94 remain separate.
+- Kaguya/Hagoromo: requested 100 anchors and Fivefold/combat stats verified.
+
+Online universe handoff
+- A guest joining a Naruto room from an One Piece session (or vice versa) is switched to the host's universe before final join.
+- The handoff preserves the outgoing local save, changes the selector, clears universe-specific caches and completes joining after the rerun.
+- Regression tests for automatic selector handoff, delayed join completion and cross-universe payload validation: PASS.
+- No Supabase schema change required; the current room payload stores anime_universe.
+
+Tierlist screenshot note
+- The uploaded unlabeled image shows 87 visible portrait tiles. The 93 active Naruto profiles are not claimed to be a fully verified 1:1 transcription of all tiles. The identified Kakashi ambiguity has been resolved conservatively; unidentifiable entries were not deleted by guesswork.
 
 Runtime limitation
-The build container does not have Streamlit installed, so no live browser/Streamlit session was launched here. Install dependencies with `python -m pip install -r requirements.txt`, then run `streamlit run app.py` or `Start_GrandLineDraft.bat` on Windows for an interactive runtime check.
+- The build container does not have Streamlit installed, so no live browser/Streamlit session was launched here. Syntax, data, unit and regression tests passed. For a live check install requirements and run `streamlit run app.py` or `Start_GrandLineDraft.bat` on Windows.
 
-Secrets
-No .streamlit/secrets.toml or service-role key is included in this distribution. Keep the existing deployment secrets private.
+Security
+- No .streamlit/secrets.toml or service-role key is included. Keep existing deployment secrets private.

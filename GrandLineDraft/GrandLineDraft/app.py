@@ -48,13 +48,22 @@ def http_session() -> requests.Session:
     return session
 
 st.set_page_config(
-    page_title="Grand Line Draft · Dual Anime Edition 6.0",
+    page_title="Grand Line Draft · Dual Anime Edition 6.0.2",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # Two separate anime universes share the game engine, not their data or saved games.
+# A guest who joins a room from the other anime is switched before the next widget
+# is created; this pending label is consumed at the very top of the following run.
+_PENDING_ANIME_LABELS = {
+    "one_piece": "One Piece",
+    "naruto": "Naruto Shippuden · The Last (ohne Boruto)",
+}
+_pending_selector_label = st.session_state.pop("_pending_anime_universe_selector", None)
+if _pending_selector_label in _PENDING_ANIME_LABELS.values():
+    st.session_state["anime_universe_selector"] = _pending_selector_label
 st.session_state.setdefault("anime_universe", "one_piece")
 ACTIVE_UNIVERSE = st.session_state.get("anime_universe", "one_piece")
 IS_NARUTO = ACTIVE_UNIVERSE == "naruto"
@@ -70,7 +79,7 @@ AUTOSAVE_FILE = SAVE_DIR / "autosave.json"
 PORTRAIT_LINKS_FILE = BASE_DIR / "portrait_links.json"
 API_BASE = None if IS_NARUTO else "https://onepieceapi.com/api/characters"
 FANDOM_API = "https://naruto.fandom.com/api.php" if IS_NARUTO else "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/6.0 (dual-anime fan game; isolated One Piece and Naruto datasets)"
+USER_AGENT = "GrandLineDraft/6.0.2 (dual-anime fan game; isolated One Piece and Naruto datasets)"
 PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Local custom component: animation and drag-and-drop run in the browser rather
@@ -788,6 +797,60 @@ def online_create_room(variant: str) -> tuple[bool, str]:
         return False, f"Raum konnte nicht erstellt werden: {type(exc).__name__}: {exc}"
 
 
+def _prepare_online_join_universe_switch(room_universe: str, code: str, guest_name: str) -> tuple[bool, str]:
+    """Stage a cross-universe join and rerun so the correct JSON files load first."""
+    if room_universe not in _PENDING_ANIME_LABELS:
+        return False, "Die Lobby enthält eine unbekannte Anime-Auswahl und kann nicht geladen werden."
+    # Save the guest's current universe before changing the active data directory.
+    if "players" in st.session_state:
+        try:
+            persist_game_state()
+        except Exception:
+            pass
+    label = _PENDING_ANIME_LABELS[room_universe]
+    st.session_state["_pending_online_join"] = {
+        "code": code,
+        "guest_name": guest_name,
+        "anime_universe": room_universe,
+    }
+    st.session_state["_pending_anime_universe_selector"] = label
+    st.session_state["anime_universe"] = room_universe
+
+    # Clear game-specific in-memory state; it will be restored from the new anime's
+    # own save folder, then replaced by the host's online room state.
+    for key in GAME_STATE_KEYS:
+        if key not in {"anime_universe", "name_input_a", "name_input_b", "game_mode", "draft_variant", "rank_game_mode"}:
+            st.session_state.pop(key, None)
+    for key in (
+        "pool_filter", "pool_role_filter", "pool_search", "pool_sort",
+        "pool_evidence_filter", "pool_page", "pool_selected_character_id",
+        "show_roster_browser_classic", "portrait_status", "live_bounties",
+        "bounty_data_updated", "bounty_data_message", "_last_local_autosave_hash",
+    ):
+        st.session_state.pop(key, None)
+    st.session_state["online_room_code"] = None
+    st.session_state["online_role"] = None
+    st.session_state["online_revision"] = 0
+    st.session_state["online_last_hash"] = None
+    st.session_state["online_status"] = "Wechsle zum Anime der Lobby …"
+
+    # Streamlit caches are scoped to this process; invalidate path-dependent data
+    # before the rerun initializes the new universe.
+    for fn_name in (
+        "get_characters", "get_rating_data", "get_matchup_rows", "get_matchup_index",
+        "get_character_search_index", "_ranking_profile_cached",
+        "_build_character_profile_cached", "fetch_portrait_remote",
+        "fetch_live_bounty_data",
+    ):
+        fn = globals().get(fn_name)
+        try:
+            if fn is not None and hasattr(fn, "clear"):
+                fn.clear()
+        except Exception:
+            pass
+    return True, f"Diese Lobby spielt {label}. Der Anime wird automatisch umgestellt und du wirst verbunden."
+
+
 def online_join_room(code: str, guest_name: str) -> tuple[bool, str]:
     clean = re.sub(r"[^A-Z0-9]", "", (code or "").upper())[:8]
     if len(clean) != 8:
@@ -804,8 +867,9 @@ def online_join_room(code: str, guest_name: str) -> tuple[bool, str]:
         state = envelope.get("state", {}) if isinstance(envelope, dict) else {}
         if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
             return False, "Der gespeicherte Raumzustand ist ungültig."
-        if state.get("anime_universe", "one_piece") != ACTIVE_UNIVERSE:
-            return False, "Diese Lobby gehört zum anderen Anime-Universum. Bitte wechsle zuerst im Menü das Anime-Universum."
+        room_universe = state.get("anime_universe", "one_piece")
+        if room_universe != ACTIVE_UNIVERSE:
+            return _prepare_online_join_universe_switch(room_universe, clean, guest_name)
         variant = row.get("variant", "classic")
         state["game_mode"] = "online"; state["rank_game_mode"] = "online"; state["draft_variant"] = variant
         state["players"]["B"]["name"] = guest_name.strip() or "Spieler B"
@@ -3561,6 +3625,17 @@ restore_persistent_game_state()
 migrate_saved_character_pool()
 init_game()
 rank_init_game()
+# Complete a cross-anime join only after this rerun has loaded the host's data
+# directory and initialized the matching roster/matchup matrix.
+_pending_join = st.session_state.pop("_pending_online_join", None)
+if isinstance(_pending_join, dict):
+    _join_ok, _join_message = online_join_room(
+        str(_pending_join.get("code", "")),
+        str(_pending_join.get("guest_name", "Spieler B")),
+    )
+    st.session_state["_pending_online_join_notice"] = {
+        "ok": bool(_join_ok), "message": str(_join_message),
+    }
 if st.session_state.get("draft_variant", "classic") == "ranking":
     rank_process_ai_automatic_actions()
 else:
@@ -3642,6 +3717,12 @@ with st.sidebar:
         current_mode = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
         st.button("⇄ Spieleridentitäten tauschen", key="swap_player_identities", on_click=swap_active_player_identities, disabled=current_mode in {"single", "online"}, use_container_width=True, help="Namen und Teams bleiben zusammen. Im KI- und Online-Modus deaktiviert.")
         if selected_mode == "online" or current_mode == "online":
+            _join_notice = st.session_state.pop("_pending_online_join_notice", None)
+            if isinstance(_join_notice, dict):
+                if _join_notice.get("ok"):
+                    st.success(_join_notice.get("message", "Online-Beitritt abgeschlossen."))
+                else:
+                    st.error(_join_notice.get("message", "Online-Beitritt fehlgeschlagen."))
             if not supabase_config():
                 st.warning("Online-Lobbys benötigen eine einmalige Supabase-Konfiguration. Offline und gegen KI funktioniert die App ohne Einrichtung.")
                 st.caption("Siehe ONLINE_SETUP.md und .streamlit/secrets.toml.example im Projektordner.")
@@ -3904,7 +3985,7 @@ with hero_left:
     if IS_NARUTO:
         hero_html = '''<div class="brand-row"><div class="hero-mark">忍</div><div><div class="eyebrow">THE SHINOBI AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION · NARUTO SHIPPUDEN + THE LAST · OHNE BORUTO &nbsp;·&nbsp; Stelle dein Shinobi-Team zusammen. Überbiete deinen Rivalen.</div></div></div>'''
     else:
-        hero_html = '''<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION 6.0 · ONE PIECE / NARUTO SHIPPUDEN &nbsp;·&nbsp; Stelle dein Team zusammen. Überbiete deinen Rivalen. Gewinne den Draft.</div></div></div>'''
+        hero_html = '''<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN &nbsp;·&nbsp; Stelle dein Team zusammen. Überbiete deinen Rivalen. Gewinne den Draft.</div></div></div>'''
     st.markdown(hero_html, unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
@@ -3928,7 +4009,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT · DUAL ANIME EDITION 6.0 · ONE PIECE / NARUTO SHIPPUDEN · Fan-Modell.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT · DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN · Fan-Modell.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -4188,7 +4269,7 @@ with st.container(border=True):
             st.markdown(f'<div class="result-wrap"><div class="eyebrow">GEWINN-TENDENZ · ZUSÄTZLICH ZUM PUNKTESTAND</div><h3>{safe_text(leader if leader == "Unentschieden" else leader + " liegt nach Power Level und Kontern vorn")}</h3><div style="display:flex;justify-content:space-between;gap:12px;margin:8px 0 6px"><b>{safe_text(players["A"]["name"])}: {p_a:.0f}%</b><b>{safe_text(players["B"]["name"])}: {p_b:.0f}%</b></div></div>', unsafe_allow_html=True)
             st.progress(p_a / 100, text="Modell-Tendenz aus Teamstärke, Teamchemie und zugeordneten Einzelduellen – keine objektive Siegwahrscheinlichkeit")
             st.markdown(f'<div class="analysis-note">{safe_text(battle_text(players["A"]["name"], team_a, players["B"]["name"], team_b, matchups))}</div>', unsafe_allow_html=True)
-            matrix_version = "Naruto-Matrix 1.2" if IS_NARUTO else "One-Piece-Matrix 5.1"
+            matrix_version = "Naruto-Matrix 1.3" if IS_NARUTO else "One-Piece-Matrix 5.1"
             pair_count = int(get_rating_data().get("matchup_method", {}).get("unique_pairs", len(get_matchup_rows())))
             st.caption(f"Die Einzelduell-Prognosen stammen aus der separaten {matrix_version} mit 15.000 Ergebnisziehungen pro Paarung. Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
             st.markdown("### ⚔️ Taktisches Matchmaking · Einzelduelle")
