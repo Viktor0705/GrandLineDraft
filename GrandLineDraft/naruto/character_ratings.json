@@ -1,6 +1,6 @@
 {
   "schema_version": "1.2",
-  "model_name": "Grand Line Draft · Naruto Shippuden / The Last Power Matrix 1.3 · Tierlisten-Korrektur",
+  "model_name": "Grand Line Draft · Naruto Shippuden / The Last Power Matrix 1.4 · eigenständige Bijū aus dem Draft-Pool entfernt",
   "last_reviewed": "2026-11-16",
   "anime_cutoff": "Naruto Shippuden + The Last: Naruto the Movie; no Boruto material",
   "weights": {
@@ -38,18 +38,18 @@
     "kakuzu_profile_reference": "https://www.narutohq.com/characters/kakuzu"
   },
   "review_summary": {
-    "characters": 93,
+    "characters": 89,
     "source_policy": "Canon feats and official Naruto materials prioritized; fan scaling sources used only as comparative context, not as evidence for precise numerical values.",
     "top_anchors_note": "Kaguya und Hagoromo sind auf Wunsch des Nutzers 100er-Deckenanker: Power, Chakra, Fähigkeiten, alle fünf Fivefold-Disziplinen sowie Angriff, Defensive, Tempo, Ausdauer, Kampftaktik und Chakra-Kontrolle stehen auf 100. Die gemeinsame Versiegelung Kaguyas durch Hagoromo und Hamura wird nicht als Hagoromo-Solo-Sieg ausgegeben.",
-    "unique_matchups": 4278,
+    "unique_matchups": 3916,
     "simulations_per_pair": 15000,
-    "total_simulated_fights": 64170000,
+    "total_simulated_fights": 58740000,
     "confidence_rule": "Confidence is evidence quality, not Monte Carlo sample size.",
     "date": "2026-11-16",
     "kakashi_deduplication": "Eine einzige Kakashi-Version bleibt aktiv: DMS-Peak. Die separate Kriegsbogen-Version wurde entfernt; Sakumo Hatake bleibt als Kakashis Vater eigenständig erhalten.",
     "kakuzu_sasori_order": "Kakuzu 84 > Sasori 83; Poison/Puppenspiel bleibt ein möglicher Matchup-Konter.",
     "killer_b_power": "Killer B Power Level 88; Chakra 98 und Fähigkeiten 94 bleiben separat.",
-    "screenshot_audit": "Das bereitgestellte Tierlistenbild enthält 87 sichtbare Portrait-Kacheln. Die vorherige Datenbasis enthielt 94 Naruto-Datensätze; eine vollständige 1:1-Bildzuordnung aller Kacheln ist aus dem unlabeled Screenshot nicht beweisbar. Die bestätigte Kakashi-Doppelversion wurde entfernt; weitere nicht belegte Löschungen wurden vermieden."
+    "screenshot_audit": "Das bereitgestellte Tierlistenbild enthält 87 sichtbare Portrait-Kacheln ohne Textlabels. Nach Entfernung der vier eigenständigen Bijū bleiben 89 aktive Charakterprofile; eine vollständige 1:1-Zuordnung aller sichtbaren Kacheln ist aus dem unlabeled Screenshot nicht beweisbar."
   },
   "characters": {
     "Kaguya Ōtsutsuki": {
@@ -4180,198 +4180,6 @@
       "specialty_stats": {},
       "matchup_reviewed": true
     },
-    "Kurama": {
-      "power": 96,
-      "abilities": 98,
-      "abilities_unknown": false,
-      "versatility": 100,
-      "intelligence": 88,
-      "chakra_score": 100,
-      "chakra_status": "geschätzt",
-      "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
-      "confidence": "Mittel",
-      "rationale": "96/100 Power, 100/100 Chakra und 98/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
-      "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Neunschwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-      "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
-      "combat_stats": {
-        "offense": 97,
-        "defense": 97,
-        "speed": 94,
-        "endurance": 99,
-        "battle_iq": 88,
-        "chakra_control": 100
-      },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
-      "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
-      "ranking_stats": {
-        "ninjutsu": 100,
-        "chakra": 100,
-        "taijutsu": 100,
-        "speed": 94,
-        "battle_iq": 88,
-        "evidence": {
-          "ninjutsu": "Breite und Beherrschung der Jutsu, Kekkei Genkai, Dōjutsu, Spezialeffekte und Reichweite; Fan-Schätzung.",
-          "chakra": "Relative Reserven, Kontrolle, Effizienz, Zugriff auf Bijū-/Six-Paths-Chakra; Fan-Schätzung.",
-          "taijutsu": "Nahkampf, physische Kraft, Technik und Kampfstil; Fan-Schätzung.",
-          "speed": "Reaktionszeit, Bewegung, Raum-Zeit-Techniken und Mobilität; Fan-Schätzung.",
-          "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
-        },
-        "rationale": {
-          "ninjutsu": "Neunschwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 100/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 100/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 94/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 88/100; Kampftaktik und Anpassung."
-        }
-      },
-      "specialty_stats": {},
-      "matchup_reviewed": true
-    },
-    "Son Gokū (Vier-Schwänze)": {
-      "power": 88,
-      "abilities": 94,
-      "abilities_unknown": false,
-      "versatility": 94,
-      "intelligence": 82,
-      "chakra_score": 97,
-      "chakra_status": "geschätzt",
-      "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
-      "confidence": "Mittel",
-      "rationale": "88/100 Power, 97/100 Chakra und 94/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
-      "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Vier-Schwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-      "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
-      "combat_stats": {
-        "offense": 91,
-        "defense": 92,
-        "speed": 85,
-        "endurance": 94,
-        "battle_iq": 82,
-        "chakra_control": 97
-      },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
-      "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
-      "ranking_stats": {
-        "ninjutsu": 96,
-        "chakra": 97,
-        "taijutsu": 97,
-        "speed": 85,
-        "battle_iq": 82,
-        "evidence": {
-          "ninjutsu": "Breite und Beherrschung der Jutsu, Kekkei Genkai, Dōjutsu, Spezialeffekte und Reichweite; Fan-Schätzung.",
-          "chakra": "Relative Reserven, Kontrolle, Effizienz, Zugriff auf Bijū-/Six-Paths-Chakra; Fan-Schätzung.",
-          "taijutsu": "Nahkampf, physische Kraft, Technik und Kampfstil; Fan-Schätzung.",
-          "speed": "Reaktionszeit, Bewegung, Raum-Zeit-Techniken und Mobilität; Fan-Schätzung.",
-          "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
-        },
-        "rationale": {
-          "ninjutsu": "Vier-Schwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 97/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 97/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 85/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 82/100; Kampftaktik und Anpassung."
-        }
-      },
-      "specialty_stats": {},
-      "matchup_reviewed": true
-    },
-    "Gyūki (Acht-Schwänze)": {
-      "power": 92,
-      "abilities": 97,
-      "abilities_unknown": false,
-      "versatility": 98,
-      "intelligence": 90,
-      "chakra_score": 99,
-      "chakra_status": "geschätzt",
-      "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
-      "confidence": "Mittel",
-      "rationale": "92/100 Power, 99/100 Chakra und 97/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
-      "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Acht-Schwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-      "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
-      "combat_stats": {
-        "offense": 94,
-        "defense": 94,
-        "speed": 88,
-        "endurance": 97,
-        "battle_iq": 90,
-        "chakra_control": 99
-      },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
-      "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
-      "ranking_stats": {
-        "ninjutsu": 98,
-        "chakra": 99,
-        "taijutsu": 98,
-        "speed": 88,
-        "battle_iq": 90,
-        "evidence": {
-          "ninjutsu": "Breite und Beherrschung der Jutsu, Kekkei Genkai, Dōjutsu, Spezialeffekte und Reichweite; Fan-Schätzung.",
-          "chakra": "Relative Reserven, Kontrolle, Effizienz, Zugriff auf Bijū-/Six-Paths-Chakra; Fan-Schätzung.",
-          "taijutsu": "Nahkampf, physische Kraft, Technik und Kampfstil; Fan-Schätzung.",
-          "speed": "Reaktionszeit, Bewegung, Raum-Zeit-Techniken und Mobilität; Fan-Schätzung.",
-          "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
-        },
-        "rationale": {
-          "ninjutsu": "Acht-Schwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 99/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 98/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 88/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 90/100; Kampftaktik und Anpassung."
-        }
-      },
-      "specialty_stats": {},
-      "matchup_reviewed": true
-    },
-    "Shukaku": {
-      "power": 85,
-      "abilities": 92,
-      "abilities_unknown": false,
-      "versatility": 94,
-      "intelligence": 83,
-      "chakra_score": 96,
-      "chakra_status": "geschätzt",
-      "chakra_note": "Chakra-Punkte sind relative Fan-Schätzungen zu Reserven, Kontrolle und effizienter Nutzung; Naruto kennt keine offiziellen 0–100-Chakrawerte.",
-      "confidence": "Mittel",
-      "rationale": "85/100 Power, 96/100 Chakra und 92/100 Fähigkeiten als Peak-/Prime-Fan-Schätzung innerhalb des festgelegten Naruto-Cutoffs. Manga-/Anime-Leistungen, bekannte Jutsu, Chakra-Reserven, Ausdauer, Geschwindigkeit und taktische Anpassung fließen getrennt ein. Keine Zahl ist ein offizieller Canon-Stat.",
-      "version_label": "Peak / stärkste belegte Form bis Naruto Shippuden und The Last · kein Boruto",
-      "ability_summary": "Einschwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-      "evidence_basis": "Quellenbasis: Naruto-Manga und -Anime bis Kriegsende, Film The Last; offizielle Naruto-Website-Zusammenfassungen, Kapitelhinweise und offizielle Charakter-/Jubiläumskolumnen. Zahlen sind Fan-Schätzwerte, keine offiziellen Werte.",
-      "combat_stats": {
-        "offense": 88,
-        "defense": 90,
-        "speed": 80,
-        "endurance": 93,
-        "battle_iq": 83,
-        "chakra_control": 96
-      },
-      "weaknesses": "Wie bei jeder Fan-Bewertung gilt: nicht alle direkten Matchups wurden im Werk gezeigt; Formdauer, Vorbereitung und Kampfumgebung können das Ergebnis verändern.",
-      "rating_type": "Fan-Modell auf Manga-/Anime-Feats bis The Last; Zahlen nicht offiziell",
-      "ranking_stats": {
-        "ninjutsu": 97,
-        "chakra": 96,
-        "taijutsu": 90,
-        "speed": 80,
-        "battle_iq": 83,
-        "evidence": {
-          "ninjutsu": "Breite und Beherrschung der Jutsu, Kekkei Genkai, Dōjutsu, Spezialeffekte und Reichweite; Fan-Schätzung.",
-          "chakra": "Relative Reserven, Kontrolle, Effizienz, Zugriff auf Bijū-/Six-Paths-Chakra; Fan-Schätzung.",
-          "taijutsu": "Nahkampf, physische Kraft, Technik und Kampfstil; Fan-Schätzung.",
-          "speed": "Reaktionszeit, Bewegung, Raum-Zeit-Techniken und Mobilität; Fan-Schätzung.",
-          "battle_iq": "Taktik im Kampf, Anpassung, Analyse und Nutzung von Schwächen; Fan-Schätzung."
-        },
-        "rationale": {
-          "ninjutsu": "Einschwänziger. Bewertung berücksichtigt die dargestellten Jutsu, besonderen Fähigkeiten und den stärksten belegten Zustand bis einschließlich The Last.",
-          "chakra": "Chakra 96/100 als relative Fan-Einordnung.",
-          "taijutsu": "Taijutsu 90/100 aus belegtem Nahkampf- und Technikprofil.",
-          "speed": "Geschwindigkeit 80/100 aus Reaktionen und Mobilität.",
-          "battle_iq": "Battle IQ 83/100; Kampftaktik und Anpassung."
-        }
-      },
-      "specialty_stats": {},
-      "matchup_reviewed": true
-    },
     "Might Duy": {
       "power": 73,
       "abilities": 81,
@@ -4518,10 +4326,10 @@
     }
   },
   "matchup_method": {
-    "version": "Naruto-Matrix 1.3 · 93-character recalibration",
-    "unique_pairs": 4278,
+    "version": "Naruto-Matrix 1.4 · 89-character roster (standalone Bijū excluded)",
+    "unique_pairs": 3916,
     "simulations_per_pair": 15000,
-    "total_simulated_fights": 64170000,
+    "total_simulated_fights": 58740000,
     "model": "Power Level, Chakra, abilities, versatility, offense, defense, speed, endurance and Battle IQ; matchup-specific counterplay remains limited and evidence-based.",
     "probability_floor": "0.05% to 99.95%; not a guaranteed outcome.",
     "manga_cutoff": "Naruto Shippuden + The Last: Naruto the Movie; no Boruto"

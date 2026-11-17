@@ -27,9 +27,9 @@ def test_two_universes_have_independent_complete_rosters_and_matchups():
     op_rows = read_gzip_json(BASE / "matchup_results.json.gz")
     naruto_rows = read_gzip_json(BASE / "naruto" / "matchup_results.json.gz")
     assert len(one_piece) == 140
-    assert len(naruto) == 93
+    assert len(naruto) == 89
     assert len(op_rows) == 140 * 139 // 2
-    assert len(naruto_rows) == 93 * 92 // 2
+    assert len(naruto_rows) == 89 * 88 // 2
     assert len({pair_key(row) for row in op_rows}) == len(op_rows)
     assert len({pair_key(row) for row in naruto_rows}) == len(naruto_rows)
     assert all(row["simulations_per_pair"] == 15000 for row in op_rows + naruto_rows)
@@ -39,7 +39,7 @@ def test_universe_ids_do_not_overlap():
     op_ids = {int(item["id"]) for item in read_json(BASE / "characters.json")}
     naruto_ids = {int(item["id"]) for item in read_json(BASE / "naruto" / "characters.json")}
     assert len(op_ids) == 140
-    assert len(naruto_ids) == 93
+    assert len(naruto_ids) == 89
     assert op_ids.isdisjoint(naruto_ids)
 
 
@@ -57,8 +57,8 @@ def test_tierlist_identity_and_order_corrections():
     ratings = read_json(BASE / "naruto" / "character_ratings.json")["characters"]
     names = [item["name"] for item in roster]
     ids = [int(item["id"]) for item in roster]
-    assert len(names) == len(set(names)) == 93
-    assert len(ids) == len(set(ids)) == 93
+    assert len(names) == len(set(names)) == 89
+    assert len(ids) == len(set(ids)) == 89
     # The apparent extra War-Arc Kakashi tile was not confirmed as a separate Kakashi version.
     # Keep Sakumo as his own character and Kakashi only at the user's DMS peak.
     assert "Kakashi Hatake (Kriegsbogen)" not in names
@@ -99,7 +99,7 @@ def test_user_requested_naruto_anchor_values_are_preserved():
 def test_naruto_fivefold_has_five_distinct_categories():
     ratings = read_json(BASE / "naruto" / "character_ratings.json")["characters"]
     required = {"ninjutsu", "chakra", "taijutsu", "speed", "battle_iq"}
-    assert len(ratings) == 93
+    assert len(ratings) == 89
     for character in ratings.values():
         stats = character["ranking_stats"]
         assert required.issubset(stats)
@@ -227,3 +227,21 @@ def test_remaining_user_stated_naruto_anchors_are_present():
     for name, values in expected.items():
         p = ratings[name]
         assert (p["power"], p["chakra_score"], p["abilities"]) == values
+
+
+
+def test_naruto_roster_excludes_standalone_bijuu_but_keeps_jinchuriki_and_summons():
+    names = {item["name"] for item in read_json(BASE / "naruto" / "characters.json")}
+    standalone_bijuu = {"Kurama", "Son Gokū (Vier-Schwänze)", "Gyūki (Acht-Schwänze)", "Shukaku"}
+    assert names.isdisjoint(standalone_bijuu)
+    retained = {
+        "Naruto Uzumaki (The Last)", "Killer B", "Yugito Nii", "Yagura Karatachi",
+        "Rōshi", "Han", "Utakata", "Fū", "Gaara (Vierter Shinobi-Krieg)",
+        "Madara Uchiha (Jūbi-Jinchūriki)", "Obito Uchiha (Jūbi-Jinchūriki)",
+        "Manda", "Gamabunta",
+    }
+    assert retained.issubset(names)
+    ratings = read_json(BASE / "naruto" / "character_ratings.json")
+    assert set(ratings["characters"]) == names
+    assert ratings["review_summary"]["unique_matchups"] == 89 * 88 // 2
+    assert ratings["matchup_method"]["total_simulated_fights"] == (89 * 88 // 2) * 15000

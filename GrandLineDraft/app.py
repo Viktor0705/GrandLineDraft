@@ -48,7 +48,7 @@ def http_session() -> requests.Session:
     return session
 
 st.set_page_config(
-    page_title="Grand Line Draft · Dual Anime Edition 6.0.2",
+    page_title="Grand Line Draft · Dual Anime Edition 6.0.3",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -79,7 +79,7 @@ AUTOSAVE_FILE = SAVE_DIR / "autosave.json"
 PORTRAIT_LINKS_FILE = BASE_DIR / "portrait_links.json"
 API_BASE = None if IS_NARUTO else "https://onepieceapi.com/api/characters"
 FANDOM_API = "https://naruto.fandom.com/api.php" if IS_NARUTO else "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/6.0.2 (dual-anime fan game; isolated One Piece and Naruto datasets)"
+USER_AGENT = "GrandLineDraft/6.0.3 (dual-anime fan game; isolated One Piece and Naruto datasets)"
 PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Local custom component: animation and drag-and-drop run in the browser rather
@@ -1205,7 +1205,11 @@ def image_as_jpeg(content: bytes) -> bytes | None:
     try:
         image = Image.open(io.BytesIO(content))
         image.verify()
-        image = Image.open(io.BytesIO(content)).convert("RGB")
+        image = Image.open(io.BytesIO(content)).convert("RGBA")
+        # Keep transparent cut-outs clean when normalizing the shared portrait library to JPEG.
+        matte = Image.new("RGBA", image.size, (9, 21, 33, 255))
+        matte.alpha_composite(image)
+        image = matte.convert("RGB")
         if image.width < 80 or image.height < 80:
             return None
         image.thumbnail((620, 800))
@@ -1372,12 +1376,16 @@ def cloud_portraits_for_characters(characters: list[dict[str, Any]]) -> dict[str
 
 @st.cache_data(show_spinner=False, max_entries=512)
 def _portrait_thumbnail(image_bytes: bytes, max_width: int = 300, max_height: int = 380) -> bytes:
-    """Create compact card thumbnails, retaining the full-resolution portrait for detail views."""
+    """Create a consistent 3:4 card tile without cropping off character details."""
     try:
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        image.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+        source = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        source.thumbnail((max_width - 12, max_height - 12), Image.Resampling.LANCZOS)
+        canvas = Image.new("RGB", (max_width, max_height), (9, 21, 33))
+        x = (max_width - source.width) // 2
+        y = (max_height - source.height) // 2
+        canvas.paste(source, (x, y))
         output = io.BytesIO()
-        image.save(output, format="JPEG", quality=76, optimize=True, progressive=True)
+        canvas.save(output, format="JPEG", quality=88, optimize=True)
         return output.getvalue()
     except Exception:
         return image_bytes
@@ -3943,7 +3951,7 @@ with st.sidebar:
             st.caption("Hinweis: In der Cloud-App sieht der Server nur Dateien, die im GitHub-Repository enthalten sind oder über dieses Upload-Feld importiert wurden. Lokale Bilder auf deinem PC müssen daher einmal als ZIP hochgeladen werden.")
 
     st.divider()
-    if st.button(f"🖼 Alle {len(get_characters())} Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
+    if st.button(f"🖼 Alle {len(get_characters())} Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Narutopedia-/Wiki-Seiten, lädt erreichbare Porträts und speichert sie gesammelt. Bei eingerichteter Cloud-Bilddatenbank werden die gefundenen Bilder anschließend zu Supabase Storage übertragen."):
         bar = st.progress(0, text="Bildquellen werden geprüft …")
         def update_portrait_progress(fraction):
             bar.progress(min(1.0, max(0.0, fraction)), text=f"Bildquellen geprüft: {round(fraction * len(get_characters()))}/{len(get_characters())} …")
@@ -3958,6 +3966,19 @@ with st.sidebar:
                 st.write(", ".join(missing))
         else:
             st.caption("Alle Figuren haben ein echtes Porträt lokal im Ordner portraits/.")
+        if supabase_config():
+            schema_ok, _schema_message = cloud_portrait_schema_ready()
+            if schema_ok:
+                local_items = local_portrait_items()
+                with st.spinner(f"{len(local_items)} lokale Porträts werden mit Supabase Storage synchronisiert …"):
+                    uploaded_count, upload_errors = upload_cloud_portraits(local_items)
+                if uploaded_count:
+                    st.success(f"Zusätzlich {uploaded_count} Porträts in Supabase Storage gespeichert; sie stehen damit geräteübergreifend bereit.")
+                if upload_errors:
+                    st.warning("Cloud-Synchronisierung: " + " · ".join(upload_errors[:5]))
+            else:
+                st.info("Die Porträts wurden lokal gespeichert. Für automatische Cloud-Synchronisierung zuerst cloud_portraits_schema.sql in Supabase ausführen.")
+        st.caption("Hinweis: Narutopedia-/Fandom-Bilddateien sind nicht automatisch zur Weiterveröffentlichung freigegeben. Bitte die Lizenz jeder Datei prüfen; für öffentliche Verteilung nur eigene oder ausdrücklich freigegebene Bilder verwenden.")
     if st.session_state.get("portrait_status"):
         status_vals = list(st.session_state.portrait_status.values())
         real_count = sum(1 for v in status_vals if not str(v).startswith("Ersatzporträt"))
@@ -3985,7 +4006,7 @@ with hero_left:
     if IS_NARUTO:
         hero_html = '''<div class="brand-row"><div class="hero-mark">忍</div><div><div class="eyebrow">THE SHINOBI AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION · NARUTO SHIPPUDEN + THE LAST · OHNE BORUTO &nbsp;·&nbsp; Stelle dein Shinobi-Team zusammen. Überbiete deinen Rivalen.</div></div></div>'''
     else:
-        hero_html = '''<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN &nbsp;·&nbsp; Stelle dein Team zusammen. Überbiete deinen Rivalen. Gewinne den Draft.</div></div></div>'''
+        hero_html = '''<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION 6.0.3 · ONE PIECE / NARUTO SHIPPUDEN &nbsp;·&nbsp; Stelle dein Team zusammen. Überbiete deinen Rivalen. Gewinne den Draft.</div></div></div>'''
     st.markdown(hero_html, unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
@@ -4009,7 +4030,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT · DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN · Fan-Modell.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT · DUAL ANIME EDITION 6.0.3 · ONE PIECE / NARUTO SHIPPUDEN · Fan-Modell.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -4269,7 +4290,7 @@ with st.container(border=True):
             st.markdown(f'<div class="result-wrap"><div class="eyebrow">GEWINN-TENDENZ · ZUSÄTZLICH ZUM PUNKTESTAND</div><h3>{safe_text(leader if leader == "Unentschieden" else leader + " liegt nach Power Level und Kontern vorn")}</h3><div style="display:flex;justify-content:space-between;gap:12px;margin:8px 0 6px"><b>{safe_text(players["A"]["name"])}: {p_a:.0f}%</b><b>{safe_text(players["B"]["name"])}: {p_b:.0f}%</b></div></div>', unsafe_allow_html=True)
             st.progress(p_a / 100, text="Modell-Tendenz aus Teamstärke, Teamchemie und zugeordneten Einzelduellen – keine objektive Siegwahrscheinlichkeit")
             st.markdown(f'<div class="analysis-note">{safe_text(battle_text(players["A"]["name"], team_a, players["B"]["name"], team_b, matchups))}</div>', unsafe_allow_html=True)
-            matrix_version = "Naruto-Matrix 1.3" if IS_NARUTO else "One-Piece-Matrix 5.1"
+            matrix_version = "Naruto-Matrix 1.4" if IS_NARUTO else "One-Piece-Matrix 5.1"
             pair_count = int(get_rating_data().get("matchup_method", {}).get("unique_pairs", len(get_matchup_rows())))
             st.caption(f"Die Einzelduell-Prognosen stammen aus der separaten {matrix_version} mit 15.000 Ergebnisziehungen pro Paarung. Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
             st.markdown("### ⚔️ Taktisches Matchmaking · Einzelduelle")

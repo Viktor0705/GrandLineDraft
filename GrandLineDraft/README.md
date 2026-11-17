@@ -1,4 +1,4 @@
-# Grand Line Draft · Dual Anime Edition 6.0.2
+# Grand Line Draft · Dual Anime Edition 6.0.3
 
 Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece** und **Naruto Shippuden**. Der Name und das Auktions-/Draft-Prinzip bleiben erhalten. Charaktere, Bewertungen, Matchups und Spielstände sind pro Universum getrennt. Naruto endet bei **Naruto Shippuden + The Last: Naruto the Movie**; **Boruto ist ausgeschlossen**.
 
@@ -7,10 +7,10 @@ Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece*
 | Universum | Figuren | Eindeutige Matchups | Ziehungen je Paar | Modellziehungen gesamt |
 |---|---:|---:|---:|---:|
 | One Piece · Manga bis Kapitel 1198 (08.11.2026) | 140 | 9.730 | 15.000 | 145.950.000 |
-| Naruto Shippuden + The Last | 93 | 4.278 | 15.000 | 64.170.000 |
-| **Gesamt** | **233** | **14.008** | — | **210.120.000** |
+| Naruto Shippuden + The Last | 89 | 3.916 | 15.000 | 58.740.000 |
+| **Gesamt** | **229** | **13.646** | — | **204.690.000** |
 
-Die Ziehungen sind aggregierte Binomial-Monte-Carlo-Stichproben aus dem Matchup-Modell. Sie sind keine 211,5 Millionen kanonischen Kämpfe und machen eine Fan-Schätzung nicht zu einer offiziellen Rangliste.
+Die Ziehungen sind aggregierte Binomial-Monte-Carlo-Stichproben aus dem Matchup-Modell. Sie sind keine 204,69 Millionen kanonischen Kämpfe und machen eine Fan-Schätzung nicht zu einer offiziellen Rangliste.
 
 ## Windows-Start
 
@@ -55,7 +55,7 @@ Unbekannte Werte bleiben sichtbar als `?`; für die Mittelwertbildung wird ein n
 
 ## Naruto-Bewertungsanker
 
-Die aktive Naruto-Datenbank enthält 93 Profile. Das bereitgestellte, nicht beschriftete Tierlistenbild zeigt 87 sichtbare Portrait-Kacheln. Eine vollständige 1:1-Namenszuordnung der Kacheln ist daraus nicht zweifelsfrei möglich; nach dem Identitätscheck wurde die unbestätigte zusätzliche Kakashi-Kriegsbogen-Variante entfernt, Sakumo bleibt eigenständig. Weitere Figuren wurden nicht ohne sichere Zuordnung gelöscht. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
+Die aktive Naruto-Datenbank enthält 89 Profile. Die vier eigenständigen Bijū Kurama, Son Gokū, Gyūki und Shukaku wurden aus dem Draft-Pool entfernt. Menschliche Jinchūriki wie Naruto, Killer B, Gaara und Yugito bleiben enthalten; ebenso Beschwörungen wie Manda und Gamabunta. Das bereitgestellte, nicht beschriftete Tierlistenbild zeigt 87 sichtbare Portrait-Kacheln; eine vollständige 1:1-Namenszuordnung ist daraus nicht zweifelsfrei möglich. Die Kakashi-/Sakumo-Identitätskorrektur bleibt unverändert. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
 
 | Figur / Peak-Form | Power | Chakra | Fähigkeiten |
 |---|---:|---:|---:|
@@ -96,7 +96,13 @@ Die hochgeladene 5.0.4-Datenbank mit 135 Charakteren wurde beibehalten und um f�
 - Die Wahrscheinlichkeitskurve ist steil genug, damit extreme Leistungsunterschiede keine absurden Upsets mit mehreren Prozentpunkten erzeugen. Ein minimaler Rest bleibt, weil Modellwahrscheinlichkeiten keine absolute Kanon-Wahrheit darstellen.
 - Konfidenz beschreibt die Quellen- und Feat-Sicherheit, nicht die Zahl der Monte-Carlo-Stichproben.
 
-## Tierlisten-Korrekturen 6.0.2
+## Änderungen 6.0.3
+
+- Die vier eigenständigen Bijū Kurama, Son Gokū, Gyūki und Shukaku sind aus dem Naruto-Draft-Pool entfernt. Jinchūriki und Beschwörungen bleiben erhalten.
+- Naruto umfasst jetzt 89 Profile und 3.916 Matchups.
+- Der Sammelimport kann nach dem automatischen Porträt-Abruf direkt nach Supabase synchronisieren; Vorschaukacheln sind einheitlich 3:4.
+
+## Historische Tierlisten-Korrekturen 6.0.2
 
 - Kakashi ist nur als DMS-Peak vertreten; der unbestätigte zusätzliche Kriegsbogen-Datensatz wurde entfernt. Sakumo Hatake bleibt eine eigenständige Person und nicht eine Kakashi-Variante.
 - Kakuzu steht mit Power 84 leicht über Sasori (83). Sasoris Gift und Puppen bleiben ein situativer Matchup-Vorteil.
@@ -106,9 +112,15 @@ Die hochgeladene 5.0.4-Datenbank mit 135 Charakteren wurde beibehalten und um f�
 
 Für den Online-Modus siehe `ONLINE_SETUP.md`. Beim Beitritt übernimmt der Gast automatisch das Anime-Universum des Hosts (einschließlich Wechsel der getrennten Datenbank und Spielstand-Umgebung). `.streamlit/secrets.toml` ist absichtlich nicht Bestandteil des ZIPs. Eigene Supabase-Secrets bleiben lokal bzw. als sichere Hosting-Secrets. Niemals einen `service_role`-Key in GitHub oder in eine clientseitige Datei hochladen.
 
+## Sammelimport von Charakterporträts
+
+Wähle Naruto in der Sidebar und starte **„Alle 89 Bildquellen prüfen & Porträts lokal speichern“**. Die App fragt die exakten `wiki_slug`-Seiten bei Narutopedia ab und lädt vorhandene Seiten-Thumbnails gesammelt herunter; nicht auffindbare Bilder werden am Ende aufgelistet. Wenn Supabase konfiguriert ist und `cloud_portraits_schema.sql` eingerichtet wurde, synchronisiert die App die geladenen Bilder direkt im Anschluss mit Supabase Storage. So ist kein einzelnes Einfügen je Charakter nötig.
+
+Die Karten-Vorschau verwendet ein einheitliches 3:4-Format und beschneidet Figuren nicht aggressiv. Die Bildbibliothek normalisiert Dateien zu JPG; bereits transparente Quelldateien werden dabei sauber auf den dunklen App-Hintergrund gelegt, aber nicht als echte transparente PNG-Datei gespeichert. Narutopedia/Fandom-Bilddateien sind zudem nicht automatisch zur Weiterveröffentlichung lizenziert; Fandom weist ausdrücklich darauf hin, dass Bilder nicht automatisch dieselbe Lizenz wie Wiki-Text haben. Für öffentliche Verteilung bitte die Lizenz der einzelnen Datei prüfen oder eigene/freigegebene Grafiken verwenden.
+
 ## Charakterbilder und Backups
 
-Die Porträts liegen gemeinsam unter `portraits/`; die One-Piece-IDs und Naruto-IDs überschneiden sich nicht. Naruto-IDs mit vier Ziffern werden vom Bildarchiv-Importer unterstützt. Portables Backup umfasst beide Anime-Datenbanken und beide getrennten Autosaves. Die Cloud-Bilderbibliothek bleibt privat und erfordert `cloud_portraits_schema.sql`.
+Die Porträts liegen gemeinsam unter `portraits/`; die One-Piece-IDs und Naruto-IDs überschneiden sich nicht. Naruto-IDs mit vier Ziffern werden vom Bildarchiv-Importer unterstützt. Im Menü kann die Sammelprüfung alle Charakterporträts anhand der exakten Wiki-Seiten abrufen; bei konfigurierter Cloud-Bilderdatenbank werden die gefundenen Porträts anschließend gesammelt nach Supabase Storage übertragen. Die Vorschau-Kacheln verwenden ein einheitliches 3:4-Format ohne aggressive Bildbeschneidung. Narutopedia-/Fandom-Bilder sind nicht automatisch für Weiterveröffentlichung lizenziert; die Lizenz jeder Datei muss separat geprüft werden. Portables Backup umfasst beide Anime-Datenbanken und beide getrennten Autosaves. Die Cloud-Bilderbibliothek bleibt privat und erfordert `cloud_portraits_schema.sql`.
 
 ## Tests
 

@@ -1,13 +1,13 @@
 {
   "universe": "Naruto Shippuden + The Last; Boruto excluded",
-  "characters": 93,
-  "unique_matchups": 4278,
+  "characters": 89,
+  "unique_matchups": 3916,
   "simulations_per_matchup": 15000,
-  "total_simulated_fights": 64170000,
+  "total_simulated_fights": 58740000,
   "seed": 20261116,
   "important_note": "All score numbers are original fan-model estimates. Canon sources establish feats and abilities, not official numerical 0-100 stats.",
   "tierlist_screenshot_visible_portraits": 87,
-  "tierlist_mapping_note": "The supplied image has no text labels; 87 visible portraits were counted. Do not treat the 93 remaining character profiles as a fully verified one-to-one label transcription.",
+  "tierlist_mapping_note": "Das bereitgestellte Bild hat keine Textlabels; 87 sichtbare Portrait-Kacheln wurden gezählt. Nach dem Entfernen der vier eigenständigen Bijū bleiben 89 aktive Profile; eine vollständige 1:1-Zuordnung aller Kacheln ist nicht nachweisbar.",
   "special_matchups": [
     {
       "pair": [
