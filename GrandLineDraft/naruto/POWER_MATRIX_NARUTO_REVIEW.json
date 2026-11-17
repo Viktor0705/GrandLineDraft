@@ -1,0 +1,112 @@
+{
+  "universe": "Naruto Shippuden + The Last; Boruto excluded",
+  "characters": 93,
+  "unique_matchups": 4278,
+  "simulations_per_matchup": 15000,
+  "total_simulated_fights": 64170000,
+  "seed": 20261116,
+  "important_note": "All score numbers are original fan-model estimates. Canon sources establish feats and abilities, not official numerical 0-100 stats.",
+  "tierlist_screenshot_visible_portraits": 87,
+  "tierlist_mapping_note": "The supplied image has no text labels; 87 visible portraits were counted. Do not treat the 93 remaining character profiles as a fully verified one-to-one label transcription.",
+  "special_matchups": [
+    {
+      "pair": [
+        "Hidan",
+        "Shikamaru Nara (Kriegsbogen)"
+      ],
+      "favored": "Shikamaru Nara (Kriegsbogen)",
+      "modifier": 14,
+      "reason": "Shikamarus bekannte Schatten-/Ritual-Konterstrategie gibt ihm mit Vorbereitung einen taktischen Vorteil; ohne Vorbereitung wäre das Duell deutlich enger."
+    },
+    {
+      "pair": [
+        "Itachi Uchiha (Edo Tensei)",
+        "Kabuto Yakushi (Sennin-Modus)"
+      ],
+      "favored": "Itachi Uchiha (Edo Tensei)",
+      "modifier": 4,
+      "reason": "Izanami war ein spezifischer, vorbereiteter Siegweg gegen Kabutos Selbstbild; kein automatischer Vorteil in jedem offenen Kampf."
+    },
+    {
+      "pair": [
+        "Naruto Uzumaki (The Last)",
+        "Toneri Ōtsutsuki"
+      ],
+      "favored": "Naruto Uzumaki (The Last)",
+      "modifier": 5,
+      "reason": "The Last zeigt Narutos Sieg im direkten Endkampf; Toneris Tenseigan-Modus bleibt gefährlich und der Bonus ist daher begrenzt."
+    },
+    {
+      "pair": [
+        "Madara Uchiha (Jūbi-Jinchūriki)",
+        "Might Guy (Acht Tore)"
+      ],
+      "favored": "Might Guy (Acht Tore)",
+      "modifier": 5,
+      "reason": "Night Guy verletzte Jūbi-Madara schwer und brachte ihn beinahe um. Der Bonus bleibt begrenzt, da Guy Unterstützung brauchte und das Acht-Tore-Fenster tödlich kurz ist."
+    },
+    {
+      "pair": [
+        "Deidara",
+        "Sasuke Uchiha (The Last)"
+      ],
+      "favored": "Sasuke Uchiha (The Last)",
+      "modifier": 5,
+      "reason": "Sasukes Blitz-Ninjutsu ist ein belegter Konter gegen Deidaras explosiven Ton."
+    },
+    {
+      "pair": [
+        "Chiyo",
+        "Sasori"
+      ],
+      "favored": "Chiyo",
+      "modifier": 4,
+      "reason": "Chiyo kennt Sasoris Puppenspiel und Giftmethoden aus nächster Nähe; begrenzter Wissens- und Matchup-Vorteil."
+    },
+    {
+      "pair": [
+        "Jiraiya (Sennin-Modus)",
+        "Pain (Sechs Pfade)"
+      ],
+      "favored": "Pain (Sechs Pfade)",
+      "modifier": 3,
+      "reason": "Pains gemeinsames Sichtfeld und sechs Körper erschweren Jiraiyas Informationsgewinn; Jiraiyas Wissen verhindert einen großen Bonus."
+    },
+    {
+      "pair": [
+        "Hashirama Senju (Prime)",
+        "Madara Uchiha (Jūbi-Jinchūriki)"
+      ],
+      "favored": "Madara Uchiha (Jūbi-Jinchūriki)",
+      "modifier": 6,
+      "reason": "Peak-Formenvergleich: Madaras Jūbi-Power-up geht über die historische Rivalität hinaus."
+    },
+    {
+      "pair": [
+        "Killer B",
+        "Kisame Hoshigaki"
+      ],
+      "favored": "Kisame Hoshigaki",
+      "modifier": 2,
+      "reason": "Samehada kann Chakra absorbieren und ist gegen einen Jinchūriki gefährlich; Killer Bs Bijū-Synchronisation und Kenjutsu halten das Duell eng."
+    },
+    {
+      "pair": [
+        "Minato Namikaze (KCM · Edo)",
+        "Obito Uchiha (Jūbi-Jinchūriki)"
+      ],
+      "favored": "Obito Uchiha (Jūbi-Jinchūriki)",
+      "modifier": 2,
+      "reason": "Jūbi-Chakra und Truth-Seeking Orbs übersteigen Minatos gewöhnliches Kamui-Matchup; Minatos Hiraishin bleibt relevant."
+    },
+    {
+      "pair": [
+        "Kakuzu",
+        "Sasori"
+      ],
+      "favored": "Kakuzu",
+      "modifier": 2.0,
+      "reason": "Kakuzu liegt im Gesamtprofil leicht vor Sasori: fünf Herzen, mehrere Elementnaturen und hohe Ausdauer. Sasoris Gift und Puppenarsenal bleiben ein gefährliches Konterfenster, besonders mit Vorbereitung oder passender Distanz."
+    }
+  ]
+}

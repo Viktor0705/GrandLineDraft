@@ -1,36 +1,40 @@
-# Grand Line Draft 5.1 — Manga- und Matchup-Review
+# One Piece Power Matrix 5.1 · 16.11.2026
 
-**Basis:** vom Nutzer bereitgestellte vollständige Version 5.0.4.
-**Stichtag:** Kapitel 1198 (deutsche Veröffentlichung 09.11.2026).
-**Pool:** 140 eindeutige Charaktere; 9.730 eindeutige Paarungen.
+**Umfang:** 140 Charaktere, 9.730 eindeutige Matchups, je 15.000 aggregierte Binomial-Monte-Carlo-Ziehungen. Manga-Stichtag: **Kapitel 1198, 08.11.2026**. Alle Bewertungen sind Fan-Modellschätzungen, keine offiziellen Oda-Werte.
 
-## Wesentliche Änderungen
+## Datenbasis und Änderungen
 
-- Monkey D. Luffy: Power Level **96**. Kapitel 1198 zeigt eine neue dunkle, affenartig wirkende Nika-Manifestation. Der Manga benennt sie nicht als Gear 6; Kontrolle und Grenzen bleiben offen.
-- Ethanbaron V. Nusjuro: Gesamt-Haki **93**; Observation 91, Armament 93, Conqueror 94. Alle drei Arten sind durch konkrete Egghead-Szenen belegt.
-- Gecko Moria: **89 Power in seiner Prime**. Frühere Rivalität mit Kaido wird anerkannt; Kaido gewann, und der Kampf ist nicht vollständig gezeigt. Niedrige Evidenz-Konfidenz bleibt sichtbar.
-- Fünf neue Karten: Gecko Moria, Kyros, Ashura Doji, Vergo und Kawamatsu.
-- Katakuri bleibt unverändert bei Power 89 und Haki 89 (Observation 98, Armament 89, Conqueror 80).
+Die hochgeladene Grand-Line-Draft-5.0.4-Datenbank mit 135 Figuren und ihren Charakter-IDs wurde vollständig erhalten. Fünf Figuren wurden ergänzt: **Kyros, Ashura Doji, Gecko Moria (Prime), Vergo und Kanjuro**. Damit umfasst die One-Piece-Welt 140 Charaktere.
 
-## Matchup-Logik
+| Figur | Power | Haki | Fähigkeiten | Einordnung |
+|---|---:|---:|---:|---|
+| Monkey D. Luffy | 96 | 100 | 100 | Kapitel 1198: neue dunkle, affenartig dargestellte Nika-Form berücksichtigt; noch nicht offiziell Gear 6 genannt. |
+| Ethanbaron V. Nusjuro | 93 | 93 | 98 | Haki mit Observation, Armament und Conqueror als drei Teilwerte ergänzt; konkrete Zahlen bleiben Fan-Schätzungen. |
+| Charlotte Katakuri | 89 | 89 | 95 | Haki: Observation 98, Armament 89, Conqueror 80. |
+| Gecko Moria (Prime) | 89 | unbekannt | 91 | Prime-Schätzung; frühere Rivalität mit Kaido ist bekannt, der konkrete Kampf ist nicht vollständig gezeigt. Niedrige Konfidenz. |
+| Kyros | 78 | unbekannt | 78 | Neuer Charakter aus dem Dressrosa-Arc. |
+| Ashura Doji | 87 | 87 | 88 | Neuer Charakter; Haki-Feats und Kampf gegen Kaido berücksichtigt. |
+| Vergo | 82 | 85 | 83 | Neuer Charakter; starke Rüstungshaki-Anwendung und Ganzkörperhärtung berücksichtigt. |
+| Kanjuro | 80 | unbekannt | 90 | Neuer Charakter; gefährliche Zeichenfrucht/Kunsttechnik, aber Kontext und Grenzen werden im Kampfmodell getrennt bewertet. |
 
-Alle 9.730 Paarungen wurden vollständig neu aus den Charakterprofilen berechnet; die alten Wahrscheinlichkeitswerte wurden nicht als Prior übernommen. Die gewichtete Duel-Rating-Differenz wird in eine logistische Gewinnwahrscheinlichkeit mit 5,5-Punkte-Skalierung übersetzt. Bekannte Konter (z. B. Luffy/Enel, Sanjis Angriffsbeschränkung, Usopp/Perona) bleiben als begrenzte, benannte Modifikatoren erhalten. Shanks/Mihawk ist bewusst ein offenes 50:50-Spitzenduell; Kaido bleibt in einem langen, gesunden 1v1 knapp vor Luffy.
+## Matchup-Methodik
 
-Pro Paarung werden 15.000 reproduzierbare aggregierte Binomialziehungen gespeichert (**145.950.000 insgesamt**). Die Ziehungen stabilisieren die Schätzung, sie sind keine Manga-Kämpfe und machen einen niedrigen Evidenzgrad nicht hoch. Die Modellwahrscheinlichkeit wird auf 0,05–99,95 % begrenzt, sodass kein Sieg als mathematisch garantiert gilt.
+- Die 140 Figuren ergeben 9.730 eindeutige Paarungen.
+- Die Wahrscheinlichkeiten kombinieren Power Level, bestätigtes Haki, Fähigkeiten, Vielseitigkeit und kampfrelevante Teilwerte.
+- Spezifische Konter bleiben begrenzt; sie ersetzen keine allgemeine Kampfkraft.
+- Bei deutlichem Stärkeabstand sind unerklärliche Upsets stark reduziert, aber nicht mathematisch unmöglich. Enge Duelle wie Shanks gegen Mihawk bleiben nahe 50:50.
+- 15.000 Ziehungen je Paarung stabilisieren den Modellwert; sie sind keine tatsächlichen oder kanonischen Kämpfe.
 
-## Moria-Einordnung
+## Grenzen
 
-Moria wird ausdrücklich in seiner Prime bewertet, nicht als der durch den Verlust seiner Crew gebrochene Thriller-Bark-Kapitän. Die Überlieferung nennt ihn einen früheren Rivalen Kaidos; die Niederlage und die fehlende vollständige Darstellung verhindern aber eine Gleichstellung mit Kaido (96).
+Die 0–100-Werte sind keine offiziellen Manga- oder Databook-Statistiken. Die Datenlage zu Prime-Moria ist besonders unsicher: Die frühere Auseinandersetzung mit Kaido wird rückblickend erwähnt, aber nicht vollständig gezeigt; Power 89 ist deshalb ein vorsichtiger Schätzwert und keine Behauptung, Moria sei Kaido ebenbürtig gewesen.
 
-## Quellen
+Vollständige Tabellen: `POWER_MATRIX_V5_RANKINGS.csv` und `POWER_MATRIX_V5_MATCHUPS.csv`. Vollständige strukturierte Daten: `character_ratings.json` und `matchup_results.json.gz`.
 
-- Offizielle Kapitelübersicht / Kapitel 1198: https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52163
-- Aktuelle Kapitel: https://opwiki.org/wiki/Aktuelle_Kapitel
-- Nusjuro: https://opwiki.org/wiki/Ethanbaron_V._Nusjuro
-- Moria: https://opwiki.org/wiki/Gecko_Moria ; https://one-piece.com/75622/index.html ; https://onepiece.fandom.com/wiki/Chapter_483
-- Ashura Doji: https://onepiece.fandom.com/wiki/Ashura_Doji
-- Kyros: https://onepiece.fandom.com/wiki/Kyros
-- Vergo: https://www.grandlinearchives.com/characters/vergo
-- Kawamatsu: https://onepiece.fandom.com/wiki/Kawamatsu
+## Referenzen
 
-Alle numerischen Werte sind Fan-Modellschätzungen, keine offiziellen Oda-Statistiken.
+- [Offizielle One-Piece-Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece)
+- [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52017)
+- [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel)
+- [One Piece Wiki – Haki](https://onepiece.fandom.com/wiki/Haki), [Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Gecko Moria](https://onepiece.fandom.com/wiki/Gecko_Moria), [Ethanbaron V. Nusjuro](https://onepiece.fandom.com/wiki/Ethanbaron_V._Nusjuro)
+- Fan-Analysen und Foren werden ausschließlich als zusätzliche Perspektiven genutzt; sie begründen keine offiziellen Punktwerte.

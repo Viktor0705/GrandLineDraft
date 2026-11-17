@@ -1,0 +1,542 @@
+[
+  {
+    "id": 1,
+    "name": "Monkey D. Luffy"
+  },
+  {
+    "id": 2,
+    "name": "Roronoa Zoro"
+  },
+  {
+    "id": 3,
+    "name": "Nami"
+  },
+  {
+    "id": 4,
+    "name": "Usopp"
+  },
+  {
+    "id": 5,
+    "name": "Sanji"
+  },
+  {
+    "id": 6,
+    "name": "Tony Tony Chopper"
+  },
+  {
+    "id": 7,
+    "name": "Nico Robin"
+  },
+  {
+    "id": 8,
+    "name": "Franky"
+  },
+  {
+    "id": 9,
+    "name": "Brook"
+  },
+  {
+    "id": 10,
+    "name": "Jinbe"
+  },
+  {
+    "id": 11,
+    "name": "Portgas D. Ace"
+  },
+  {
+    "id": 12,
+    "name": "Sabo"
+  },
+  {
+    "id": 13,
+    "name": "Shanks"
+  },
+  {
+    "id": 14,
+    "name": "Benn Beckman"
+  },
+  {
+    "id": 15,
+    "name": "Dracule Mihawk"
+  },
+  {
+    "id": 16,
+    "name": "Trafalgar D. Water Law"
+  },
+  {
+    "id": 17,
+    "name": "Eustass Kid"
+  },
+  {
+    "id": 18,
+    "name": "Killer"
+  },
+  {
+    "id": 20,
+    "name": "X Drake"
+  },
+  {
+    "id": 23,
+    "name": "Jewelry Bonney"
+  },
+  {
+    "id": 24,
+    "name": "Capone Bege"
+  },
+  {
+    "id": 25,
+    "name": "Bartolomeo"
+  },
+  {
+    "id": 26,
+    "name": "Cavendish"
+  },
+  {
+    "id": 27,
+    "name": "Silvers Rayleigh"
+  },
+  {
+    "id": 28,
+    "name": "Gol D. Roger"
+  },
+  {
+    "id": 29,
+    "name": "Edward Newgate"
+  },
+  {
+    "id": 30,
+    "name": "Marshall D. Teach"
+  },
+  {
+    "id": 31,
+    "name": "Buggy"
+  },
+  {
+    "id": 32,
+    "name": "Crocodile"
+  },
+  {
+    "id": 33,
+    "name": "Donquixote Doflamingo"
+  },
+  {
+    "id": 34,
+    "name": "Boa Hancock"
+  },
+  {
+    "id": 35,
+    "name": "Bartholomew Kuma"
+  },
+  {
+    "id": 37,
+    "name": "Perona"
+  },
+  {
+    "id": 38,
+    "name": "Daz Bonez"
+  },
+  {
+    "id": 39,
+    "name": "Bentham (Bon Clay)"
+  },
+  {
+    "id": 40,
+    "name": "Enel"
+  },
+  {
+    "id": 41,
+    "name": "Caesar Clown"
+  },
+  {
+    "id": 42,
+    "name": "Charlotte Linlin"
+  },
+  {
+    "id": 43,
+    "name": "Charlotte Katakuri"
+  },
+  {
+    "id": 44,
+    "name": "Charlotte Cracker"
+  },
+  {
+    "id": 46,
+    "name": "Charlotte Perospero"
+  },
+  {
+    "id": 47,
+    "name": "Kaido"
+  },
+  {
+    "id": 48,
+    "name": "King"
+  },
+  {
+    "id": 49,
+    "name": "Queen"
+  },
+  {
+    "id": 50,
+    "name": "Jack"
+  },
+  {
+    "id": 53,
+    "name": "Black Maria"
+  },
+  {
+    "id": 56,
+    "name": "Yamato"
+  },
+  {
+    "id": 57,
+    "name": "Kozuki Oden"
+  },
+  {
+    "id": 58,
+    "name": "Kozuki Momonosuke"
+  },
+  {
+    "id": 60,
+    "name": "Denjiro"
+  },
+  {
+    "id": 65,
+    "name": "Marco"
+  },
+  {
+    "id": 66,
+    "name": "Fisher Tiger"
+  },
+  {
+    "id": 67,
+    "name": "Arlong"
+  },
+  {
+    "id": 68,
+    "name": "Shirahoshi"
+  },
+  {
+    "id": 69,
+    "name": "Hody Jones"
+  },
+  {
+    "id": 70,
+    "name": "Bellamy"
+  },
+  {
+    "id": 71,
+    "name": "Nefertari Vivi"
+  },
+  {
+    "id": 74,
+    "name": "Don Chinjao"
+  },
+  {
+    "id": 77,
+    "name": "Rob Lucci"
+  },
+  {
+    "id": 78,
+    "name": "Kaku"
+  },
+  {
+    "id": 79,
+    "name": "Stussy"
+  },
+  {
+    "id": 80,
+    "name": "Magellan"
+  },
+  {
+    "id": 81,
+    "name": "Smoker"
+  },
+  {
+    "id": 82,
+    "name": "Tashigi"
+  },
+  {
+    "id": 83,
+    "name": "Koby"
+  },
+  {
+    "id": 84,
+    "name": "Helmeppo"
+  },
+  {
+    "id": 85,
+    "name": "Monkey D. Garp"
+  },
+  {
+    "id": 86,
+    "name": "Sengoku"
+  },
+  {
+    "id": 87,
+    "name": "Sakazuki (Akainu)"
+  },
+  {
+    "id": 88,
+    "name": "Kuzan (Aokiji)"
+  },
+  {
+    "id": 89,
+    "name": "Borsalino (Kizaru)"
+  },
+  {
+    "id": 90,
+    "name": "Issho (Fujitora)"
+  },
+  {
+    "id": 91,
+    "name": "Aramaki (Ryokugyu)"
+  },
+  {
+    "id": 92,
+    "name": "Monkey D. Dragon"
+  },
+  {
+    "id": 93,
+    "name": "Emporio Ivankov"
+  },
+  {
+    "id": 95,
+    "name": "Dr. Vegapunk"
+  },
+  {
+    "id": 97,
+    "name": "Shiryu"
+  },
+  {
+    "id": 98,
+    "name": "Van Augur"
+  },
+  {
+    "id": 99,
+    "name": "Jesus Burgess"
+  },
+  {
+    "id": 100,
+    "name": "Donquixote Rosinante"
+  },
+  {
+    "id": 101,
+    "name": "Kingbaum"
+  },
+  {
+    "id": 102,
+    "name": "Charlotte Pudding"
+  },
+  {
+    "id": 107,
+    "name": "Pedro"
+  },
+  {
+    "id": 108,
+    "name": "Carrot"
+  },
+  {
+    "id": 109,
+    "name": "Nekomamushi"
+  },
+  {
+    "id": 110,
+    "name": "Inuarashi"
+  },
+  {
+    "id": 111,
+    "name": "Bepo"
+  },
+  {
+    "id": 115,
+    "name": "Blueno"
+  },
+  {
+    "id": 118,
+    "name": "Sentomaru"
+  },
+  {
+    "id": 120,
+    "name": "Tsuru"
+  },
+  {
+    "id": 121,
+    "name": "Don Krieg"
+  },
+  {
+    "id": 122,
+    "name": "Kuro"
+  },
+  {
+    "id": 123,
+    "name": "Gin"
+  },
+  {
+    "id": 124,
+    "name": "Crocus"
+  },
+  {
+    "id": 125,
+    "name": "Dr. Kureha"
+  },
+  {
+    "id": 126,
+    "name": "Dr. Hiriluk"
+  },
+  {
+    "id": 127,
+    "name": "Pell"
+  },
+  {
+    "id": 128,
+    "name": "Nefertari Cobra"
+  },
+  {
+    "id": 129,
+    "name": "Iceburg"
+  },
+  {
+    "id": 130,
+    "name": "Paulie"
+  },
+  {
+    "id": 131,
+    "name": "Imu"
+  },
+  {
+    "id": 132,
+    "name": "Loki"
+  },
+  {
+    "id": 133,
+    "name": "Joy Boy"
+  },
+  {
+    "id": 134,
+    "name": "Rocks D. Xebec"
+  },
+  {
+    "id": 135,
+    "name": "Lucky Roux"
+  },
+  {
+    "id": 136,
+    "name": "Figarland Garling"
+  },
+  {
+    "id": 137,
+    "name": "Figarland Shamrock"
+  },
+  {
+    "id": 138,
+    "name": "Scopper Gaban"
+  },
+  {
+    "id": 139,
+    "name": "Harald"
+  },
+  {
+    "id": 140,
+    "name": "Shiki"
+  },
+  {
+    "id": 141,
+    "name": "Kong"
+  },
+  {
+    "id": 142,
+    "name": "Jaygarcia Saturn"
+  },
+  {
+    "id": 143,
+    "name": "Topman Warcury"
+  },
+  {
+    "id": 144,
+    "name": "Ethanbaron V. Nusjuro"
+  },
+  {
+    "id": 145,
+    "name": "Marcus Mars"
+  },
+  {
+    "id": 146,
+    "name": "Shepherd Ju Peter"
+  },
+  {
+    "id": 147,
+    "name": "Gunko"
+  },
+  {
+    "id": 148,
+    "name": "Dorry"
+  },
+  {
+    "id": 149,
+    "name": "Brogy"
+  },
+  {
+    "id": 150,
+    "name": "Yasopp"
+  },
+  {
+    "id": 151,
+    "name": "Charlotte Smoothie"
+  },
+  {
+    "id": 152,
+    "name": "Charlotte Oven"
+  },
+  {
+    "id": 153,
+    "name": "Charlotte Daifuku"
+  },
+  {
+    "id": 154,
+    "name": "Charlotte Snack"
+  },
+  {
+    "id": 155,
+    "name": "Urouge"
+  },
+  {
+    "id": 156,
+    "name": "Edward Weevil"
+  },
+  {
+    "id": 157,
+    "name": "Vista"
+  },
+  {
+    "id": 158,
+    "name": "Jozu"
+  },
+  {
+    "id": 159,
+    "name": "S-Hawk"
+  },
+  {
+    "id": 160,
+    "name": "S-Snake"
+  },
+  {
+    "id": 161,
+    "name": "S-Bear"
+  },
+  {
+    "id": 162,
+    "name": "S-Shark"
+  },
+  {
+    "id": 163,
+    "name": "Limejuice"
+  },
+  {
+    "id": 164,
+    "name": "Shepherd Sommers"
+  },
+  {
+    "id": 165,
+    "name": "Rimoshifu Killingham"
+  }
+]

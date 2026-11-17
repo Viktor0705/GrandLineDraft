@@ -16,6 +16,7 @@ import time
 import os
 import zipfile
 import tempfile
+import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,21 +29,11 @@ import streamlit.components.v1 as components
 from PIL import Image, ImageDraw, ImageFont
 
 BASE_DIR = Path(__file__).resolve().parent
-CHARACTERS_FILE = BASE_DIR / "characters.json"
-RATINGS_FILE = BASE_DIR / "character_ratings.json"
-PORTRAIT_DIR = BASE_DIR / "portraits"
-SAVE_DIR = BASE_DIR / "saves"
-AUTOSAVE_FILE = SAVE_DIR / "autosave.json"
-PORTRAIT_LINKS_FILE = BASE_DIR / "portrait_links.json"
 START_BUDGET = 20
 TEAM_SIZE = 5
 MIN_PRICE = 1
 MAX_RETURNS = 3
 RETURN_PENALTY = 1
-API_BASE = "https://onepieceapi.com/api/characters"
-FANDOM_API = "https://onepiece.fandom.com/api.php"
-USER_AGENT = "GrandLineDraft/5.1.0 (fan game; chapter 1198 and 140-character roster)"
-PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Keep-alive HTTP sessions are local to each Streamlit worker thread. This avoids
 # opening a fresh TCP/TLS connection for every small Supabase poll or image request.
@@ -57,11 +48,39 @@ def http_session() -> requests.Session:
     return session
 
 st.set_page_config(
-    page_title="Grand Line Draft 5.1 | Peak Edition",
+    page_title="Grand Line Draft · Dual Anime Edition 6.0.2",
     page_icon="🏴‍☠️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Two separate anime universes share the game engine, not their data or saved games.
+# A guest who joins a room from the other anime is switched before the next widget
+# is created; this pending label is consumed at the very top of the following run.
+_PENDING_ANIME_LABELS = {
+    "one_piece": "One Piece",
+    "naruto": "Naruto Shippuden · The Last (ohne Boruto)",
+}
+_pending_selector_label = st.session_state.pop("_pending_anime_universe_selector", None)
+if _pending_selector_label in _PENDING_ANIME_LABELS.values():
+    st.session_state["anime_universe_selector"] = _pending_selector_label
+st.session_state.setdefault("anime_universe", "one_piece")
+ACTIVE_UNIVERSE = st.session_state.get("anime_universe", "one_piece")
+IS_NARUTO = ACTIVE_UNIVERSE == "naruto"
+ANIME_NAME = "Naruto Shippuden · The Last" if IS_NARUTO else "One Piece"
+RESOURCE_LABEL = "Chakra" if IS_NARUTO else "Haki"
+DATA_DIR = BASE_DIR / "naruto" if IS_NARUTO else BASE_DIR
+CHARACTERS_FILE = DATA_DIR / "characters.json"
+RATINGS_FILE = DATA_DIR / "character_ratings.json"
+MATCHUPS_FILE = DATA_DIR / "matchup_results.json.gz"
+PORTRAIT_DIR = BASE_DIR / "portraits"
+SAVE_DIR = BASE_DIR / "saves" / "naruto" if IS_NARUTO else BASE_DIR / "saves"
+AUTOSAVE_FILE = SAVE_DIR / "autosave.json"
+PORTRAIT_LINKS_FILE = BASE_DIR / "portrait_links.json"
+API_BASE = None if IS_NARUTO else "https://onepieceapi.com/api/characters"
+FANDOM_API = "https://naruto.fandom.com/api.php" if IS_NARUTO else "https://onepiece.fandom.com/api.php"
+USER_AGENT = "GrandLineDraft/6.0.2 (dual-anime fan game; isolated One Piece and Naruto datasets)"
+PORTRAIT_DIR.mkdir(exist_ok=True)
 
 # Local custom component: animation and drag-and-drop run in the browser rather
 # than blocking Python or repeatedly rebuilding the whole Streamlit page.
@@ -176,7 +195,10 @@ def money(value: float) -> str:
 
 
 def normalize(text: str) -> str:
-    return re.sub(r"[^a-z0-9]", "", text.lower().replace("ä", "a").replace("ö", "o").replace("ü", "u").replace("ß", "ss"))
+    """Stable ASCII key for names with accents, macrons and punctuation."""
+    raw = unicodedata.normalize("NFKD", str(text).casefold())
+    raw = "".join(ch for ch in raw if not unicodedata.combining(ch))
+    return re.sub(r"[^a-z0-9]", "", raw.replace("ß", "ss"))
 
 
 def safe_text(value: Any) -> str:
@@ -212,7 +234,7 @@ def get_rating_data() -> dict[str, Any]:
         }
 
 
-MATCHUPS_FILE = BASE_DIR / "matchup_results.json.gz"
+MATCHUPS_FILE = DATA_DIR / "matchup_results.json.gz"
 
 @st.cache_data(show_spinner=False, max_entries=1)
 def get_matchup_rows() -> list[dict[str, Any]]:
@@ -264,7 +286,9 @@ BOUNTY_ALIASES = {
 
 @st.cache_data(show_spinner=False, ttl=3600)
 def fetch_live_bounty_data() -> tuple[dict[str, dict[str, Any]], str]:
-    """Only fetch public data when the user presses the refresh button."""
+    """Only fetch public bounty data when explicitly requested in One Piece mode."""
+    if not API_BASE:
+        return {}, "Live-Kopfgelder sind im Naruto-Universum deaktiviert."
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
     result: dict[str, dict[str, Any]] = {}
@@ -301,6 +325,8 @@ def fetch_live_bounty_data() -> tuple[dict[str, dict[str, Any]], str]:
 
 
 def live_bounty_for(name: str) -> dict[str, Any] | None:
+    if IS_NARUTO:
+        return None
     live = st.session_state.get("live_bounties", {})
     for candidate in [name, *BOUNTY_ALIASES.get(name, [])]:
         record = live.get(normalize(candidate))
@@ -310,7 +336,17 @@ def live_bounty_for(name: str) -> dict[str, Any] | None:
 
 
 def power_tier(value: float) -> str:
-    """Readable fan-tier label; it is not an official One Piece classification."""
+    """Readable fan-tier label; it is not an official canon classification."""
+    if IS_NARUTO:
+        if value >= 99: return "ŌTSUTSUKI / SIX-PATHS-TIER"
+        if value >= 97: return "LEGENDEN-TIER"
+        if value >= 94: return "GÖTTER-/SPITZEN-TIER"
+        if value >= 90: return "KAGE-OBERKLASSE"
+        if value >= 85: return "ELITE-SHINOBI"
+        if value >= 75: return "JŌNIN-TIER"
+        if value >= 60: return "ERFAHRENER SHINOBI"
+        if value >= 40: return "CHŪNIN-TIER"
+        return "BEGRENZTE KAMPFFEATS"
     if value >= 99:
         return "MYTHOS-TIER"
     if value >= 97:
@@ -393,9 +429,17 @@ def _build_character_profile_cached(
 
 def character_profile(character: dict[str, Any]) -> dict[str, Any]:
     name = str(character.get("name", ""))
-    rating_entry = get_rating_data().get("characters", {}).get(name, {})
+    rating_entry = dict(get_rating_data().get("characters", {}).get(name, {}))
     weights = get_rating_data().get("weights", {"power": .68, "haki": .14, "abilities": .14, "versatility": .04})
-    live_record = live_bounty_for(name)
+    live_record = None if IS_NARUTO else live_bounty_for(name)
+    if IS_NARUTO:
+        # The scoring engine keeps its historical internal key, but Naruto UI and data use Chakra.
+        rating_entry["haki_score"] = rating_entry.get("chakra_score")
+        rating_entry["haki_status"] = "bestätigt" if isinstance(rating_entry.get("chakra_score"), (int, float)) else "nicht bestätigt"
+        rating_entry["haki_types"] = []
+        rating_entry["haki_note"] = rating_entry.get("chakra_note", "Chakra-Wert ist nicht hinterlegt.")
+        rating_entry["haki_breakdown"] = {}
+        rating_entry["versatility"] = rating_entry.get("versatility", 50)
     return _build_character_profile_cached(name, rating_entry, weights, live_record)
 
 
@@ -407,7 +451,7 @@ def _pair_key(a: str, b: str) -> tuple[str, str]:
 
 @st.cache_data(show_spinner=False)
 def get_matchup_index() -> dict[tuple[str, str], dict[str, Any]]:
-    """Build a constant-time lookup for the supplied v5.1 pairwise simulations."""
+    """Build a constant-time lookup for the active anime universe’s precomputed pairwise simulations."""
     rows = get_matchup_rows()
     index: dict[tuple[str, str], dict[str, Any]] = {}
     if isinstance(rows, list):
@@ -559,7 +603,7 @@ def role_for_slot(index: int) -> str:
 
 # ---- Persistent game state / portable backup -------------------------------
 GAME_STATE_KEYS = [
-    "game_mode", "mode_selector", "name_input_a", "name_input_b", "players", "remaining", "used",
+    "anime_universe", "game_mode", "mode_selector", "name_input_a", "name_input_b", "players", "remaining", "used",
     "history", "return_history", "returns_used", "phase", "round_no", "current_char", "spin_owner",
     "next_spinner", "auction", "last_winner", "game_seed", "draft_variant", "rank_game_mode", "rank_mode_selector",
     "rank_players", "rank_remaining", "rank_used", "rank_history", "rank_return_history", "rank_returns_used",
@@ -632,7 +676,7 @@ def online_state_hash(state: dict[str, Any] | None = None) -> str:
 
 def apply_online_state(state: dict[str, Any]) -> None:
     """Apply shared game keys only; widget keys and local connection identity remain local."""
-    if not isinstance(state, dict):
+    if not isinstance(state, dict) or state.get("anime_universe", "one_piece") != ACTIVE_UNIVERSE:
         return
     for key, value in state.items():
         if key in GAME_STATE_KEYS and key not in ONLINE_LOCAL_ONLY_KEYS:
@@ -686,6 +730,8 @@ def online_force_pull() -> tuple[bool, str]:
         state = envelope.get("state", {}) if isinstance(envelope, dict) else {}
         if not isinstance(state, dict):
             return False, "Der gespeicherte Online-Spielstand ist ungültig."
+        if state.get("anime_universe", "one_piece") != ACTIVE_UNIVERSE:
+            return False, "Dieser Online-Spielstand gehört zum anderen Anime-Universum."
         apply_online_state(state)
         st.session_state.online_revision = int(row.get("revision", 0))
         st.session_state.online_last_hash = online_state_hash(state)
@@ -751,6 +797,60 @@ def online_create_room(variant: str) -> tuple[bool, str]:
         return False, f"Raum konnte nicht erstellt werden: {type(exc).__name__}: {exc}"
 
 
+def _prepare_online_join_universe_switch(room_universe: str, code: str, guest_name: str) -> tuple[bool, str]:
+    """Stage a cross-universe join and rerun so the correct JSON files load first."""
+    if room_universe not in _PENDING_ANIME_LABELS:
+        return False, "Die Lobby enthält eine unbekannte Anime-Auswahl und kann nicht geladen werden."
+    # Save the guest's current universe before changing the active data directory.
+    if "players" in st.session_state:
+        try:
+            persist_game_state()
+        except Exception:
+            pass
+    label = _PENDING_ANIME_LABELS[room_universe]
+    st.session_state["_pending_online_join"] = {
+        "code": code,
+        "guest_name": guest_name,
+        "anime_universe": room_universe,
+    }
+    st.session_state["_pending_anime_universe_selector"] = label
+    st.session_state["anime_universe"] = room_universe
+
+    # Clear game-specific in-memory state; it will be restored from the new anime's
+    # own save folder, then replaced by the host's online room state.
+    for key in GAME_STATE_KEYS:
+        if key not in {"anime_universe", "name_input_a", "name_input_b", "game_mode", "draft_variant", "rank_game_mode"}:
+            st.session_state.pop(key, None)
+    for key in (
+        "pool_filter", "pool_role_filter", "pool_search", "pool_sort",
+        "pool_evidence_filter", "pool_page", "pool_selected_character_id",
+        "show_roster_browser_classic", "portrait_status", "live_bounties",
+        "bounty_data_updated", "bounty_data_message", "_last_local_autosave_hash",
+    ):
+        st.session_state.pop(key, None)
+    st.session_state["online_room_code"] = None
+    st.session_state["online_role"] = None
+    st.session_state["online_revision"] = 0
+    st.session_state["online_last_hash"] = None
+    st.session_state["online_status"] = "Wechsle zum Anime der Lobby …"
+
+    # Streamlit caches are scoped to this process; invalidate path-dependent data
+    # before the rerun initializes the new universe.
+    for fn_name in (
+        "get_characters", "get_rating_data", "get_matchup_rows", "get_matchup_index",
+        "get_character_search_index", "_ranking_profile_cached",
+        "_build_character_profile_cached", "fetch_portrait_remote",
+        "fetch_live_bounty_data",
+    ):
+        fn = globals().get(fn_name)
+        try:
+            if fn is not None and hasattr(fn, "clear"):
+                fn.clear()
+        except Exception:
+            pass
+    return True, f"Diese Lobby spielt {label}. Der Anime wird automatisch umgestellt und du wirst verbunden."
+
+
 def online_join_room(code: str, guest_name: str) -> tuple[bool, str]:
     clean = re.sub(r"[^A-Z0-9]", "", (code or "").upper())[:8]
     if len(clean) != 8:
@@ -767,6 +867,9 @@ def online_join_room(code: str, guest_name: str) -> tuple[bool, str]:
         state = envelope.get("state", {}) if isinstance(envelope, dict) else {}
         if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
             return False, "Der gespeicherte Raumzustand ist ungültig."
+        room_universe = state.get("anime_universe", "one_piece")
+        if room_universe != ACTIVE_UNIVERSE:
+            return _prepare_online_join_universe_switch(room_universe, clean, guest_name)
         variant = row.get("variant", "classic")
         state["game_mode"] = "online"; state["rank_game_mode"] = "online"; state["draft_variant"] = variant
         state["players"]["B"]["name"] = guest_name.strip() or "Spieler B"
@@ -859,7 +962,8 @@ def online_can_control(player_key: str, variant: str | None = None) -> bool:
 
 def current_game_state() -> dict[str, Any]:
     state = {key: st.session_state.get(key) for key in GAME_STATE_KEYS if key in st.session_state}
-    return {"app": "Grand Line Draft 5.1", "schema_version": 3,
+    state["anime_universe"] = ACTIVE_UNIVERSE
+    return {"app": "Grand Line Draft 6.0", "schema_version": 4,
             "saved_at": datetime.now().astimezone().isoformat(timespec="seconds"), "state": state}
 
 
@@ -895,6 +999,8 @@ def restore_persistent_game_state() -> bool:
         payload = json.loads(AUTOSAVE_FILE.read_text(encoding="utf-8"))
         state = payload.get("state", {}) if isinstance(payload, dict) else {}
         if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
+            return False
+        if state.get("anime_universe", "one_piece") != ACTIVE_UNIVERSE:
             return False
         for key in GAME_STATE_KEYS:
             if key in state:
@@ -943,7 +1049,7 @@ def migrate_saved_character_pool() -> None:
 def import_game_state(payload: dict[str, Any]) -> tuple[bool, str]:
     state = payload.get("state") if isinstance(payload, dict) else None
     if not isinstance(state, dict) or not isinstance(state.get("players"), dict):
-        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6-, 5.0- oder 5.1-Export verwenden."
+        return False, "Die Datei ist kein unterstützter Grand Line Draft-Spielstand. Bitte einen Grand Line Draft 3.5-, 3.6- oder 5.0-Export verwenden."
     try:
         players = state["players"]
         if set(players.keys()) != {"A", "B"}:
@@ -972,7 +1078,7 @@ def make_portable_backup() -> bytes:
     persist_game_state()
     out = io.BytesIO()
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
-        wanted = ["app.py", "characters.json", "character_ratings.json", "matchup_results.json.gz", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_5_0.md", "ONLINE_SETUP.md", "online_schema.sql", "cloud_portraits_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "Start_GrandLineDraft.bat", "CHANGELOG_5_0_2.md", "CHANGELOG_5_1.md", "BUILD_REPORT_V5_1.json", "POWER_MATRIX_V5_MATCHUPS.csv", "POWER_MATRIX_V5_RANKINGS.csv", "CHANGELOG_5_0_3.md", "CHANGELOG_5_0_4.md"]
+        wanted = ["app.py", "characters.json", "character_ratings.json", "matchup_results.json.gz", "portrait_links.json", "requirements.txt", "README.md", "CHANGELOG_6_0.md", "ONLINE_SETUP.md", "online_schema.sql", "cloud_portraits_schema.sql", "POWER_MATRIX_V5_REVIEW.md", "POWER_MATRIX_V5_RANKINGS.csv", "POWER_MATRIX_V5_MATCHUPS.csv", "POWER_MATRIX_NARUTO_RANKINGS.csv", "POWER_MATRIX_NARUTO_MATCHUPS.csv", "Start_GrandLineDraft.bat", "CHANGELOG_5_0_2.md"]
         for filename in wanted:
             item = BASE_DIR / filename
             if item.exists():
@@ -983,12 +1089,20 @@ def make_portable_backup() -> bytes:
         config = BASE_DIR / ".streamlit" / "config.toml"
         if config.exists():
             archive.write(config, "GrandLineDraft/.streamlit/config.toml")
-        if AUTOSAVE_FILE.exists():
-            archive.write(AUTOSAVE_FILE, "GrandLineDraft/saves/autosave.json")
+        save_root = BASE_DIR / "saves"
+        if save_root.exists():
+            for item in save_root.rglob("*.json"):
+                if item.is_file():
+                    archive.write(item, f"GrandLineDraft/saves/{item.relative_to(save_root).as_posix()}")
         if PORTRAIT_DIR.exists():
             for item in PORTRAIT_DIR.rglob("*"):
                 if item.is_file() and item.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}:
                     archive.write(item, f"GrandLineDraft/portraits/{item.relative_to(PORTRAIT_DIR).as_posix()}")
+        naruto_dir = BASE_DIR / "naruto"
+        if naruto_dir.exists():
+            for item in naruto_dir.rglob("*"):
+                if item.is_file():
+                    archive.write(item, f"GrandLineDraft/naruto/{item.relative_to(naruto_dir).as_posix()}")
     return out.getvalue()
 
 
@@ -1320,10 +1434,18 @@ def delete_cloud_portrait(character_id: int) -> tuple[bool, str]:
 def portrait_archive_items(zip_bytes: bytes) -> tuple[list[dict[str, Any]], list[str]]:
     """Read a user ZIP without extracting paths; accept this app's portrait filename conventions."""
     roster = {int(c["id"]): c for c in get_characters()}
+    # Both anime share the portrait store. Include the inactive roster so a portable
+    # backup ZIP can restore portraits for either universe without switching first.
+    other_roster_file = BASE_DIR / ("characters.json" if IS_NARUTO else "naruto/characters.json")
+    try:
+        other_roster = json.loads(other_roster_file.read_text(encoding="utf-8"))
+        roster.update({int(c["id"]): c for c in other_roster if isinstance(c, dict) and "id" in c})
+    except (OSError, json.JSONDecodeError, TypeError, ValueError):
+        pass
     chosen: dict[int, tuple[int, dict[str, Any]]] = {}
     warnings: list[str] = []
     total_size = 0
-    pattern = re.compile(r"^(manual_character|linked_character|character)_(\d{3})(?:_[a-f0-9]{8})?\.(?:jpg|jpeg|png|webp)$", re.I)
+    pattern = re.compile(r"^(manual_character|linked_character|character)_(\d{3,})(?:_[a-f0-9]{8})?\.(?:jpg|jpeg|png|webp)$", re.I)
     try:
         with zipfile.ZipFile(io.BytesIO(zip_bytes)) as archive:
             files = [info for info in archive.infolist() if not info.is_dir()]
@@ -1366,9 +1488,9 @@ def portrait_archive_items(zip_bytes: bytes) -> tuple[list[dict[str, Any]], list
 def local_portrait_items() -> list[dict[str, Any]]:
     roster = {int(c["id"]): c for c in get_characters()}
     patterns = [
-        (re.compile(r"^manual_character_(\d{3})\.jpg$", re.I), "manual_upload"),
-        (re.compile(r"^linked_character_(\d{3})\.jpg$", re.I), "direct_link"),
-        (re.compile(r"^character_(\d{3})_[a-f0-9]{8}\.jpg$", re.I), "local_portrait"),
+        (re.compile(r"^manual_character_(\d{3,})\.jpg$", re.I), "manual_upload"),
+        (re.compile(r"^linked_character_(\d{3,})\.jpg$", re.I), "direct_link"),
+        (re.compile(r"^character_(\d{3,})_[a-f0-9]{8}\.jpg$", re.I), "local_portrait"),
     ]
     picked: dict[int, tuple[int, dict[str, Any]]] = {}
     for path in PORTRAIT_DIR.glob("*.jpg"):
@@ -1412,7 +1534,7 @@ def fetch_portrait_remote(name: str, wiki_slug: str, direct_url: str = "") -> tu
         return None, ""
 
     if direct_url:
-        image, source = download(direct_url, "offizielle One-Piece-Seite")
+        image, source = download(direct_url, "Naruto-/Charakterbild-Link" if IS_NARUTO else "offizielle One-Piece-Seite")
         if image:
             return image, source
 
@@ -1429,14 +1551,16 @@ def fetch_portrait_remote(name: str, wiki_slug: str, direct_url: str = "") -> tu
                 title = str(page.get("title", ""))
                 img_url = page.get("thumbnail", {}).get("source")
                 if img_url and title and _wiki_page_title_matches(title, requested_title):
-                    image, source = download(img_url, f"One Piece Wiki · {title}")
+                    image, source = download(img_url, f"{'Narutopedia' if IS_NARUTO else 'One Piece Wiki'} · {title}")
                     if image:
                         return image, source
     except (requests.RequestException, ValueError, TypeError):
         pass
 
-    # Optional API fallback accepts exact normalized names only; never `wanted in result`.
+    # Optional One Piece API fallback accepts exact normalized names only; disabled for Naruto.
     try:
+        if not API_BASE:
+            return None, "Kein echtes Porträt erreichbar"
         response = session.get(API_BASE, params={"q": name, "limit": 20, "page": 1}, timeout=5)
         if response.ok:
             payload = response.json()
@@ -1693,12 +1817,12 @@ def init_game() -> None:
     characters = get_characters()
     ids = [c.get("id") for c in characters]
     names = [normalize(str(c.get("name", ""))) for c in characters]
-    if len(characters) != 140 or len(ids) != len(set(ids)) or len(names) != len(set(names)):
-        st.error("Die Charakterdatenbank muss 140 Figuren mit eindeutigen IDs und Namen enthalten. Bitte characters.json prüfen.")
+    if not characters or len(ids) != len(set(ids)) or len(names) != len(set(names)):
+        st.error(f"Die {ANIME_NAME}-Charakterdatenbank muss mindestens eine Figur mit eindeutigen IDs und Namen enthalten. Bitte {CHARACTERS_FILE.name} prüfen.")
         st.stop()
     mode = st.session_state.get("game_mode", "friend")
     player_a = st.session_state.get("name_input_a", "Spieler 1").strip() or "Spieler 1"
-    player_b = "Grand Line KI" if mode == "single" else ("Wartet auf Mitspieler" if mode == "online" else (st.session_state.get("name_input_b", "Spieler 2").strip() or "Spieler 2"))
+    player_b = ("Shinobi-KI" if IS_NARUTO else "Grand Line KI") if mode == "single" else ("Wartet auf Mitspieler" if mode == "online" else (st.session_state.get("name_input_b", "Spieler 2").strip() or "Spieler 2"))
     st.session_state.players = {
         "A": {"name": player_a, "budget": float(START_BUDGET), "team": []},
         "B": {"name": player_b, "budget": float(START_BUDGET), "team": []},
@@ -1904,7 +2028,7 @@ def render_player(player_key: str) -> None:
     is_ai = is_ai_player(player_key)
     cloud_batch = cloud_portraits_for_characters(player.get("team", []))
     label = "PLAYER 01" if player_key == "A" else "PLAYER 02"
-    accent = "Dein Schiff" if player_key == "A" else ("KI-Rivale" if is_ai else "Freund-Modus")
+    accent = ("Dein Shinobi-Team" if IS_NARUTO else "Dein Schiff") if player_key == "A" else ("KI-Rivale" if is_ai else "Freund-Modus")
     with st.container(border=True):
         st.markdown(f'<div class="panel-label">{label}</div><div class="player-heading"><div class="player-name">{safe_text(player["name"].upper())}</div><div class="player-tag">{safe_text(accent)}</div></div>', unsafe_allow_html=True)
         st.markdown(f'<div class="player-money">{money(player["budget"])}</div><div class="player-meta">Restbudget · Start: {money(START_BUDGET)} · Rückgaben: {st.session_state.returns_used[player_key]}/{MAX_RETURNS}</div>', unsafe_allow_html=True)
@@ -1919,7 +2043,8 @@ def render_player(player_key: str) -> None:
                         st.image(character_portrait_thumbnail(ch, cloud_batch), width=118)
                         slot_role = role_for_slot(idx)
                         ch_profile = character_profile(ch)
-                        haki_small = f"HAKI {int(ch_profile['haki_score'])}/100" if ch_profile.get("haki_score") is not None else "HAKI N. B."
+                        haki_small = f"{RESOURCE_LABEL.upper()} {int(ch_profile['haki_score'])}/100" if ch_profile.get("haki_score") is not None else f"{RESOURCE_LABEL.upper()} N. B."
+                        ability_small = "FÄHIG. N. B." if ch_profile.get("abilities_unknown") else f"FÄHIG. {int(ch_profile.get('abilities', 50))}/100"
                         st.markdown(f'<div class="player-tag" style="display:inline-block;margin:3px 0 6px">{slot_role}</div><div style="font-weight:800;font-size:.78rem;line-height:1.15;min-height:31px">{safe_text(ch["name"])}</div><div style="font-size:.68rem;color:#e8bd64;font-weight:800">POWER {ch_profile["power"]}/100</div><div style="font-size:.66rem;color:#c4d0dc;font-weight:700">{haki_small} · FÄHIG. {int(ch_profile.get("abilities", 50))}/100</div><div style="font-size:.72rem;color:#e8bd64;font-weight:800">{money(ch["price"])}</div>' , unsafe_allow_html=True)
                         if st.session_state.phase in ("ready", "finished") and not is_ai and can_return_card(player_key, current_draw=False):
                             if st.button("↩ Rückgabe · 1 €", key=f"return_{player_key}_{ch['id']}", use_container_width=True, help=f"Maximal {MAX_RETURNS} Rückgaben je Spieler."):
@@ -1947,7 +2072,57 @@ def bounty_card_label(amount: int | None, state: str = "unbekannt") -> str:
     return f"{amount} ฿"
 
 
+def render_naruto_character_analysis(character: dict[str, Any]) -> None:
+    profile = character_profile(character)
+    ability_unknown = bool(profile.get("abilities_unknown"))
+    ability_label = "Unbekannt" if ability_unknown else f"{int(profile.get('abilities', 50))} / 100"
+    chakra_value = profile.get("haki_score")
+    chakra_label = f"{int(chakra_value)} / 100" if chakra_value is not None else "Unbekannt"
+    st.markdown(
+        f'<div class="draft-card-banner"><div class="draft-card-kicker">PEAK FORM · NARUTO SHIPPUDEN + THE LAST · OHNE BORUTO</div>'
+        f'<div class="draft-card-name">{safe_text(character.get("name", "Unbekannt"))}</div>'
+        f'<div class="draft-card-sub">{safe_text(character.get("faction", ""))} · {safe_text(character.get("role", ""))}</div>'
+        f'<div class="score-pills"><span class="score-pill">POWER {int(profile.get("power", 50))}/100</span>'
+        f'<span class="score-pill">CHAKRA {safe_text(chakra_label)}</span>'
+        f'<span class="score-pill">FÄHIGKEITEN {safe_text(ability_label)}</span></div></div>',
+        unsafe_allow_html=True,
+    )
+    c1, c2, c3 = st.columns(3, gap="small")
+    c1.metric("Power Level", f"{int(profile.get('power', 50))} / 100")
+    c2.metric("Chakra", chakra_label)
+    c3.metric("Fähigkeiten", ability_label)
+    st.progress(float(profile.get("power", 50)) / 100, text=f"Power Level · {power_tier(profile.get('power', 50))}")
+    if chakra_value is not None:
+        st.progress(float(chakra_value) / 100, text=f"Chakra-Reserven und -Kontrolle · {int(chakra_value)}/100")
+    if profile.get("chakra_note"):
+        st.caption(f"Chakra-Einordnung: {profile['chakra_note']}")
+    if ability_unknown:
+        st.caption("Fähigkeiten: Die Quellenlage reicht nicht für eine seriöse Einzelpunktzahl. In der Teamformel wird intern neutral mit 50 gerechnet; die Anzeige bleibt ausdrücklich ‚Unbekannt‘.")
+    else:
+        st.progress(float(profile.get("abilities", 50)) / 100, text=f"Fähigkeiten/Ninjutsu-Nutzwert · {int(profile.get('abilities', 50))}/100")
+    st.markdown("**Fähigkeiten & Kampfidentität**")
+    st.markdown(f'<div class="evidence-line">{safe_text(profile.get("ability_summary", "Keine individuelle Fähigkeitsbeschreibung hinterlegt."))}</div>', unsafe_allow_html=True)
+    stats = profile.get("combat_stats", {})
+    with st.expander("🧭 Kampfprofil · Angriff, Defensive, Tempo und Ausdauer", expanded=False):
+        labels = [("Angriff", "offense"), ("Defensive", "defense"), ("Tempo", "speed"), ("Ausdauer", "endurance"), ("Kampftaktik", "battle_iq"), ("Chakra-Kontrolle", "chakra_control")]
+        st.markdown('<div class="combat-grid">' + ''.join(
+            f'<div class="combat-stat"><div class="combat-stat-label">{label}</div><div class="combat-stat-value">{int(stats.get(key, 50))}</div></div>'
+            for label, key in labels) + '</div>', unsafe_allow_html=True)
+        st.caption("Teilwerte sind transparente Fan-Modellschätzungen, keine offiziellen Databook-Werte.")
+        st.markdown("**Konterfenster / Grenzen**")
+        st.write(profile.get("weaknesses", "Kein besonderer Konter hinterlegt."))
+        if profile.get("evidence_basis"):
+            st.caption(profile["evidence_basis"])
+    if profile.get("version_label"):
+        st.caption(f"Bewertungsform: {profile['version_label']} · Evidenzsicherheit: {profile.get('confidence', 'Niedrig')}")
+    st.caption(profile.get("rationale", "Fan-Schätzung auf Basis der bis The Last berücksichtigten Feats."))
+
+
 def render_character_analysis(character: dict[str, Any]) -> None:
+    profile = character_profile(character)
+    if IS_NARUTO:
+        render_naruto_character_analysis(character)
+        return
     profile = character_profile(character)
     # Card always exposes the four draft-defining details requested: Power, bounty, Haki and abilities.
     st.markdown(
@@ -2039,15 +2214,106 @@ def render_character_analysis(character: dict[str, Any]) -> None:
             st.caption("Spezialisierte Vergleichswerte werden nur als zusätzliche Profilinformation gezeigt und ändern die klassische Teamformel nicht separat.")
     if profile.get("version_label"):
         st.caption(f"Bewertungsform: {profile['version_label']} · Evidenzsicherheit: {profile.get('confidence', 'Niedrig')}")
-    st.caption(profile.get("rationale", "Fan-Schätzung auf Basis der bis Manga-Kapitel 1198 bekannten Story-Feats."))
+    st.caption(profile.get("rationale", "Fan-Schätzung auf Basis der Naruto-Shippuden-Story und des Films The Last; Boruto ist ausgeschlossen."))
     if profile.get("bounty_state") == "cross_guild":
         st.caption("Einordnung: Dieses Kopfgeld stammt von der Cross Guild, die Marineangehörige zu Zielen erklärt. Es ist kein von der Weltregierung gegen einen Piraten verhängtes Kopfgeld.")
     if profile.get("bounty_source") == "live":
         st.caption("Das Kopfgeld wurde beim letzten manuellen Online-Abruf bestätigt. Power Level und Fähigkeiten bleiben Fan-Einschätzungen.")
 
 
+def render_naruto_roster_browser() -> None:
+    characters = get_characters()
+    character_by_id = {int(c["id"]): c for c in characters}
+    profiles = {int(c["id"]): character_profile(c) for c in characters}
+    ranks = {int(c["id"]): ranking_profile(c) for c in characters}
+    fcol, scol, pcol, rcol = st.columns([1.2, 1.6, 1, 1.3])
+    factions = ["Alle Fraktionen"] + sorted({c.get("faction", "Unbekannt") for c in characters})
+    with fcol:
+        faction = st.selectbox("Fraktion / Clan", factions, key="pool_filter")
+    with scol:
+        query = st.text_input("Charakter suchen", placeholder="Name, Clan oder Fähigkeit …", key="pool_search").casefold().strip()
+    with pcol:
+        limits = st.slider("Power Level", 0, 100, (0, 100), key="pool_power_range")
+    with rcol:
+        sort_by = st.selectbox("Sortierung", ["Power Level", "Chakra", "Ninjutsu", "Taijutsu", "Geschwindigkeit", "Battle IQ", "Name A–Z"], key="pool_sort")
+    active_variant = st.session_state.get("draft_variant", "classic")
+    if active_variant == "ranking":
+        remaining_ids = {c["id"] for c in st.session_state.get("rank_remaining", [])}
+        active_char = st.session_state.get("rank_current_char")
+        active_id = active_char.get("id") if active_char else None
+        owned_ids = {c["id"] for key in ("A", "B") for c in st.session_state.get("rank_players", {}).get(key, {}).get("team", [])}
+    else:
+        remaining_ids = {c["id"] for c in st.session_state.get("remaining", [])}
+        active_char = st.session_state.get("current_char")
+        active_id = active_char.get("id") if active_char else None
+        owned_ids = {c["id"] for key in ("A", "B") for c in st.session_state.get("players", {}).get(key, {}).get("team", [])}
+    def _naruto_search_text(c):
+        r = get_rating_data().get("characters", {}).get(c["name"], {})
+        return " ".join(str(v) for v in [c.get("name"), c.get("role"), c.get("faction"), r.get("ability_summary"), r.get("rationale"), r.get("weaknesses"), r.get("evidence_basis")]).casefold()
+    filtered = [c for c in characters if (faction == "Alle Fraktionen" or c.get("faction") == faction)
+                and limits[0] <= int(profiles[int(c["id"])].get("power", 0)) <= limits[1]
+                and (not query or query in _naruto_search_text(c))]
+    key_by_sort = {"Power Level": lambda c: profiles[int(c["id"])]["power"],
+                   "Chakra": lambda c: ranks[int(c["id"])].get("chakra", 50),
+                   "Ninjutsu": lambda c: ranks[int(c["id"])].get("ninjutsu", 50),
+                   "Taijutsu": lambda c: ranks[int(c["id"])].get("taijutsu", 50),
+                   "Geschwindigkeit": lambda c: ranks[int(c["id"])].get("speed", 50),
+                   "Battle IQ": lambda c: ranks[int(c["id"])].get("battle_iq", 50)}
+    if sort_by == "Name A–Z":
+        filtered.sort(key=lambda c: c["name"].casefold())
+    else:
+        filtered.sort(key=lambda c: (-key_by_sort[sort_by](c), c["name"].casefold()))
+    pages = max(1, math.ceil(len(filtered) / 20))
+    if st.session_state.get("pool_page", 1) > pages:
+        st.session_state["pool_page"] = pages
+    page = st.selectbox("Ergebnisseite", list(range(1, pages + 1)), format_func=lambda p: f"Seite {p}/{pages}", key="pool_page")
+    subset = filtered[(page - 1) * 20:page * 20]
+    st.caption(f"{len(filtered)} Figuren gefunden · {len(remaining_ids)} im aktiven Lostopf. Bewertungsgrenze: The Last, kein Boruto.")
+    cols = st.columns(4, gap="small")
+    status = st.session_state.setdefault("portrait_status", {})
+    cloud_batch = cloud_portraits_for_characters(subset)
+    selected_id = st.session_state.get("pool_selected_character_id")
+    for i, ch in enumerate(subset):
+        ident = int(ch["id"]); profile = profiles[ident]; rank = ranks[ident]
+        with cols[i % 4]:
+            st.image(character_portrait_thumbnail(ch, cloud_batch), width=155)
+            state_label = "IM LOSTOPF" if ch["id"] in remaining_ids else ("AKTUELL GEZOGEN" if ch["id"] == active_id else ("VERGEBEN" if ch["id"] in owned_ids else "AUSSERHALB DES POOLS"))
+            st.markdown(f'<div style="background:rgba(255,255,255,.025);border:1px solid rgba(210,226,243,.1);border-radius:10px;padding:9px;margin-bottom:8px">'
+                        f'<div style="font-weight:800;font-size:.84rem">{safe_text(ch["name"])}</div>'
+                        f'<div style="font-size:.7rem;color:#98adbf;margin:3px 0">{safe_text(ch.get("faction", ""))} · {safe_text(ch.get("role", ""))}</div>'
+                        f'<div style="font-size:.7rem;color:#e8bd64;font-weight:800">POWER {profile["power"]} · CHAKRA {rank["chakra_display"]} · NINJUTSU {rank["ninjutsu_display"]}</div>'
+                        f'<div style="font-size:.63rem;letter-spacing:.08em;font-weight:800;color:#cbd7e2;margin-top:5px">{state_label}</div></div>', unsafe_allow_html=True)
+            if st.button("👁 Werte ansehen", key=f"pool_open_profile_{ident}", use_container_width=True):
+                st.session_state["pool_selected_character_id"] = ident
+    selected = character_by_id.get(int(selected_id)) if selected_id is not None else None
+    if selected:
+        st.markdown("---")
+        st.markdown('<div class="panel-label">NARUTO CHARAKTER-EXPLORER</div><h2>Vollständiges Profil</h2><div class="small-muted">Power Level, Chakra, Fähigkeiten und Fivefold-Werte – ohne Boruto.</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            img_col, info_col = st.columns([.7, 2.3], gap="medium")
+            with img_col:
+                st.image(character_portrait(selected, cloud_portraits_for_characters([selected])), use_container_width=True)
+            with info_col:
+                st.markdown(f'<div class="character-name">{safe_text(selected["name"])}</div><div class="character-sub">{safe_text(selected.get("faction", ""))} · {safe_text(selected.get("role", ""))}</div>', unsafe_allow_html=True)
+                if st.button("Ausgewähltes Profil schließen", key=f"pool_close_profile_{int(selected['id'])}"):
+                    st.session_state.pop("pool_selected_character_id", None); st.rerun()
+            render_character_analysis(selected)
+            detail_rank = ranks[int(selected["id"])]
+            st.markdown("### Fivefold Ranking · fünf Disziplinen")
+            stat_cols = st.columns(5, gap="small")
+            for col, (label, key, _desc) in zip(stat_cols, RANKING_CATEGORIES):
+                with col: col.metric(label, detail_rank[f"{key}_display"])
+            with st.expander("Warum hat der Charakter diese Fivefold-Werte?", expanded=False):
+                for label, key, _desc in RANKING_CATEGORIES:
+                    st.markdown(f"**{label}: {detail_rank[f'{key}_display']}** · {detail_rank[f'{key}_evidence']}")
+                    st.write(detail_rank[f"{key}_rationale"])
+
+
 def render_roster_browser() -> None:
     """Searchable, filterable character explorer shared by both game modes."""
+    if IS_NARUTO:
+        render_naruto_roster_browser()
+        return
     characters = get_characters()
     # Each profile is derived once per explorer render and reused by filtering,
     # sorting, cards and details. This avoids duplicate scoring work on every click.
@@ -2170,7 +2436,7 @@ def render_roster_browser() -> None:
                 f'<div style="font-size:.7rem;color:#e8bd64;font-weight:800">POWER {profile["power"]} · FRUCHT {rprofile["devil_fruit"]} · HAKI {rprofile["haki_display"]}</div>'
                 f'<div style="font-size:.67rem;color:#cbd7e2;margin-top:3px">Kopfgeld: {safe_text(bounty_card_label(profile.get("bounty"), profile.get("bounty_state", "unbekannt")))}</div>'
                 f'<div style="font-size:.63rem;letter-spacing:.08em;font-weight:800;color:{color};margin-top:5px">{state_label}</div></div>', unsafe_allow_html=True)
-            if st.button("👁 Werte ansehen", key=f"pool_open_profile_{int(ch['id'])}", use_container_width=True, help=f"Öffnet Haki, Fähigkeiten, Power Level, Kopfgeld und die vollständige Bewertung von {ch['name']}."):
+            if st.button("👁 Werte ansehen", key=f"pool_open_profile_{int(ch['id'])}", use_container_width=True, help=f"Öffnet {RESOURCE_LABEL}, Fähigkeiten, Power Level und die vollständige Bewertung von {ch['name']}."):
                 st.session_state["pool_selected_character_id"] = int(ch["id"])
             if status.get(ch["name"], "").startswith("Ersatzporträt"):
                 st.caption("Ersatzbild · Quelle prüfen")
@@ -2242,6 +2508,23 @@ MATCHUP_RULES = [
 def matchup_effect(character_a: dict[str, Any], character_b: dict[str, Any]) -> tuple[float, str]:
     name_a = normalize(character_a.get("name", ""))
     name_b = normalize(character_b.get("name", ""))
+    if IS_NARUTO:
+        rules = [
+            ("Shikamaru Nara (Kriegsbogen)", "Hidan", "Shikamaru Nara (Kriegsbogen)", 14.0, "Shikamarus Vorbereitung, Analyse und Schattenbindung kontern Hidans ritualabhängigen Kampfstil; ohne Vorbereitung wird der Vorteil kleiner."),
+            ("Itachi Uchiha (Edo Tensei)", "Kabuto Yakushi (Sennin-Modus)", "Itachi Uchiha (Edo Tensei)", 4.0, "Izanami ist ein außergewöhnlicher, aber situationsabhängiger Konter. Kabutos Höhle, Sensorik und Sage Mode halten das Duell eng."),
+            ("Naruto Uzumaki (The Last)", "Toneri Ōtsutsuki", "Naruto Uzumaki (The Last)", 5.0, "The Last zeigt Narutos Sieg; Toneris Tenseigan-Chakra-Modus und Mondtechniken bleiben gefährliche Faktoren."),
+            ("Might Guy (Acht Tore)", "Madara Uchiha (Jūbi-Jinchūriki)", "Might Guy (Acht Tore)", 7.0, "Night Guy brachte Madara an den Rand einer Niederlage. Die Form ist extrem kurz und lebensgefährlich; kein verlässlicher Langkampf-Vorteil."),
+            ("Sasuke Uchiha (The Last)", "Deidara", "Sasuke Uchiha (The Last)", 5.0, "Sasukes Blitznatur kontert Deidaras Ton, aber Deidaras Flugdistanz und Sprengradius bleiben relevant."),
+            ("Chiyo", "Sasori", "Chiyo", 4.0, "Chiyos Wissen um Sasori und ihre Puppenspielkunst helfen; Sasoris Gift und Puppenarmee machen den Ausgang weiterhin gefährlich."),
+            ("Pain (Sechs Pfade)", "Jiraiya (Sennin-Modus)", "Pain (Sechs Pfade)", 3.0, "Pains gemeinsames Sichtfeld und die sechs Pfade sind im offenen Kampf ein Vorteil; Jiraiyas Informationen und Sage Mode verkürzen ihn."),
+            ("Madara Uchiha (Jūbi-Jinchūriki)", "Hashirama Senju (Prime)", "Madara Uchiha (Jūbi-Jinchūriki)", 6.0, "Verglichen werden Peak-Formen: Jūbi, Rinnegan und Limbo heben Madara klar über Hashiramas lebende Prime-Form."),
+            ("Kisame Hoshigaki", "Killer B", "Kisame Hoshigaki", 2.0, "Samehada kann Bijū-Chakra absorbieren; Bee kann mit Gyūki-Form und Team-/Umgebungsbedingungen dagegenhalten."),
+            ("Obito Uchiha (Jūbi-Jinchūriki)", "Minato Namikaze (KCM · Edo)", "Obito Uchiha (Jūbi-Jinchūriki)", 2.0, "Minatos Raum-Zeit-Erfahrung ist ein taktischer Konter, aber Juubitos rohe Six-Paths-Reserven und Truth-Seeking Orbs bleiben dominant."),
+        ]
+        for left, right, favored, bonus, reason in rules:
+            if {name_a, name_b} == {normalize(left), normalize(right)}:
+                return (bonus if name_a == normalize(favored) else -bonus), reason
+        return 0.0, "Kein spezieller Naruto-Kontereintrag; das Modell berücksichtigt Power Level, Chakra, Fähigkeiten und Kampfparameter."
     female_names = {normalize(n) for n in ["Nami", "Nico Robin", "Boa Hancock", "Black Maria", "Stussy", "Gunko", "Jewelry Bonney", "Charlotte Linlin", "Charlotte Cracker", "Charlotte Perospero", "Perona", "Tashigi", "Nefertari Vivi", "Charlotte Pudding", "Carrot", "Tsuru", "Dr. Kureha"]}
     if name_a == normalize("Sanji") and name_b in female_names:
         return -22.0, "Kanonische Einschränkung: Sanji verweigert den Angriff auf Frauen; der Matchup-Bonus steht für diese Verhaltensschwäche, nicht für mehr rohe Kampfkraft."
@@ -2285,7 +2568,7 @@ def duel_rating(character: dict[str, Any]) -> float:
     return min(100.0, max(0.0, base))
 
 def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dict[str, Any]:
-    """Return a duel prediction using the v5.1 all-pairs simulations when available.
+    """Return a duel prediction using the active universe’s all-pairs simulations when available.
 
     Probabilities in the matrix are oriented to its stored `a` and `b`. This
     function always reorients them to the caller's character_a/character_b order.
@@ -2308,7 +2591,8 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         p_a = stored_probability if direct_orientation else 100.0 - stored_probability
         # Preserve the app's established non-certainty floor/ceiling. These are
         # model simulations, not canonically guaranteed fight outcomes.
-        p_a = max(0.05, min(99.95, p_a))
+        low, high = (0.05, 99.95)
+        p_a = max(low, min(high, p_a))
         try:
             row_modifier = float(matchup.get("matchup_modifier", 0.0) or 0.0)
         except (TypeError, ValueError):
@@ -2327,17 +2611,18 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
         special_factors = matchup.get("special_factors", [])
         if not isinstance(special_factors, list):
             special_factors = [str(special_factors)] if special_factors else []
-        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus der v5.1-Matrix mit 15.000 Ergebnisziehungen.")
+        reason = str(matchup.get("reason") or "V4.4-Matchup-Prognose aus den vorab berechneten Ergebnisziehungen.")
         # The probability and the displayed margin stay mathematically consistent.
         p_unit = max(0.0005, min(0.9995, p_a / 100.0))
         margin = 10.0 * math.log(p_unit / (1.0 - p_unit))
-        source = "Power Matrix v5.1 · 15.000 Ergebnisziehungen"
+        source = f"{'Naruto' if IS_NARUTO else 'One Piece'} Power Matrix · 15.000 Ergebnisziehungen"
     else:
         # Backward-compatible fallback for any future character absent from v4.4.
         modifier, reason = matchup_effect(character_a, character_b)
         margin = rating_a - rating_b + modifier
         p_a = 100.0 / (1.0 + math.exp(max(-12, min(12, -margin / 10.0))))
-        p_a = max(0.05, min(99.95, p_a))
+        low, high = (0.05, 99.95)
+        p_a = max(low, min(high, p_a))
         simulations, confidence, wins_a, wins_b = 0, "Fallback", 0, 0
         special_factors = []
         source = "Lokale Fallback-Formel"
@@ -2360,7 +2645,7 @@ def duel_result(character_a: dict[str, Any], character_b: dict[str, Any]) -> dic
 
 
 def calculate_matchmaking(team_a: list[dict[str, Any]], team_b: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Pair team members to create the closest projected duels using v5.1 odds."""
+    """Pair team members to create the closest projected duels using v5.0 odds."""
     count = min(len(team_a), len(team_b), TEAM_SIZE)
     if count <= 0:
         return []
@@ -2379,7 +2664,7 @@ def calculate_matchmaking(team_a: list[dict[str, Any]], team_b: list[dict[str, A
         objective = 0.0
         for a_char, b_char in zip(a_team, order):
             predicted_probability = float(pair_results[(a_char.get("name", ""), b_char.get("name", ""))]["p_a"])
-            # Prefer close fights around 50:50, using the actual v5.1 pairwise
+            # Prefer close fights around 50:50, using the actual precomputed pairwise
             # estimate rather than a second, inconsistent formula.
             objective += -abs(predicted_probability - 50.0)
         if objective > best_value:
@@ -2397,7 +2682,7 @@ def calculate_matchmaking(team_a: list[dict[str, Any]], team_b: list[dict[str, A
 
 def battle_text(name_a: str, a: dict[str, Any], name_b: str, b: dict[str, Any], matchups: list[dict[str, Any]] | None = None) -> str:
     if not a["profiles"] or not b["profiles"]:
-        return "Noch sind nicht beide Crews vollständig genug aufgestellt, um einen sinnvollen Kampftext zu formulieren."
+        return "Noch sind nicht beide Teams vollständig genug aufgestellt, um einen sinnvollen Kampftext zu formulieren."
     overall_delta = float(a["score"] - b["score"])
     if matchups:
         average_duel_margin = sum(float(item.get("margin", 0)) for item in matchups) / len(matchups)
@@ -2406,18 +2691,22 @@ def battle_text(name_a: str, a: dict[str, Any], name_b: str, b: dict[str, Any], 
         winner_name, winner, loser_name, loser = name_a, a, name_b, b
     else:
         winner_name, winner, loser_name, loser = name_b, b, name_a, a
+    resource = "Chakra" if IS_NARUTO else "Haki"
+    team_word = "Shinobi-Team" if IS_NARUTO else "Crew"
     if abs(overall_delta) < 3:
         intro = f"{name_a} und {name_b} liefern sich ein enges Gefecht: {winner_name} hat rechnerisch nur einen kleinen Vorteil."
     elif winner["chemistry"] > loser["chemistry"] + 8:
-        intro = f"{winner_name} wirkt als Crew eingespielter und kann durch die bessere Teamchemie koordinierter angreifen."
+        intro = f"{winner_name} wirkt als {team_word} eingespielter und kann durch die bessere Teamchemie koordinierter angreifen."
     else:
-        intro = f"{winner_name} hat nach Power Level, bestätigtem Haki und Team-Boni die stärkere modellierte Kampfbilanz."
+        intro = f"{winner_name} hat nach Power Level, {resource} und Team-Boni die stärkere modellierte Kampfbilanz."
     if winner["avg_power"] > loser["avg_power"] + 10:
         detail = " Im direkten Schlagabtausch dürfte die höhere rohe Kampfkraft den Unterschied machen."
     elif winner["chemistry"] > loser["chemistry"] + 10:
-        detail = " Durch abgestimmte Kombinationen und gegenseitige Unterstützung kann die Crew einzelne stärkere Gegner ausspielen."
+        detail = " Durch abgestimmte Kombinationen und gegenseitige Unterstützung kann das Team einzelne stärkere Gegner ausspielen."
     else:
-        detail = " Der Ausgang hängt stark von den konkreten Duellen, Haki, Teufelsfrüchten und der Kampfsituation ab."
+        detail = (" Der Ausgang hängt stark von Chakra-Kontrolle, Ninjutsu, Dōjutsu, Reichweite, Ausdauer und der Kampfsituation ab."
+                  if IS_NARUTO else
+                  " Der Ausgang hängt stark von Haki, Teufelsfrüchten, Reichweite, Ausdauer und der Kampfsituation ab.")
     counter_notes = []
     for duel in matchups or []:
         if abs(duel.get("modifier", 0)) >= 15:
@@ -2430,38 +2719,51 @@ def battle_text(name_a: str, a: dict[str, Any], name_b: str, b: dict[str, Any], 
 
 
 # ---- Fivefold Ranking mode --------------------------------------------------
-RANKING_CATEGORIES = [
-    ("Teufelsfrucht", "devil_fruit", "Fruchtpotenzial, Beherrschung, Erwachen, Reichweite und besondere Effekte"),
-    ("Haki", "haki", "Bestätigte Haki-Meisterschaft; unbestätigte Werte sind ausdrücklich als Schätzung markiert"),
-    ("Stärke", "strength", "Direkte Durchschlagskraft, physische Kraft, Defensive und Durchhaltevermögen"),
-    ("Geschwindigkeit", "speed", "Bewegungstempo, Reaktionen, Beschleunigung und Kampfmobilität"),
-    ("Battle IQ", "battle_iq", "Taktische Entscheidungen im Kampf, Anpassung und Nutzung von Schwächen"),
-]
+if IS_NARUTO:
+    RANKING_CATEGORIES = [
+        ("Ninjutsu", "ninjutsu", "Ninjutsu, Dōjutsu, Kekkei Genkai, Raum-Zeit-Techniken und Spezialeffekte"),
+        ("Chakra", "chakra", "Chakra-Reserven, Kontrolle, Effizienz und Zugriff auf Bijū-/Six-Paths-Chakra"),
+        ("Taijutsu", "taijutsu", "Nahkampf, physische Kraft, Technik und körperliche Kampffähigkeit"),
+        ("Geschwindigkeit", "speed", "Bewegungstempo, Reaktionen, Beschleunigung und Kampfmobilität"),
+        ("Battle IQ", "battle_iq", "Taktische Entscheidungen im Kampf, Anpassung und Nutzung von Schwächen"),
+    ]
+else:
+    RANKING_CATEGORIES = [
+        ("Teufelsfrucht", "devil_fruit", "Fruchtpotenzial, Beherrschung, Erwachen, Reichweite und besondere Effekte"),
+        ("Haki", "haki", "Bestätigte Haki-Meisterschaft; unbestätigte Werte sind ausdrücklich als Schätzung markiert"),
+        ("Stärke", "strength", "Direkte Durchschlagskraft, physische Kraft, Defensive und Durchhaltevermögen"),
+        ("Geschwindigkeit", "speed", "Bewegungstempo, Reaktionen, Beschleunigung und Kampfmobilität"),
+        ("Battle IQ", "battle_iq", "Taktische Entscheidungen im Kampf, Anpassung und Nutzung von Schwächen"),
+    ]
 RANK_CATEGORY_LABELS = [item[0] for item in RANKING_CATEGORIES]
 RANK_CATEGORY_KEYS = {label: key for label, key, _ in RANKING_CATEGORIES}
 
 
 @st.cache_data(show_spinner=False, max_entries=512)
 def _ranking_profile_cached(character_name: str, values: dict[str, Any]) -> dict[str, Any]:
-    """Cached pure Fivefold profile; unknown Haki remains visible as '?' and neutral only in the mean."""
+    """Cached pure Fivefold profile; unknown disciplines stay visible as '?' and neutral in the mean."""
     result: dict[str, Any] = {}
     unknown_count = 0
+    unknown_keys = {"haki", "chakra", "ninjutsu"}
     for label, key, description in RANKING_CATEGORIES:
-        raw = values.get(key, None if key == "haki" else 0)
+        raw = values.get(key, None if key in unknown_keys else 0)
         evidence = values.get("evidence", {}).get(key, "Modell-Schätzung")
         rationale = values.get("rationale", {}).get(key, description)
-        unknown = raw is None or (key == "haki" and any(token in str(evidence).lower() for token in ("unbekannt", "nicht quantifizierbar", "nicht ausreichend")))
+        unknown = raw is None or (key in unknown_keys and any(token in str(evidence).lower() for token in ("unbekannt", "nicht quantifizierbar", "nicht ausreichend")))
         if unknown:
-            score = 50 if key == "haki" else 0
-            display = "?" if key == "haki" else f"{score}/100"
+            score = 50
+            display = "?"
             unknown_count += 1
         else:
             try:
                 score = int(max(0, min(100, round(float(raw)))))
             except (TypeError, ValueError):
-                score = 50 if key == "haki" else 0
-                unknown = key == "haki"
-            display = "?" if unknown and key == "haki" else f"{score}/100"
+                score = 50 if key in unknown_keys else 0
+                unknown = key in unknown_keys
+                display = "?" if unknown else f"{score}/100"
+                if unknown: unknown_count += 1
+            else:
+                display = f"{score}/100"
         result[key] = score
         result[f"{key}_unknown"] = bool(unknown)
         result[f"{key}_display"] = display
@@ -2469,9 +2771,10 @@ def _ranking_profile_cached(character_name: str, values: dict[str, Any]) -> dict
         result[f"{key}_rationale"] = str(rationale)
     result["average"] = round(sum(result[key] for _, key, _ in RANKING_CATEGORIES) / len(RANKING_CATEGORIES), 1)
     result["unknown_count"] = unknown_count
-    result["average_note"] = "Unbekannte Haki-Meisterschaft wird ausschließlich für den Fivefold-Gleichgewichtsschnitt intern neutral mit 50 angesetzt und als ? angezeigt." if result.get("haki_unknown") else "Alle fünf Kategorien besitzen einen Zahlenwert."
+    resource_key = "chakra" if IS_NARUTO else "haki"
+    resource_name = "Chakra" if IS_NARUTO else "Haki-Meisterschaft"
+    result["average_note"] = f"Unbekannte {resource_name}-Werte werden ausschließlich für den Fivefold-Gleichgewichtsschnitt intern neutral mit 50 angesetzt und als ? angezeigt." if result.get(f"{resource_key}_unknown") else "Alle fünf Kategorien besitzen einen Zahlenwert."
     return result
-
 
 def ranking_profile(character: dict[str, Any]) -> dict[str, Any]:
     rating = get_rating_data().get("characters", {}).get(character.get("name", ""), {})
@@ -2491,8 +2794,10 @@ def get_character_search_index() -> dict[int, str]:
             character.get("name"), character.get("role"), character.get("faction"),
             rating.get("ability_summary") if isinstance(rating, dict) else "",
             rating.get("haki_note") if isinstance(rating, dict) else "",
+            rating.get("chakra_note") if isinstance(rating, dict) else "",
             rating.get("devil_fruit_name") if isinstance(rating, dict) else "",
             ranking.get("devil_fruit_rationale"), ranking.get("haki_rationale"),
+            ranking.get("ninjutsu_rationale"), ranking.get("chakra_rationale"), ranking.get("taijutsu_rationale"),
             ranking.get("strength_rationale"), ranking.get("speed_rationale"),
             ranking.get("battle_iq_rationale"), ranking.get("evidence"),
             rating.get("haki_types") if isinstance(rating, dict) else [],
@@ -2547,7 +2852,7 @@ def rank_init_game(force: bool = False) -> None:
     characters = get_characters()
     mode = st.session_state.get("rank_game_mode", "friend")
     name_a = st.session_state.get("name_input_a", "Spieler 1").strip() or "Spieler 1"
-    name_b = "Grand Line KI" if mode == "single" else ("Wartet auf Mitspieler" if mode == "online" else (st.session_state.get("name_input_b", "Spieler 2").strip() or "Spieler 2"))
+    name_b = ("Shinobi-KI" if IS_NARUTO else "Grand Line KI") if mode == "single" else ("Wartet auf Mitspieler" if mode == "online" else (st.session_state.get("name_input_b", "Spieler 2").strip() or "Spieler 2"))
     st.session_state.rank_players = {
         "A": {"name": name_a, "budget": float(START_BUDGET), "team": []},
         "B": {"name": name_b, "budget": float(START_BUDGET), "team": []},
@@ -2806,7 +3111,7 @@ def rank_probability(team_a: list[dict[str, Any]], team_b: list[dict[str, Any]])
     delta = score_a - score_b
     # Same capped logistic curve as the classic duel probability model (10-point scale).
     p_a = 100.0 / (1.0 + math.exp(max(-12.0, min(12.0, -delta / 10.0))))
-    p_a = max(0.05, min(99.95, p_a))
+    p_a = max(2.0, min(98.0, p_a))
     return {"score_a": score_a, "score_b": score_b, "delta": delta, "p_a": p_a, "p_b": 100.0 - p_a}
 
 
@@ -2876,7 +3181,7 @@ def rank_render_player(player_key: str) -> None:
                 display_score = ranking_profile(item)[f'{key}_display']
                 st.markdown(f'<div class="crew-score">{safe_text(display_score.split("/")[0])}<span style="font-size:.7rem;color:#9aafc3"> {"" if display_score == "?" else "/ 100"}</span></div>', unsafe_allow_html=True)
                 if ranking_profile(item)[f'{key}_unknown']:
-                    st.caption("Haki-Meisterschaft unbekannt · neutral 50 nur für den Enddurchschnitt")
+                    st.caption(f"{category}-Wert unbekannt · neutral 50 nur für den Enddurchschnitt")
                 st.caption(f"Preis: {money(item.get('price', 0))}")
                 if st.session_state.rank_phase in {"ready", "finished"} and rank_can_return(player_key, current_draw=False):
                     if st.button(f"↩ Zurückgeben · 1 €", key=f"rank_return_owned_{player_key}_{item['id']}_{item.get('round',0)}", use_container_width=True):
@@ -2887,6 +3192,20 @@ def rank_render_player(player_key: str) -> None:
 
 def rank_show_character_values(character: dict[str, Any]) -> None:
     profile = ranking_profile(character)
+    if IS_NARUTO:
+        base_profile = character_profile(character)
+        ability_text = "Unbekannt" if base_profile.get("abilities_unknown") else f"{int(base_profile.get('abilities', 50))}/100"
+        chakra_raw = base_profile.get("chakra_score")
+        chakra_text = f"{int(chakra_raw)}/100" if isinstance(chakra_raw, (int, float)) else "unbekannt"
+        st.image(character_portrait(character), use_container_width=True)
+        st.markdown(f'<div class="draft-card-banner"><div class="draft-card-kicker">PEAK FORM · NARUTO SHIPPUDEN + THE LAST · RANKING-KARTE</div><div class="draft-card-name">{safe_text(character["name"])}</div><div class="draft-card-sub">{safe_text(character.get("faction", "Unbekannte Fraktion"))} · Power Level {base_profile["power"]}/100 · Chakra {safe_text(chakra_text)} · Fähigkeiten {safe_text(ability_text)}</div><div class="score-pills">' + ''.join(f'<span class="score-pill">{safe_text(label)} <b>{safe_text(profile[key + "_display"])}</b></span>' for label, key, _ in RANKING_CATEGORIES) + '</div></div>', unsafe_allow_html=True)
+        if base_profile.get("abilities_unknown"):
+            st.caption("Die Quellenlage lässt keine belastbare Fähigkeiten-Punktzahl zu; im Fivefold-Schnitt wird intern neutral 50 verwendet.")
+        with st.expander("Einordnung der fünf Kategorien und Evidenz", expanded=False):
+            for label, key, desc in RANKING_CATEGORIES:
+                st.markdown(f"**{label}: {safe_text(profile[f'{key}_display'])}** · {safe_text(profile[f'{key}_evidence'])}")
+                st.write(profile[f"{key}_rationale"])
+        return
     st.image(character_portrait(character), use_container_width=True)
     base_profile = character_profile(character)
     fruit_name = base_profile.get("devil_fruit_name", "Keine bestätigte eigene Teufelsfrucht")
@@ -2901,7 +3220,11 @@ def rank_show_character_values(character: dict[str, Any]) -> None:
 def rank_render_mode() -> None:
     players = st.session_state.rank_players
     st.markdown('<div class="brand-row"><div class="hero-mark">⚖</div><div><div class="eyebrow">SEPARATER SPIELMODUS · 5 DISZIPLINEN</div><h1>FIVEFOLD <span class="gold">RANKING</span></h1><div class="hero-sub">Ziehe eine Figur, gewinne die Auktion und ordne sie einer noch freien Kategorie zu. Fünf unterschiedliche Kategorien entscheiden über den Durchschnitt.</div></div></div>', unsafe_allow_html=True)
-    st.markdown('<div class="analysis-note"><b>Regeln:</b> 20 € Budget pro Spieler · gleiche Auktionslogik wie im klassischen Modus · 1 € Strafe pro Rückgabe · maximal 3 Rückgaben je Spieler. Jeder Spieler belegt jede Kategorie genau einmal: Teufelsfrucht, Haki, Stärke, Geschwindigkeit und Battle IQ. Der Endwert ist der arithmetische Mittelwert der fünf Kategorie-Werte (je 20 %); dieselbe logistische Wahrscheinlichkeitskurve wie beim klassischen Duellmodell zeigt die geschätzte Gewinnchance. Unbekannte Haki-Meisterschaft wird in der Karte als ? gezeigt und für den Fivefold-Schnitt intern nur neutral mit 50 angesetzt.</div>', unsafe_allow_html=True)
+    if IS_NARUTO:
+        intro = '''<div class="analysis-note"><b>Regeln:</b> 20 € Budget pro Spieler · gleiche Auktionslogik wie im klassischen Modus · 1 € Strafe pro Rückgabe · maximal 3 Rückgaben je Spieler. Jeder Spieler belegt jede Kategorie genau einmal: Ninjutsu, Chakra, Taijutsu, Geschwindigkeit und Battle IQ. Der Endwert ist der arithmetische Mittelwert der fünf Kategorie-Werte (je 20 %). Nicht ausreichend quantifizierbare Werte werden als ? gezeigt und nur intern neutral mit 50 angesetzt. Daten-Cutoff: The Last, kein Boruto.</div>'''
+    else:
+        intro = '''<div class="analysis-note"><b>Regeln:</b> 20 € Budget pro Spieler · gleiche Auktionslogik wie im klassischen Modus · 1 € Strafe pro Rückgabe · maximal 3 Rückgaben je Spieler. Jeder Spieler belegt jede Kategorie genau einmal: Teufelsfrucht, Haki, Stärke, Geschwindigkeit und Battle IQ. Der Endwert ist der arithmetische Mittelwert der fünf Kategorie-Werte (je 20 %); dieselbe logistische Wahrscheinlichkeitskurve wie beim klassischen Duellmodell zeigt die geschätzte Gewinnchance. Unbekannte Haki-Meisterschaft wird in der Karte als ? gezeigt und für den Fivefold-Schnitt intern nur neutral mit 50 angesetzt.</div>'''
+    st.markdown(intro, unsafe_allow_html=True)
     top1, top2, top3, top4 = st.columns(4)
     top1.metric("Charaktere im Pool", f"{len(st.session_state.rank_remaining)} / {len(get_characters())}")
     top2.metric("Karten gewonnen", f"{len(st.session_state.rank_history)}")
@@ -3107,7 +3430,10 @@ Jeder Spieler besetzt jede der fünf Kategorien genau einmal. Der Endwert ist de
             for item in reversed(st.session_state.rank_return_history):
                 st.markdown(f"- {safe_text(item['player'])}: {safe_text(item['character'])} zurückgegeben · −{money(item['fee'])}")
     with st.expander("Quellen und Grenzen der Kategorie-Werte"):
-        st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1198 (09.11.2026, deutsche Veröffentlichung).")
+        if IS_NARUTO:
+            st.markdown("Naruto-Datenbasis: Naruto Shippuden bis zum Kriegsende sowie der Film The Last. Boruto und spätere Fortsetzungen sind ausgeschlossen. Offizielle Naruto-Seiten belegen Rollen und dargestellte Fähigkeiten; die exakten Zahlen sind eigene Fan-Schätzungen, keine offiziellen Databook-Werte. Hamuras Ninjutsu-/Fähigkeitenpalette bleibt mangels detaillierter Darstellung ausdrücklich unbekannt.")
+        else:
+            st.markdown("Die Wertung trennt bestätigte Manga-Fakten von Fan-Schätzungen. Verwendete Referenzen umfassen [One Piece Wiki – Teufelsfrucht](https://onepiece.fandom.com/wiki/Devil_Fruit), [Charlotte Katakuri](https://onepiece.fandom.com/wiki/Charlotte_Katakuri), [Boa Hancock](https://onepiece.fandom.com/wiki/Boa_Hancock), [Joy Boy](https://onepiece.fandom.com/wiki/Joy_Boy), [Loki](https://onepiece.fandom.com/wiki/Loki), [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) und die [offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece). Community-Videos und Foren helfen beim Vergleich, gelten aber nicht als Kanonbeweis. Bewertungsstand: Kapitel 1198 (veröffentlicht am 08.11.2026).")
     if st.button("🏴‍☠️ Charakter-Explorer anzeigen / schließen", key="toggle_roster_ranking", use_container_width=True):
         st.session_state["show_roster_browser_ranking"] = not st.session_state.get("show_roster_browser_ranking", False)
         st.rerun()
@@ -3299,6 +3625,17 @@ restore_persistent_game_state()
 migrate_saved_character_pool()
 init_game()
 rank_init_game()
+# Complete a cross-anime join only after this rerun has loaded the host's data
+# directory and initialized the matching roster/matchup matrix.
+_pending_join = st.session_state.pop("_pending_online_join", None)
+if isinstance(_pending_join, dict):
+    _join_ok, _join_message = online_join_room(
+        str(_pending_join.get("code", "")),
+        str(_pending_join.get("guest_name", "Spieler B")),
+    )
+    st.session_state["_pending_online_join_notice"] = {
+        "ok": bool(_join_ok), "message": str(_join_message),
+    }
 if st.session_state.get("draft_variant", "classic") == "ranking":
     rank_process_ai_automatic_actions()
 else:
@@ -3307,11 +3644,54 @@ players = st.session_state.players
 num_sold = len(st.session_state.history)
 remaining_count = len(st.session_state.remaining)
 
+# Switching anime persists the outgoing draft in its own folder, then starts/restores the other universe.
+def on_anime_universe_change() -> None:
+    selected_label = st.session_state.get("anime_universe_selector", "One Piece")
+    selected = {
+        "One Piece": "one_piece",
+        "Naruto Shippuden · The Last (ohne Boruto)": "naruto",
+    }.get(selected_label, "one_piece")
+    try:
+        # ACTIVE_UNIVERSE still describes the outgoing script run during this callback.
+        st.session_state["anime_universe"] = ACTIVE_UNIVERSE
+        if "players" in st.session_state:
+            persist_game_state()
+    except Exception:
+        pass
+    st.session_state["anime_universe"] = selected
+    for key in GAME_STATE_KEYS:
+        if key not in {"anime_universe", "name_input_a", "name_input_b", "game_mode", "draft_variant"}:
+            st.session_state.pop(key, None)
+    for key in ["pool_filter", "pool_role_filter", "pool_search", "pool_sort", "pool_evidence_filter", "pool_page", "pool_selected_character_id", "show_roster_browser_classic", "portrait_status", "live_bounties", "bounty_data_updated", "bounty_data_message", "_last_local_autosave_hash"]:
+        st.session_state.pop(key, None)
+    # Never let an online room cross the boundary between unrelated anime universes.
+    st.session_state["online_room_code"] = None
+    st.session_state["online_role"] = None
+    st.session_state["online_revision"] = 0
+    st.session_state["online_last_hash"] = None
+    st.session_state["online_status"] = None
+    for fn_name in ("get_characters", "get_rating_data", "get_matchup_rows", "get_matchup_index", "get_character_search_index", "_ranking_profile_cached", "_build_character_profile_cached", "fetch_portrait_remote", "fetch_live_bounty_data"):
+        fn = globals().get(fn_name)
+        try:
+            if fn is not None and hasattr(fn, "clear"):
+                fn.clear()
+        except Exception:
+            pass
+
+
 # ---- Sidebar ---------------------------------------------------------------
 with st.sidebar:
     st.markdown('<div class="eyebrow">GRAND LINE DRAFT</div>', unsafe_allow_html=True)
     st.markdown("### 🏴‍☠️ Spielmenü")
-    st.markdown("Zwei Crews. Ein Lostopf. Fünf Plätze pro Team.")
+    st.markdown("Zwei Teams. Ein Lostopf. Fünf Plätze pro Team.")
+    universe_options = {"One Piece": "one_piece", "Naruto Shippuden · The Last (ohne Boruto)": "naruto"}
+    current_universe_label = next((label for label, value in universe_options.items() if value == ACTIVE_UNIVERSE), "One Piece")
+    st.selectbox("Anime-Universum", list(universe_options), index=list(universe_options).index(current_universe_label), key="anime_universe_selector", on_change=on_anime_universe_change, help="Beide Anime haben getrennte Charakterpools, Bewertungen, Matchups und Spielstände. Das Auktions- und Draft-Prinzip bleibt gleich.")
+    # Keep the actual state key synchronized with the visible selector.
+    selected_universe_value = universe_options[st.session_state.get("anime_universe_selector", current_universe_label)]
+    if selected_universe_value != st.session_state.get("anime_universe", "one_piece"):
+        st.session_state["anime_universe"] = selected_universe_value
+    st.caption("Aktiv: Naruto Shippuden bis The Last · kein Boruto." if IS_NARUTO else "Aktiv: One Piece.")
     st.divider()
     with st.expander("Spielumgebung, Lobby & Spielernamen", expanded=True):
         mode_labels = {"Lokal · 2 Spieler": "friend", "Gegen KI": "single", "Online · Lobby": "online"}
@@ -3324,7 +3704,7 @@ with st.sidebar:
         if selected_mode == "friend":
             st.text_input("Spieler B", key="name_input_b", max_chars=24)
         elif selected_mode == "single":
-            st.text_input("Gegner", value="Grand Line KI", disabled=True, key="ai_name_disabled")
+            st.text_input("Gegner", value="Shinobi-KI" if IS_NARUTO else "Grand Line KI", disabled=True, key="ai_name_disabled")
         else:
             st.caption("Spieler B tritt über einen 8-stelligen Raumcode bei.")
         if st.button("Spielumgebung & Namen übernehmen", use_container_width=True, type="primary"):
@@ -3337,6 +3717,12 @@ with st.sidebar:
         current_mode = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
         st.button("⇄ Spieleridentitäten tauschen", key="swap_player_identities", on_click=swap_active_player_identities, disabled=current_mode in {"single", "online"}, use_container_width=True, help="Namen und Teams bleiben zusammen. Im KI- und Online-Modus deaktiviert.")
         if selected_mode == "online" or current_mode == "online":
+            _join_notice = st.session_state.pop("_pending_online_join_notice", None)
+            if isinstance(_join_notice, dict):
+                if _join_notice.get("ok"):
+                    st.success(_join_notice.get("message", "Online-Beitritt abgeschlossen."))
+                else:
+                    st.error(_join_notice.get("message", "Online-Beitritt fehlgeschlagen."))
             if not supabase_config():
                 st.warning("Online-Lobbys benötigen eine einmalige Supabase-Konfiguration. Offline und gegen KI funktioniert die App ohne Einrichtung.")
                 st.caption("Siehe ONLINE_SETUP.md und .streamlit/secrets.toml.example im Projektordner.")
@@ -3369,7 +3755,7 @@ with st.sidebar:
     st.divider()
     # The single end-of-run save below handles persistence once; do not hash/sync twice.
     export_data = current_game_state()
-    st.download_button("⬇ Vollständigen Spielstand exportieren", data=json.dumps(export_data, ensure_ascii=False, indent=2), file_name="grand_line_draft_5_0_3_spielstand.json", mime="application/json", use_container_width=True)
+    st.download_button("⬇ Vollständigen Spielstand exportieren", data=json.dumps(export_data, ensure_ascii=False, indent=2), file_name=("grand_line_draft_naruto_spielstand.json" if IS_NARUTO else "grand_line_draft_one_piece_spielstand.json"), mime="application/json", use_container_width=True)
     if st.button("📦 Komplett-Backup erzeugen", key="create_portable_backup", use_container_width=True, help="Packt App, Bewertungsdaten, aktuellen Spielstand und bereits lokal gespeicherte Charakterporträts in eine ZIP-Datei."):
         st.session_state["backup_bundle_bytes"] = make_portable_backup()
         st.session_state["backup_bundle_created_at"] = datetime.now().astimezone().strftime("%d.%m.%Y %H:%M")
@@ -3378,7 +3764,7 @@ with st.sidebar:
         st.download_button("⬇ Komplett-Backup herunterladen", data=st.session_state["backup_bundle_bytes"], file_name="GrandLineDraft_3_6_Backup.zip", mime="application/zip", use_container_width=True, key=f"download_portable_backup_{st.session_state.get('backup_bundle_created_at', 'saved')}")
         st.caption(f"Backup erzeugt: {st.session_state.get('backup_bundle_created_at', 'Zeitpunkt unbekannt')}. Nach weiteren Spielzügen vor dem Download ein neues Backup erzeugen.")
     with st.expander("📂 Spielstand laden / wiederherstellen", expanded=False):
-        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0/5.1-Spielstand (JSON)", type=["json"], key="import_game_state_file")
+        uploaded_save = st.file_uploader("Grand Line Draft 3.5/3.6/5.0-Spielstand (JSON)", type=["json"], key="import_game_state_file")
         if uploaded_save is not None and st.button("Spielstand laden und fortsetzen", key="import_game_state_button", use_container_width=True, type="primary"):
             try:
                 payload = json.loads(uploaded_save.getvalue().decode("utf-8"))
@@ -3557,11 +3943,11 @@ with st.sidebar:
             st.caption("Hinweis: In der Cloud-App sieht der Server nur Dateien, die im GitHub-Repository enthalten sind oder über dieses Upload-Feld importiert wurden. Lokale Bilder auf deinem PC müssen daher einmal als ZIP hochgeladen werden.")
 
     st.divider()
-    if st.button("🖼 Alle 140 Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
+    if st.button(f"🖼 Alle {len(get_characters())} Bildquellen prüfen & Porträts lokal speichern", use_container_width=True, help="Prüft die exakten Wiki-Seiten, lädt erreichbare echte Porträts und speichert sie lokal. Kann je nach Verbindung eine Weile dauern."):
         bar = st.progress(0, text="Bildquellen werden geprüft …")
         def update_portrait_progress(fraction):
             bar.progress(min(1.0, max(0.0, fraction)), text=f"Bildquellen geprüft: {round(fraction * len(get_characters()))}/{len(get_characters())} …")
-        with st.spinner("Bis zu 140 Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
+        with st.spinner(f"Bis zu {len(get_characters())} Charakterporträts werden geprüft und lokal gespeichert. Bitte das Fenster offen lassen."):
             results = audit_all_portraits(update_portrait_progress)
         real = sum(1 for value in results.values() if not value.startswith("Kein echtes Bild") and "fehlgeschlagen" not in value)
         missing = [name for name, value in results.items() if value.startswith("Kein echtes Bild") or "fehlgeschlagen" in value]
@@ -3576,30 +3962,37 @@ with st.sidebar:
         status_vals = list(st.session_state.portrait_status.values())
         real_count = sum(1 for v in status_vals if not str(v).startswith("Ersatzporträt"))
         st.caption(f"Bildstatus letzter Lauf: {real_count} Einträge mit echter Quelle / lokalem Cache.")
-    if st.button("🌐 Kopfgeld-Daten online aktualisieren", use_container_width=True, help="Ruft öffentliche Kopfgelddaten nur bei Klick ab."):
-        fetch_live_bounty_data.clear()
-        with st.spinner("Öffentliche Kopfgelddaten werden abgerufen …"):
-            values, message = fetch_live_bounty_data()
-        st.session_state.live_bounties = values
-        st.session_state.bounty_data_updated = message if values else None
-        st.session_state.bounty_data_message = message
-    if st.session_state.bounty_data_updated:
-        st.caption(f"Kopfgeld-Daten zuletzt aktualisiert: {st.session_state.bounty_data_updated}. {len(st.session_state.live_bounties)} API-Einträge geladen.")
-    elif st.session_state.bounty_data_message:
-        st.caption(st.session_state.bounty_data_message)
+    if not IS_NARUTO:
+        if st.button("🌐 Kopfgeld-Daten online aktualisieren", use_container_width=True, help="Ruft öffentliche Kopfgelddaten nur bei Klick ab."):
+            fetch_live_bounty_data.clear()
+            with st.spinner("Öffentliche Kopfgelddaten werden abgerufen …"):
+                values, message = fetch_live_bounty_data()
+            st.session_state.live_bounties = values
+            st.session_state.bounty_data_updated = message if values else None
+            st.session_state.bounty_data_message = message
+        if st.session_state.get("bounty_data_updated"):
+            st.caption(f"Kopfgeld-Daten zuletzt aktualisiert: {st.session_state.bounty_data_updated}. {len(st.session_state.get('live_bounties', {}))} API-Einträge geladen.")
+        elif st.session_state.get("bounty_data_message"):
+            st.caption(st.session_state.bounty_data_message)
+        else:
+            st.caption("Online-Datenabruf startet nur nach Klick. Die Bewertung läuft ansonsten lokal.")
     else:
-        st.caption("Online-Datenabruf startet nur nach Klick. Die Bewertung läuft ansonsten lokal.")
+        st.caption("Naruto verwendet getrennte Chakra-Daten statt One-Piece-Kopfgeldern oder Haki.")
 
 # ---- Hero ------------------------------------------------------------------
 hero_left, hero_right = st.columns([4, 1])
 with hero_left:
-    st.markdown("""<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">VERSION 5.1 · PEAK EDITION · MANGA-STAND KAPITEL 1198 &nbsp;·&nbsp; Stelle deine Crew zusammen. Überbiete deinen Rivalen. Werde König der Auktion.</div></div></div>""", unsafe_allow_html=True)
+    if IS_NARUTO:
+        hero_html = '''<div class="brand-row"><div class="hero-mark">忍</div><div><div class="eyebrow">THE SHINOBI AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION · NARUTO SHIPPUDEN + THE LAST · OHNE BORUTO &nbsp;·&nbsp; Stelle dein Shinobi-Team zusammen. Überbiete deinen Rivalen.</div></div></div>'''
+    else:
+        hero_html = '''<div class="brand-row"><div class="hero-mark">☠</div><div><div class="eyebrow">THE PIRATE AUCTION GAME</div><h1>GRAND LINE <span class="gold">DRAFT</span></h1><div class="hero-sub">DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN &nbsp;·&nbsp; Stelle dein Team zusammen. Überbiete deinen Rivalen. Gewinne den Draft.</div></div></div>'''
+    st.markdown(hero_html, unsafe_allow_html=True)
 with hero_right:
     active_ai_mode = rank_is_ai_mode() if st.session_state.get("draft_variant", "classic") == "ranking" else is_ai_mode()
     current_mode_for_badge = st.session_state.get("rank_game_mode", "friend") if st.session_state.get("draft_variant", "classic") == "ranking" else st.session_state.get("game_mode", "friend")
     mode_label = "VS KI" if active_ai_mode else ("VS ONLINE" if current_mode_for_badge == "online" else "VS FRIEND")
     environment_badge = "ONLINE LOBBY" if current_mode_for_badge == "online" else ("AI MATCH" if active_ai_mode else "LOCAL PASS & PLAY")
-    st.markdown(f'<div style="text-align:right;padding-top:13px"><div class="brand-mini">ONE PIECE</div><div style="font-family:Barlow Condensed,sans-serif;font-size:1.15rem;font-weight:900;color:#e8bd64;letter-spacing:.15em">{mode_label}</div><div class="small-muted">{environment_badge}</div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="text-align:right;padding-top:13px"><div class="brand-mini">{"NARUTO SHIPPUDEN" if IS_NARUTO else "ONE PIECE"}</div><div style="font-family:Barlow Condensed,sans-serif;font-size:1.15rem;font-weight:900;color:#e8bd64;letter-spacing:.15em">{mode_label}</div><div class="small-muted">{environment_badge}</div></div>', unsafe_allow_html=True)
 st.markdown('<div class="eyebrow" style="margin-top:20px">SPIELMODUS WÄHLEN</div>', unsafe_allow_html=True)
 mode_a, mode_b = st.columns(2, gap="medium")
 with mode_a:
@@ -3616,7 +4009,7 @@ with mode_b:
 if st.session_state.draft_variant == "ranking":
     rank_render_mode()
     persist_game_state()
-    st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FIVEFOLD RANKING · Fan-Modell, Manga-Stichtag Kapitel 1198.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-note">GRAND LINE DRAFT · DUAL ANIME EDITION 6.0.2 · ONE PIECE / NARUTO SHIPPUDEN · Fan-Modell.</div>', unsafe_allow_html=True)
     st.stop()
 
 st.markdown('<div class="stat-strip">' + html_stat("Charaktere im Pool", f'<span>{remaining_count}</span> / {len(get_characters())}') + html_stat("Auktionen abgeschlossen", f'<span>{num_sold}</span>') + html_stat("Startbudget", f'<span>{money(START_BUDGET)}</span> p. P.') + html_stat("Teamgröße", '<span>5</span> Slots') + '</div>', unsafe_allow_html=True)
@@ -3632,7 +4025,9 @@ with center_col:
     with st.container(border=True):
         st.markdown('<div class="panel-label">DAS AUKTIONSDECK</div>', unsafe_allow_html=True)
         if st.session_state.phase == "finished":
-            st.markdown('<div class="result-wrap"><div class="eyebrow">ALLE CREWS VOLLSTÄNDIG</div><h2>Die Auktion ist beendet</h2><p class="small-muted">Beide Spieler haben ihre fünf Charaktere gesammelt. Power Level, bestätigtes Haki, Fähigkeiten und Teamchemie fließen in die Gesamtbewertung ein.</p></div>', unsafe_allow_html=True)
+            finished_label = "BEIDE SHINOBI-TEAMS VOLLSTÄNDIG" if IS_NARUTO else "BEIDE CREWS VOLLSTÄNDIG"
+            resource_blurb = "Power Level, Chakra, Fähigkeiten und Teamchemie" if IS_NARUTO else "Power Level, bestätigtes Haki, Fähigkeiten und Teamchemie"
+            st.markdown(f'<div class="result-wrap"><div class="eyebrow">{finished_label}</div><h2>Die Auktion ist beendet</h2><p class="small-muted">Beide Spieler haben ihre fünf Charaktere gesammelt. {resource_blurb} fließen in die Gesamtbewertung ein.</p></div>', unsafe_allow_html=True)
             a = analyze_team(players["A"]["team"]); b = analyze_team(players["B"]["team"])
             st.markdown(f'<div class="round-banner"><div style="display:flex;justify-content:space-between;gap:12px"><span>{safe_text(players["A"]["name"])} investiert</span><b style="color:#e8bd64">{money(a["spent"])}</b></div><div style="display:flex;justify-content:space-between;gap:12px;margin-top:6px"><span>{safe_text(players["B"]["name"])} investiert</span><b style="color:#e8bd64">{money(b["spent"])}</b></div><div style="display:flex;justify-content:space-between;gap:12px;margin-top:6px"><span>Teamchemie</span><b>Kleiner Synergiebonus berücksichtigt</b></div></div>', unsafe_allow_html=True)
             if st.session_state.get("classic_result_recorded") is None:
@@ -3753,7 +4148,11 @@ with center_col:
 st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
 with st.container(border=True):
     st.markdown('<div class="panel-label">POWER LEVEL · PRIME-FORMEN & MATCHMAKING</div><h2>Die Team-Bewertung</h2>', unsafe_allow_html=True)
-    st.markdown('<div class="analysis-note">Stand: Manga-Kapitel 1198 (09.11.2026); alle Figuren in ihrer stärksten belegten Peak-/Prime-Form. Teamwertung: Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 % und Vielseitigkeit 4 %. Einzelduelle nutzen die importierte Power Matrix v5.1 mit 15.000 vorab berechnete Ergebnisziehungen je Paarung; Angriff, Defensive, Tempo, Ausdauer und Kampftaktik sind Teil der Ausgangsprofile. Der Haki-Wert wird ausschließlich aus den Teammitgliedern mit bestätigter Haki-Anwendung gemittelt. Nicht bestätigte/unklare Haki-Daten werden nicht als 0 gewertet und nicht in den Nenner aufgenommen. Wenn für keinen Charakter Haki bestätigt ist, entfällt der Haki-Faktor und die übrigen Gewichte werden proportional normalisiert. Intelligenz ist nur ein kleiner Bonus bis +0,45 Punkte; Teamchemie kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status bestimmen nie direkt die Gesamtwertung.</div>', unsafe_allow_html=True)
+    if IS_NARUTO:
+        team_note = '<div class="analysis-note">Stand: Naruto Shippuden + The Last; keine Boruto-Inhalte. Teamwertung: Power Level 68 %, Chakra 16 % und Fähigkeiten 16 %. Einzelduelle nutzen die getrennte Naruto-Matrix mit 15.000 vorab berechneten Ergebnisziehungen je Paarung; Angriff, Defensive, Tempo, Ausdauer und Kampftaktik fließen ein. Chakra ist ein relativer Fan-Schätzwert. Intelligenz ist ein kleiner Zusatzbonus bis +0,45 Punkte; Teamchemie kann bis zu ±2 Punkte beitragen. Alle fünf Teamplätze sind gleichwertig.</div>'
+    else:
+        team_note = '<div class="analysis-note">Stand: One Piece Manga-Kapitel 1198; alle Figuren in ihrer stärksten belegten Peak-/Prime-Form. Teamwertung: Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 % und Vielseitigkeit 4 %. Einzelduelle nutzen die separate One-Piece-Power-Matrix mit 15.000 vorab berechneten Ergebnisziehungen je Paarung; Angriff, Defensive, Tempo, Ausdauer und Kampftaktik sind Teil der Ausgangsprofile. Der Haki-Wert wird ausschließlich aus den Teammitgliedern mit bestätigter Haki-Anwendung gemittelt. Nicht bestätigte/unklare Haki-Daten werden nicht als 0 gewertet und nicht in den Nenner aufgenommen. Wenn für keinen Charakter Haki bestätigt ist, entfällt der Haki-Faktor und die übrigen Gewichte werden proportional normalisiert. Intelligenz ist nur ein kleiner Bonus bis +0,45 Punkte; Teamchemie kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status bestimmen nie direkt die Gesamtwertung.</div>'
+    st.markdown(team_note, unsafe_allow_html=True)
     team_a = analyze_team(st.session_state.players["A"]["team"])
     team_b = analyze_team(st.session_state.players["B"]["team"])
     if not team_a["profiles"] and not team_b["profiles"]:
@@ -3767,36 +4166,43 @@ with st.container(border=True):
                 if info["score"] is None:
                     st.markdown('<div class="small-muted">Noch keine Figuren im Team.</div>', unsafe_allow_html=True)
                     continue
+                team_score_meta = ("Power Level + Chakra + Fähigkeiten + kleine Intelligenz- und Teamchemie-Anpassung"
+                                   if IS_NARUTO else
+                                   "Power Level + bestätigtes Haki + Fähigkeiten + Vielseitigkeit + kleine Intelligenz- und Teamchemie-Anpassung")
                 st.markdown(
                     f'<div class="team-total-card"><div class="team-total-label">GESAMTPUNKTZAHL · AKTUELLER KADER</div>'
                     f'<div class="team-total-value">{info["score"]:.1f}<span>/ 100 PUNKTE</span></div>'
-                    f'<div class="team-total-meta">Power Level + bestätigtes Haki + Fähigkeiten + Vielseitigkeit + kleine Intelligenz- und Teamchemie-Anpassung</div></div>',
+                    f'<div class="team-total-meta">{team_score_meta}</div></div>',
                     unsafe_allow_html=True,
                 )
                 mc_top = st.columns(2, gap="medium")
                 mc_bottom = st.columns(2, gap="medium")
                 mc_top[0].metric("Ø Power Level", f'{info["avg_power"]:.1f} / 100')
                 if info["haki_avg"] is not None:
-                    mc_top[1].metric("Ø Haki (bestätigt)", f'{info["haki_avg"]:.1f} / 100', help=f'{info["haki_count"]} von {len(info["profiles"])} Charakteren berücksichtigt; unbestätigte Haki-Daten zählen nicht als 0.')
+                    mc_top[1].metric(f"Ø {RESOURCE_LABEL} ({'Modellwert' if IS_NARUTO else 'bestätigt'})", f'{info["haki_avg"]:.1f} / 100', help=f'{info["haki_count"]} von {len(info["profiles"])} Charakteren berücksichtigt.')
                 else:
-                    mc_top[1].metric("Ø Haki (bestätigt)", "Keine Daten", help="Für kein Teammitglied ist Haki ausreichend bestätigt; Haki wird für dieses Team ausgelassen und nicht als 0 gewertet.")
+                    mc_top[1].metric(f"Ø {RESOURCE_LABEL}", "Keine Daten", help=f"Für kein Teammitglied ist ein belastbarer {RESOURCE_LABEL}-Wert hinterlegt; der Faktor wird ausgelassen und nicht als 0 gewertet.")
                 mc_bottom[0].metric("Ø Fähigkeiten", f'{info["avg_abilities"]:.1f} / 100')
                 mc_bottom[1].metric("Teamchemie", f'{info["chemistry"]:.1f} / 100')
-                with st.expander("Bewertung im Detail · Haki-Durchschnitt & Punktebeiträge", expanded=False):
-                    st.markdown("**Die Gesamtwertung ist ein Fan-Modell, keine offizielle One-Piece-Zahl. Unbekannte Haki-Werte werden nicht als 0 gewertet.**")
-                    if info["haki_avg"] is not None:
-                        st.success(f'Haki: {info["haki_count"]} von {len(info["profiles"])} Charakteren einbezogen. Der Haki-Durchschnitt von {info["haki_avg"]:.1f}/100 wird mit vollen 14 % gewichtet. Ausgeschlossen (nicht bestätigt/unklar): {info["haki_unknown_count"]}.')
-                        st.caption("Einbezogen: " + ", ".join(info["haki_names"]))
-                    else:
-                        st.info("Für kein Teammitglied liegt eine bestätigte Haki-Bewertung vor. Der Haki-Faktor wird ausgelassen; die übrigen Gewichte werden proportional angepasst, damit fehlende Daten keinen Nachteil erzeugen.")
+                with st.expander(f"Bewertung im Detail · {RESOURCE_LABEL}-Durchschnitt & Punktebeiträge", expanded=False):
                     parts = info.get("weighted_contributions", {})
                     team_weights = info.get("effective_weights", {})
+                    if IS_NARUTO:
+                        st.markdown("**Die Gesamtwertung ist ein Fan-Modell, keine offiziellen Naruto-Statistiken. Chakra- und Fähigkeitenwerte sind vergleichende Schätzungen.**")
+                    else:
+                        st.markdown("**Die Gesamtwertung ist ein Fan-Modell, keine offizielle One-Piece-Zahl. Unbekannte Haki-Werte werden nicht als 0 gewertet.**")
+                    if info["haki_avg"] is not None:
+                        st.success(f'{RESOURCE_LABEL}: {info["haki_count"]} von {len(info["profiles"])} Charakteren einbezogen. Der Durchschnitt von {info["haki_avg"]:.1f}/100 wird mit {team_weights.get("haki", 0)*100:.0f} % gewichtet. Nicht bezifferte Werte: {info["haki_unknown_count"]}.')
+                        st.caption("Einbezogen: " + ", ".join(info["haki_names"]))
+                    else:
+                        st.info(f"Für kein Teammitglied liegt ein belastbarer {RESOURCE_LABEL}-Wert vor. Der Faktor wird ausgelassen; die übrigen Gewichte werden proportional angepasst, damit fehlende Daten keinen Nachteil erzeugen.")
                     breakdown_rows = [
                         ("Power Level", info["avg_power"], team_weights.get("power", 0), parts.get("power", 0), "Geschätzte Kampfkraft in der stärksten bekannten Prime-Form"),
-                        ("Haki-Fähigkeit", info["haki_avg"], team_weights.get("haki", 0), parts.get("haki", 0), "Durchschnitt nur der Charaktere mit bestätigter Haki-Nutzung"),
-                        ("Fähigkeiten / Nutzwert", info["avg_abilities"], team_weights.get("abilities", 0), parts.get("abilities", 0), "Frucht/Haki-Wirkung, Reichweite, Kontrolle, Verteidigung und Spezialnutzen"),
-                        ("Vielseitigkeit", info["avg_versatility"], team_weights.get("versatility", 0), parts.get("versatility", 0), "Anpassungsfähigkeit über verschiedene Situationen und Kampfstile"),
+                        (f"{RESOURCE_LABEL}-Wert", info["haki_avg"], team_weights.get("haki", 0), parts.get("haki", 0), "Durchschnitt der Teammitglieder mit hinterlegtem Wert"),
+                        ("Fähigkeiten / Nutzwert", info["avg_abilities"], team_weights.get("abilities", 0), parts.get("abilities", 0), "Ninjutsu, Dōjutsu, Spezialtechniken, Reichweite, Kontrolle und Kampfnutzen" if IS_NARUTO else "Frucht/Haki-Wirkung, Reichweite, Kontrolle, Verteidigung und Spezialnutzen"),
                     ]
+                    if not IS_NARUTO:
+                        breakdown_rows.append(("Vielseitigkeit", info["avg_versatility"], team_weights.get("versatility", 0), parts.get("versatility", 0), "Anpassungsfähigkeit über verschiedene Situationen und Kampfstile"))
                     def _fmt_haki_value(value):
                         return "Nicht verfügbar" if value is None else f"{value:.1f}/100"
                     st.markdown("| Faktor | Teamdurchschnitt | Gewicht | Beitrag zur Grundwertung | Erklärung |\n|---|---:|---:|---:|---|\n" + "\n".join(
@@ -3806,28 +4212,36 @@ with st.container(border=True):
                     st.markdown(f"**Intelligenzbonus:** +{info['intelligence_bonus']:.2f} Punkte (kleiner Bonus; Team-Ø Intelligenz {info['avg_intelligence']:.1f}/100, maximal +0,45).  ")
                     st.markdown(f"**Teamchemie:** {info['chemistry']:.1f}/100 → **{info['chemistry_bonus']:+.2f} Punkte**. 50 ist neutral; gute Synergie gibt Bonus, schlechte Konstellationen können abziehen.  ")
                     st.markdown(f"**Ergebnis:** {info['base_score']:.2f} Grundpunkte + {info['intelligence_bonus']:.2f} Intelligenz + {info['chemistry_bonus']:+.2f} Teamchemie = **{info['score']:.1f}/100** (auf 0–100 begrenzt).")
-                    st.caption("Kopfgeld und Rang bleiben Kontextinformationen auf den Karten, beeinflussen aber die Gesamtwertung nicht. Nicht bestätigtes Haki bedeutet fehlende Daten, nicht automatisch Haki=0.")
-                known = info["known_bounties"]
-                bounty_text = f'{info["bounty_total"]:,}'.replace(',', '.') + ' ฿' if known else "Keine Daten"
-                st.caption(f"Erfasste Kopfgelder: {bounty_text} · Datenlage: {info['confidence']} · Investiert: {money(info['spent'])}")
+                    if IS_NARUTO:
+                        st.caption("Kopfgelder und One-Piece-Haki spielen in diesem Universum keine Rolle. Chakra-Werte sind Fan-Schätzungen; fehlende Spezialwerte bleiben als unbekannt gekennzeichnet.")
+                    else:
+                        st.caption("Kopfgeld und Rang bleiben Kontextinformationen auf den Karten, beeinflussen aber die Gesamtwertung nicht. Nicht bestätigtes Haki bedeutet fehlende Daten, nicht automatisch Haki=0.")
+                if not IS_NARUTO:
+                    known = info["known_bounties"]
+                    bounty_text = f'{info["bounty_total"]:,}'.replace(',', '.') + ' ฿' if known else "Keine Daten"
+                    st.caption(f"Erfasste Kopfgelder: {bounty_text} · Datenlage: {info['confidence']} · Investiert: {money(info['spent'])}")
                 with st.expander(f"Einzelanalyse: {name}"):
                     for index, profile in enumerate(sorted(info["profiles"], key=lambda x: x["power"], reverse=True)):
                         chname = profile["name"]
                         original_index = next(i for i, x in enumerate(st.session_state.players[key]["team"]) if x["name"] == chname)
                         slot = role_for_slot(original_index)
                         abilities = profile.get("ability_summary", "Keine Fähigkeitenkurzinfo hinterlegt.")
-                        detail_markdown = (
-                            f"**{slot} — {chname}**\n\n"
-                            f"Power Level: **{profile['power']}/100** · "
-                            f"Haki: **{str(profile.get('haki_score')) + '/100' if profile.get('haki_score') is not None else 'nicht bestätigt (aus Haki-Schnitt ausgeschlossen)'}** · "
-                            f"Fähigkeiten/Nutzwert: **{int(profile.get('abilities', 50))}/100** · "
-                            f"Kopfgeld: **{bounty_label(profile.get('bounty'), profile.get('bounty_state','unbekannt'))}** · "
-                            f"Datenlage: {profile['confidence']}\n\n"
-                            f"**Haki-Arten:** {safe_text(', '.join(profile.get('haki_types', [])) or 'keine Art sicher bestätigt')}\n\n"
-                            f"**Haki-Nachweis:** {safe_text(profile.get('haki_note', 'Nicht bestätigt.'))}\n\n"
-                            f"**Fähigkeiten:** {safe_text(abilities)}\n\n"
-                            f"_{profile.get('rationale','Fan-Schätzung.')}_"
-                        )
+                        if IS_NARUTO:
+                            ability_value = "Unbekannt (neutral 50 intern)" if profile.get("abilities_unknown") else f"{int(profile.get('abilities', 50))}/100"
+                            detail_markdown = (f"**{slot} — {chname}**\n\nPower Level: **{profile['power']}/100** · Chakra: **{str(profile.get('haki_score')) + '/100' if profile.get('haki_score') is not None else 'unbekannt'}** · Fähigkeiten: **{ability_value}** · Datenlage: {profile['confidence']}\n\n**Chakra-Einordnung:** {safe_text(profile.get('haki_note', 'Keine belastbare Schätzung.'))}\n\n**Fähigkeiten:** {safe_text(abilities)}\n\n_{profile.get('rationale','Fan-Schätzung.')}_")
+                        else:
+                            detail_markdown = (
+                                f"**{slot} — {chname}**\n\n"
+                                f"Power Level: **{profile['power']}/100** · "
+                                f"Haki: **{str(profile.get('haki_score')) + '/100' if profile.get('haki_score') is not None else 'nicht bestätigt (aus Haki-Schnitt ausgeschlossen)'}** · "
+                                f"Fähigkeiten/Nutzwert: **{int(profile.get('abilities', 50))}/100** · "
+                                f"Kopfgeld: **{bounty_label(profile.get('bounty'), profile.get('bounty_state','unbekannt'))}** · "
+                                f"Datenlage: {profile['confidence']}\n\n"
+                                f"**Haki-Arten:** {safe_text(', '.join(profile.get('haki_types', [])) or 'keine Art sicher bestätigt')}\n\n"
+                                f"**Haki-Nachweis:** {safe_text(profile.get('haki_note', 'Nicht bestätigt.'))}\n\n"
+                                f"**Fähigkeiten:** {safe_text(abilities)}\n\n"
+                                f"_{profile.get('rationale','Fan-Schätzung.')}_"
+                            )
                         st.markdown(detail_markdown)
                         st.divider()
         if team_a["profiles"] and team_b["profiles"] and len(team_a["profiles"]) >= 3 and len(team_b["profiles"]) >= 3:
@@ -3849,15 +4263,17 @@ with st.container(border=True):
                     score_col.markdown(
                         f'<div class="team-total-card"><div class="team-total-label">{safe_text(players[player_key]["name"])} · GESAMTSCORE</div>'
                         f'<div class="team-total-value">{team_info["score"]:.1f}<span>/ 100 PUNKTE</span></div>'
-                        f'<div class="team-total-meta">Umfasst Power Level, bestätigtes Haki, Fähigkeiten, Vielseitigkeit, Intelligenzbonus und Teamchemie</div></div>',
+                        f'<div class="team-total-meta">{"Umfasst Power Level, Chakra, Fähigkeiten, Intelligenzbonus und Teamchemie" if IS_NARUTO else "Umfasst Power Level, bestätigtes Haki, Fähigkeiten, Vielseitigkeit, Intelligenzbonus und Teamchemie"}</div></div>',
                         unsafe_allow_html=True,
                     )
             st.markdown(f'<div class="result-wrap"><div class="eyebrow">GEWINN-TENDENZ · ZUSÄTZLICH ZUM PUNKTESTAND</div><h3>{safe_text(leader if leader == "Unentschieden" else leader + " liegt nach Power Level und Kontern vorn")}</h3><div style="display:flex;justify-content:space-between;gap:12px;margin:8px 0 6px"><b>{safe_text(players["A"]["name"])}: {p_a:.0f}%</b><b>{safe_text(players["B"]["name"])}: {p_b:.0f}%</b></div></div>', unsafe_allow_html=True)
             st.progress(p_a / 100, text="Modell-Tendenz aus Teamstärke, Teamchemie und zugeordneten Einzelduellen – keine objektive Siegwahrscheinlichkeit")
             st.markdown(f'<div class="analysis-note">{safe_text(battle_text(players["A"]["name"], team_a, players["B"]["name"], team_b, matchups))}</div>', unsafe_allow_html=True)
-            st.caption("Die Einzelduell-Prognosen stammen aus der beigefügten Power Matrix v5.1 (15.000 Ergebnisziehungen pro Paarung). Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
+            matrix_version = "Naruto-Matrix 1.3" if IS_NARUTO else "One-Piece-Matrix 5.1"
+            pair_count = int(get_rating_data().get("matchup_method", {}).get("unique_pairs", len(get_matchup_rows())))
+            st.caption(f"Die Einzelduell-Prognosen stammen aus der separaten {matrix_version} mit 15.000 Ergebnisziehungen pro Paarung. Sie sind Modellschätzungen, keine garantierten Canon-Ergebnisse; der Matchmaker sucht möglichst ausgeglichene Paarungen.")
             st.markdown("### ⚔️ Taktisches Matchmaking · Einzelduelle")
-            st.caption(f"Der Matchmaker nutzt die v5.1-Matrix für alle 9.730 eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
+            st.caption(f"Der Matchmaker nutzt die {matrix_version} für alle {pair_count:,} eindeutigen Paarungen mit 15.000 vorab berechneten Monte-Carlo-Ergebnisziehungen je Paarung und ordnet anschließend möglichst ausgeglichene Duelle zu. Die Angaben bleiben modellierte Schätzungen, keine Canon-Garantien.")
             for duel in matchups:
                 left, center, right = st.columns([1.15, 1.35, 1.15], gap="small")
                 with left:
@@ -3880,8 +4296,22 @@ with st.container(border=True):
                 st.divider()
         else:
             st.info("Eine Siegtendenz und der Kampftext erscheinen ab mindestens 3 Figuren pro Team.")
-    with st.expander("Wie werden Charaktere, Haki und Teamchemie bewertet? Quellen & Grenzen"):
-        st.markdown("""
+    with st.expander(f"Wie werden Charaktere, {RESOURCE_LABEL} und Teamchemie bewertet? Quellen & Grenzen"):
+        if IS_NARUTO:
+            st.markdown("""
+**Naruto Shippuden · Stichtag The Last (2014), ohne Boruto**
+- Der klassische Modus verwendet Power Level (68 %), Chakra (16 %) und Fähigkeiten (16 %). Ein nicht ausreichend quantifizierbarer Fähigkeitenwert wird im Profil sichtbar als unbekannt gekennzeichnet und intern neutral mit 50 angesetzt.
+- Chakra steht für eine relative Fan-Schätzung aus Reserven, Kontrolle, Effizienz und verfügbarem Bijū-/Six-Paths-Chakra; keine offizielle Skala.
+- Fähigkeiten bewertet die Breite und Kampfrelevanz von Ninjutsu, Dōjutsu, Kekkei Genkai, Raum-Zeit-Techniken, Spezialeffekten, Kontrolle und Kontern.
+- Peak-/Prime-Versionen werden klar getrennt (z. B. DMS Kakashi, Acht-Tore-Guy, Edo/KCM Minato). Zeitlich begrenzte Formen erhalten einen Hinweis auf ihre Dauer und Kosten.
+- Fivefold Ranking nutzt Ninjutsu, Chakra, Taijutsu, Geschwindigkeit und Battle IQ mit je 20 %.
+- Matchups berücksichtigen Power Level, Chakra, Fähigkeiten, Reichweite, Konter, Ausdauer, Tempo und Kampftaktik. Eine Modellwahrscheinlichkeit ist kein garantierter Canon-Sieg.
+- Hagoromo, Hamura, Ashura und Indra haben teils begrenzte direkte Kampfbelege; besonders unsichere Zahlen sind ausdrücklich Fan-Einordnungen und keine bestätigten Databook-Werte.
+
+**Quellen & Grenzen:** Die offizielle Naruto-Seite beschreibt Hagoromo als Sohn Kaguyas und Begründer des Ninshū; offizielle Übersichten zu den Vierten Shinobi-Kriegsabschnitten stützen die zentralen Form- und Kampfkontexte (Jūbi-Jinchūriki, DMS Kakashi, Kaguya und die Versiegelung). Die Punktwerte selbst bleiben Modellschätzungen.
+""")
+        else:
+            st.markdown("""
 **Kartenwerte und interne Teamwertung**
 - Das sichtbare Power Level bewertet die stärkste bekannte Prime-Form anhand von Manga-Leistungen, Kampfdarstellung und Einordnung.
 - Die Charakterkarte zeigt Power Level, Haki-Fähigkeit (wenn bestätigt), Kopfgeld und Fähigkeiten/Nutzwert.
@@ -3892,19 +4322,19 @@ with st.container(border=True):
 - Intelligenz bleibt ein kleiner Bonus bis maximal +0,45 Punkte für das Team. Teamchemie ist bei 50 neutral und kann bis zu ±2 Punkte beitragen. Alle Teamplätze sind gleichwertig; es gibt keinen Kapitäns- oder Vizekapitänsbonus. Kopfgeld und Status fließen nicht in die Gesamtwertung ein.
 
 **So wird Haki behandelt**
-Jedes der 140 Profile enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
+Jedes One-Piece-Profil enthält einen Haki-Status, einen Score (oder `null`), gegebenenfalls bestätigte Haki-Arten und eine kurze Erläuterung. In der Teamwertung werden nur Profile mit Status „bestätigt“ und numerischem Wert gezählt. Die Detailansicht nennt die einbezogenen Charaktere und den tatsächlich verwendeten Nenner.
 
 **Taktisches Matchmaking:** Das Modell stellt passende Einzelduelle zusammen und kann Konter wie Ruffy gegen Enel oder Sanji gegen Nami berücksichtigen. Die Slot-Reihenfolge bringt keinen Vorteil.
 
 **Stand und Quellenprüfung**
-- Bewertungsstichtag: **Manga-Kapitel 1198 vom 9. November 2026**. Kapitel 1199 ist nach der aktuellen Kapitelübersicht für den 22. November 2026 angekündigt; in der Woche vom 16. November erscheint kein neues Kapitel.
+- Bewertungsstichtag: **Manga-Kapitel 1198 vom 8. November 2026**. Das ist der am 16. November 2026 neueste veröffentlichte Manga-Stand; Kapitel 1199 ist für den 22. November 2026 angekündigt.
 - **Kanon vor Community:** bestätigte Manga-Feats, bestätigte Haki-Arten und im Manga gezeigte Technik stehen über Titeln, Kopfgeld, Anime-Inszenierung und Fan-Rankings. Anime-Zusatzmaterial und Filme zählen nicht automatisch als Beleg.
 - OPwiki und One Piece Wiki dienen dem Nachschlagen von Charakteren, Techniken und Haki-Arten. Analysen wie Library of Ohara, YouTube-Rankings und Fan-Foren dienen als zusätzliche Perspektiven – nicht als Beweis für eine offizielle Rangfolge.
 - Die **Shanks-über-Kaido-Einordnung (97 zu 96)** ist eine bewusste Modellentscheidung: Shanks' Spitzen-Königshaki, Zukunftssicht/Observation-Killing und sein Kid-Feat geben ihm im Draft einen kleinen Vorsprung. Das ist kein im Manga endgültig bestätigter Satz, dass Shanks jedes Duell gegen Kaido gewinnen würde; Kaidos Ausdauer, Körper, Frucht und Wano-Kampfbelastung bleiben berücksichtigt. Gear-5-Ruffy liegt bei 95, mit klaren Zeit-/Energiegrenzen und noch nicht dauerhaft belegter Dominanz über fitte Top-Tiers.
 - Imu und Joy Boy liegen auf 100 als gesetzte Obergrenze, Rocks D. Xebec bei 99, Roger und Prime-Whitebeard bei 98, Prime-Garp bei 98 sowie Shanks und Mihawk bei 97. Mihawk liegt in der reinen Schwertkunst vor Shanks; Shanks führt im separaten Haki-Teilwert.
 - Die Skala ist **kein offizieller Oda-Wert**. 1 Punkt ist keine mathematisch exakte Siegwahrscheinlichkeit; nahe Werte markieren dieselbe Spitzenklasse, keine sichere Reihenfolge.
 
-**Quellen & Gegenpositionen:** [Haki – One Piece Wiki](https://onepiece.fandom.com/wiki/Haki) · [Observationshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Observation_Haki_Users) · [Rüstungshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Armament_Haki_Users) · [Königshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Supreme_King_Haki_Users) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52163) · [Haki-Analyse bis 1194](https://abysscurrent.com/ranking/strongest-haki-users) · [Zoros Königshaki-Fortschritt](https://abysscurrent.com/manga/does-zoro-have-conquerors-haki) · [Library of Ohara: Analyse zu 1195–1196](https://thelibraryofohara.com/2026/10/20/chapter-secrets-one-piece-chapters-1195-1196-in-depth-analysis/) · [YouTube-Ranking 2026](https://www.youtube.com/watch?v=TxAoXMaavG8) · [YouTube: Top 50 (2026)](https://www.youtube.com/watch?v=vf1M513rCwA) · [Worstgen-Debatte zu 1191](https://worstgen.alwaysdata.net/forum/threads/one-piece-chapter-spoiler-1191-spoilers-discussion.86950/page-53) · [Reddit-Debatte Shanks vs. Kaido](https://www.reddit.com/r/OnePiecePowerScaling/comments/1jwbtjz) · [Deutsches Pirateboard: Loki vs. Kaido](https://www.pirateboard.net/index.php?postID=1003731&thread%2F14472-kapitel-1174-die-st%C3%A4rkste-kreatur-der-welt%2F=)
+**Quellen & Gegenpositionen:** [Haki – One Piece Wiki](https://onepiece.fandom.com/wiki/Haki) · [Observationshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Observation_Haki_Users) · [Rüstungshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Armament_Haki_Users) · [Königshaki-Nutzer](https://onepiece.fandom.com/wiki/Category:Supreme_King_Haki_Users) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52017) · [Haki-Analyse bis 1194](https://abysscurrent.com/ranking/strongest-haki-users) · [Zoros Königshaki-Fortschritt](https://abysscurrent.com/manga/does-zoro-have-conquerors-haki) · [Library of Ohara: Analyse zu 1195–1196](https://thelibraryofohara.com/2026/10/20/chapter-secrets-one-piece-chapters-1195-1196-in-depth-analysis/) · [YouTube-Ranking 2026](https://www.youtube.com/watch?v=TxAoXMaavG8) · [YouTube: Top 50 (2026)](https://www.youtube.com/watch?v=vf1M513rCwA) · [Worstgen-Debatte zu 1191](https://worstgen.alwaysdata.net/forum/threads/one-piece-chapter-spoiler-1191-spoilers-discussion.86950/page-53) · [Reddit-Debatte Shanks vs. Kaido](https://www.reddit.com/r/OnePiecePowerScaling/comments/1jwbtjz) · [Deutsches Pirateboard: Loki vs. Kaido](https://www.pirateboard.net/index.php?postID=1003731&thread%2F14472-kapitel-1174-die-st%C3%A4rkste-kreatur-der-welt%2F=)
 
 Die Kampfkraft-, Haki-, Intelligenz- und Chemiewerte sind begründete Fan-Schätzungen, keine offiziellen Zahlen. Porträts werden über direkte Bildlinks, Uploads oder eine explizit gestartete Sammelprüfung lokal im Ordner `portraits/` gespeichert. Die normale Anzeige führt keine Netzwerkabfragen aus. Das Komplett-Backup nimmt diese Bilder samt Link-Metadaten mit; ein normales JSON-Spielstand-Export enthält nur den Spielstatus.
 """)
@@ -3931,7 +4361,7 @@ with log_right:
         st.markdown("""<div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">01</div><div><b>Los ziehen</b><div class="small-muted">Jedes verbleibende Los hat dieselbe Chance. Die Animation verändert das Ergebnis nicht.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">02</div><div><b>Bieten</b><div class="small-muted">Der ziehende Spieler eröffnet. Danach wird abwechselnd erhöht oder gepasst.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">03</div><div><b>Team führen</b><div class="small-muted">Alle fünf Plätze sind gleichwertig; die Reihenfolge bringt keinen Bonus.</div></div></div><div style="display:flex;gap:10px;margin:10px 0"><div style="font-family:'Barlow Condensed';font-size:1.6rem;color:#e8bd64;font-weight:900">04</div><div><b>Rückgabe mit Strafe</b><div class="small-muted">Jeder Spieler kann maximal drei Karten für je 1 € zurück in den Lostopf legen. Der Kaufpreis wird nicht erstattet.</div></div></div>""", unsafe_allow_html=True)
         st.caption("Jeder Kauf lässt mindestens 1 € für jeden noch offenen Teamplatz übrig. Rückgaben müssen diese Reserve ebenfalls erhalten.")
 
-if st.button("🏴‍☠️ Charakterpool durchsuchen · 140 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
+if st.button("🏴‍☠️ Charakterpool durchsuchen · 135 Figuren öffnen / schließen", key="toggle_roster_classic", use_container_width=True):
     st.session_state["show_roster_browser_classic"] = not st.session_state.get("show_roster_browser_classic", False)
     st.rerun()
 if st.session_state.get("show_roster_browser_classic", False):
@@ -3971,7 +4401,7 @@ with st.expander(f"📚 Spielhistorie ({len(st.session_state.get('classic_match_
                 st.session_state.confirm_clear_classic_history = False
                 st.rerun()
 
-st.markdown('<div class="footer-note">GRAND LINE DRAFT 5.1 · PEAK EDITION · FAN-PROJEKT · One Piece und seine Charaktere gehören den jeweiligen Rechteinhabern. Porträts: One Piece Wiki, One Piece API und einzelne offizielle Seiten. Erfolgreiche Bilder werden im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="footer-note">GRANDLINE · DUAL ANIME EDITION · FAN-PROJEKT · {"Naruto Shippuden + The Last (ohne Boruto)" if IS_NARUTO else "One Piece"}. Die jeweiligen Anime, Manga und Charaktere gehören den Rechteinhabern. Erfolgreich geladene Porträts werden lokal im Projektordner portraits/ zwischengespeichert.</div>', unsafe_allow_html=True)
 
 
 # Persist each fully rendered state as a safety net; key transitions also save before reruns.

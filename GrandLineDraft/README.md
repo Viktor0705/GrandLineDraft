@@ -1,151 +1,131 @@
-# Grand Line Draft 5.1 — Peak Edition
+# Grand Line Draft · Dual Anime Edition 6.0.2
 
-One-Piece-Draft-App auf Python/Streamlit-Basis. Diese vollständige Version baut auf der vom Nutzer bereitgestellten **5.0.4-Vollversion mit 135 Charakteren** auf und erweitert sie auf **140 Charaktere**, ohne bestehende IDs oder die Spielmechanik zu entfernen. Enthalten sind Classic Draft, Fivefold Ranking, Online-Lobby, Supabase-Cloud-Porträts und die vollständige neue Matchup-Matrix.
+Ein gemeinsames Draft-Spiel mit zwei auswählbaren Anime-Universen: **One Piece** und **Naruto Shippuden**. Der Name und das Auktions-/Draft-Prinzip bleiben erhalten. Charaktere, Bewertungen, Matchups und Spielstände sind pro Universum getrennt. Naruto endet bei **Naruto Shippuden + The Last: Naruto the Movie**; **Boruto ist ausgeschlossen**.
+
+## Umfang
+
+| Universum | Figuren | Eindeutige Matchups | Ziehungen je Paar | Modellziehungen gesamt |
+|---|---:|---:|---:|---:|
+| One Piece · Manga bis Kapitel 1198 (08.11.2026) | 140 | 9.730 | 15.000 | 145.950.000 |
+| Naruto Shippuden + The Last | 93 | 4.278 | 15.000 | 64.170.000 |
+| **Gesamt** | **233** | **14.008** | — | **210.120.000** |
+
+Die Ziehungen sind aggregierte Binomial-Monte-Carlo-Stichproben aus dem Matchup-Modell. Sie sind keine 211,5 Millionen kanonischen Kämpfe und machen eine Fan-Schätzung nicht zu einer offiziellen Rangliste.
 
 ## Windows-Start
 
 1. ZIP vollständig entpacken.
 2. Python 3.10 oder neuer installieren.
 3. `Start_GrandLineDraft.bat` starten.
-4. Lokal läuft die App standardmäßig unter `http://127.0.0.1:8501`.
+4. Lokal läuft die App unter `http://127.0.0.1:8501`.
 
-## Was in 5.1 neu ist
+Alternativ manuell im Projektordner:
 
-- **140 Charaktere**: alle 135 Figuren aus deiner 5.0.4-Version bleiben erhalten; IDs 166–170 ergänzen Gecko Moria (Prime), Kyros, Ashura Doji, Vergo und Kawamatsu.
-- **Manga-Stichtag Kapitel 1198 (9. November 2026, Deutschland)**: Ruffys neue dunkle, affenartig wirkende Nika-Manifestation ist berücksichtigt. Sie wird nicht als Gear 6 bezeichnet, weil der Manga sie nicht so benennt. Power Level Ruffy: **96**.
-- **Ethanbaron V. Nusjuro** erhält einen Gesamt-Haki-Schätzwert von **93**: Observation 91, Armament 93, Conqueror 94.
-- **Prime-Gecko-Moria: Power 89**. Seine frühere Konfrontation mit Kaido zählt, aber der Kampf ist nicht vollständig gezeigt und Kaido gewann. Daher bleibt die Konfidenz niedrig; Moria wird nicht einfach mit Kaido gleichgesetzt.
-- Katakuris Gesamt-Haki bleibt **89** (Observation 98, Armament 89, Conqueror 80).
-- Alle **9.730 eindeutigen Matchups** wurden neu aus den Profilen berechnet; die widersprüchlichen alten Wahrscheinlichkeiten wurden nicht übernommen.
+```bash
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-## Spielumgebung
+## Spielprinzip (für beide Anime gleich)
 
-- **Lokal · 2 Spieler:** beide Spieler verwenden denselben Browser/dieselbe Sitzung.
-- **Gegen KI:** regelbasierte KI auf Spieler-B-Seite.
-- **Online · Lobby:** Raum erstellen oder per achtstelligem Code beitreten. Erfordert einmalige Supabase-Konfiguration; siehe `ONLINE_SETUP.md`.
+- 20 € Startbudget pro Spieler und fünf Teamplätze.
+- Lokal zu zweit, gegen KI oder online über eine Supabase-Lobby.
+- Maximal drei Rückgaben je Spieler; jede kostet 1 €. Der ursprüngliche Kaufpreis wird nicht erstattet.
+- Klassischer Draft und Fivefold Ranking sind weiterhin getrennte Spielmodi.
+- Online-Räume sind an das Anime-Universum des Hosts gebunden. Beim Beitritt wechselt der Gast automatisch zu One Piece oder Naruto, lädt die passende Datenbank und verbindet sich anschließend; manuelle Vorauswahl ist nicht nötig. Die Online-Handoff-Korrektur aus 6.0.1 ist enthalten; die Tierlisten- und Datenbankkorrekturen aus 6.0.2 sind zusätzlich enthalten.
+- Die Autosaves liegen getrennt unter `saves/` und `saves/naruto/`.
 
-## Draft-Spielmodus 1: Classic Grand Line Draft
+## Classic-Teamwertung
 
-- 20 € Budget je Spieler, fünf Charaktere je Team.
-- Bestehende Ziehungs- und Auktionsregeln bleiben erhalten.
-- Maximal drei Rückgaben je Spieler, je Rückgabe 1 € Strafkosten; Kaufpreis wird nicht erstattet.
-- Teamvergleich und Ergebnisprognose basieren auf Charakterprofilen und den hinterlegten Matchup-Wahrscheinlichkeiten.
+**One Piece:** Power Level 68 %, bestätigtes Haki 14 %, Fähigkeiten/Nutzwert 14 %, Vielseitigkeit 4 %. Nicht quantifizierbares Haki bleibt unbekannt und wird aus dem Haki-Schnitt ausgeschlossen; falls kein Teammitglied einen belastbaren Wert hat, wird der Haki-Anteil ausgelassen und der Rest proportional normalisiert.
 
-## Draft-Spielmodus 2: Fivefold Ranking
+**Naruto:** Power Level 68 %, Chakra 16 %, Fähigkeiten 16 %. Chakra ist ein relativer Fan-Schätzwert aus Reserven/Kontrolle und kein offizieller Databook-Wert. Hamuras Fähigkeitswert bleibt in der Anzeige unbekannt; intern wird zur Berechnung neutral 50 verwendet und nicht als kanonischer Score ausgegeben.
 
-- Gleicher 140er-Charakterpool, 20 € Budget je Spieler, gleiche Auktion, maximal drei Rückgaben je Spieler für je 1 €.
-- Der Gewinner einer Karte weist diese einer freien Kategorie zu: Teufelsfrucht, Haki, Stärke, Geschwindigkeit oder Battle IQ.
-- Jede Kategorie zählt 20 %. Der Durchschnitt ist 0–100 (nicht 500).
-- Der Enddurchschnitt und die Gewinnwahrscheinlichkeit werden erst am Ende offengelegt.
-- Kein bestätigter Fruchtbesitz bedeutet 0 in der Teufelsfrucht-Kategorie, nicht 0 Kampfstärke.
-- **Unbekannte Haki-Meisterschaft wird als `?` angezeigt.** Für die Fivefold-Mittelwertberechnung wird intern ein neutraler Platzhalter 50 verwendet, damit die Kategorien gleich gewichtet sind. Der Wert 50 wird nicht als Kanon-Hakiwert ausgegeben. Im klassischen Modus wird unbekanntes Haki aus dem Haki-Schnitt ausgeschlossen.
+Beide Universen verwenden zusätzlich einen begrenzten Intelligenzbonus und Teamchemie. Kopfgeld wird im Naruto-Universum nicht verwendet.
 
-## Power Matrix v5.1
+## Fivefold Ranking
 
-Bewertungsstichtag: **Manga-Kapitel 1198 vom 9. November 2026 (deutsche Veröffentlichung)**. Das ist der aktuell veröffentlichte Stand zum Erstellungsdatum dieser Version (16. November 2026). Kapitel 1199 ist für den 22. November 2026 gelistet.
+Die gleiche Auktion und die gleiche Kategorie-Zuordnung gelten für beide Welten. Jede der fünf Disziplinen zählt 20 %.
 
-Power Level und Einzelwerte sind Fan-Modellschätzungen, keine offiziellen Oda-Werte. Manga-Feats und belegte Aussagen haben Vorrang vor Wikis, Foren, YouTube-Rankings und Fan-Theorien. Community-Material dient nur als ergänzende Perspektive. Bei widersprüchlichen oder unzureichenden Belegen wird die Konfidenz abgesenkt bzw. Haki-Meisterschaft als unbekannt belassen.
+**One Piece:** Teufelsfrucht · Haki · Stärke · Geschwindigkeit · Battle IQ.
 
-### Wichtige Vergleichsanker
+**Naruto:** Ninjutsu · Chakra · Taijutsu · Geschwindigkeit · Battle IQ.
 
-| Charakter | Power Level |
-|---|---:|
-| Imu / Joy Boy | 100 |
-| Rocks D. Xebec | 99 |
-| Roger / Prime Whitebeard / Prime Garp | 98 |
-| Shanks / Mihawk | 97 |
-| Kaido / Ruffy | 96 |
-| Ethanbaron V. Nusjuro | 93 |
-| Gecko Moria (Prime) | 89 |
-| Charlotte Katakuri | 89 |
+Unbekannte Werte bleiben sichtbar als `?`; für die Mittelwertbildung wird ein neutraler Platzhalter verwendet. Das ist keine Behauptung, dass die Figur exakt 50 Punkte besitzt.
 
-Shanks gegen Mihawk bleibt ein offenes Spitzenduell. Kaido wird in einem langen, gesunden 1-gegen-1 knapp vor Ruffy geführt. Diese Werte entscheiden nicht jedes situative Matchup automatisch.
+## Naruto-Bewertungsanker
 
-## Haki-Daten
+Die aktive Naruto-Datenbank enthält 93 Profile. Das bereitgestellte, nicht beschriftete Tierlistenbild zeigt 87 sichtbare Portrait-Kacheln. Eine vollständige 1:1-Namenszuordnung der Kacheln ist daraus nicht zweifelsfrei möglich; nach dem Identitätscheck wurde die unbestätigte zusätzliche Kakashi-Kriegsbogen-Variante entfernt, Sakumo bleibt eigenständig. Weitere Figuren wurden nicht ohne sichere Zuordnung gelöscht. Die folgenden Kernanker wurden nach dessen Vorgabe gesetzt:
 
-Ein bestätigter Haki-Typ ist nicht automatisch eine bestätigte quantitative Meisterschaft. Der Gesamt-Haki-Wert wird nur angezeigt, wenn die Daten eine individuelle Meisterschaftsschätzung tragen. Nicht quantifizierbare Werte bleiben `null`/`?`; sie werden nicht künstlich als 0 interpretiert. Nusjuros drei Teilwerte werden jeweils in der Charakterdetailansicht erläutert.
+| Figur / Peak-Form | Power | Chakra | Fähigkeiten |
+|---|---:|---:|---:|
+| Kaguya Ōtsutsuki | 100 | 100 | 100 |
+| Hagoromo Ōtsutsuki · Jūbi-/Six-Paths-Peak | 100 | 100 | 100 |
+| Madara · Jūbi-Jinchūriki | 98 | 100 | 100 |
+| Naruto · The Last | 97 | 98 | 97 |
+| Sasuke · The Last | 97 | 95 | 98 |
+| Hamura Ōtsutsuki | 96 | 99 | unbekannt |
+| Obito · Jūbi-Jinchūriki | 95 | 99 | 95 |
+| Ashura Ōtsutsuki | 95 | 98 | 98 |
+| Indra Ōtsutsuki | 94 | 97 | 96 |
+| Toneri Ōtsutsuki | 94 | 98 | 97 |
+| Kakashi · DMS | 94 | 96 | 98 |
+| Might Guy · Acht Tore | 93 | 84 | 97 |
+| Hashirama · Prime | 92 | 97 | 91 |
+| Tobirama / Hiruzen · Prime | 91 | 95 / 94 | 97 / 96 |
+| Nagato · Prime | 90 | 98 | 100 |
+| Minato · KCM/Edo | 90 | 96 | 97 |
+| Itachi · Edo Tensei | 90 | 94 | 98 |
+| Kabuto · Sennin-Modus | 89 | 94 | 97 |
+| Pain · Sechs Pfade | 88 | 96 | 97 |
+| Killer B · Gyūki-Jinchūriki | 88 | 98 | 94 |
+
+Alle Kaguya-/Hagoromo-Fivefold-Disziplinen und sichtbaren Kampf-Teilwerte stehen auf 100, wie vom Nutzer gewünscht. Kanon-Kontext: Kaguya wurde von **Hagoromo und Hamura gemeinsam** versiegelt; das wird nicht als Hagoromos Solo-Sieg beschrieben. Hagoromos 100er-Peak ist die vom Nutzer gesetzte spätere Jūbi-/Six-Paths-Deckenbewertung.
+
+Die Eight-Gates-Matchup-Notiz für Might Guy würdigt Night Guy als beinahe tödlichen Treffer gegen Jūbi-Madara. Der zeitlich extrem begrenzte und lebensgefährliche Zustand macht daraus aber keinen automatischen Gesamtsieg; Madara bleibt im Modell knapp favorisiert.
+
+## One-Piece-Stand
+
+Die hochgeladene 5.0.4-Datenbank mit 135 Charakteren wurde beibehalten und um fünf Charaktere auf **140** erweitert: **Kyros, Ashura Doji, Gecko Moria (Prime), Vergo und Kanjuro**. Luffy steht bei Power Level 96 mit der neuen, noch nicht offiziell benannten affenartigen Nika-Darstellung aus Kapitel 1198; sie wird nicht als bestätigtes Gear 6 bezeichnet. Nusjuro hat einen Haki-Gesamtwert und alle drei Teilbereiche. Katakuri bleibt bei Gesamt-Haki 89 (Observation 98, Armament 89, Conqueror 80). Gecko Moria Prime steht bei Power 89 mit niedriger Evidenzsicherheit: seine frühere Rivalität mit Kaido ist bekannt, der konkrete Kampf ist nicht vollständig dargestellt und die Bewertung behauptet keine Gleichwertigkeit.
 
 ## Matchup-Modell
 
-- 140 Charaktere ergeben **9.730 eindeutige 1-gegen-1-Paarungen**.
-- Je Paarung: 15.000 reproduzierbare, vorab berechnete Ergebnisziehungen (**145.950.000 insgesamt**).
-- Jede Paarung wurde aus Power, bestätigtem Haki, Fähigkeiten, Vielseitigkeit, Angriff, Defensive, Tempo, Ausdauer und Battle IQ neu bewertet; die alten Wahrscheinlichkeiten wurden nicht als Vorannahme übernommen.
-- Kanonische Einschränkungen und ausgewählte konkrete Konter werden als begrenzte, dokumentierte Modifikatoren berücksichtigt.
-- Große Stärkeabstände können sehr klare Favoriten ergeben; auch dann bleibt eine kleine modellierte Upset-Chance. Shanks gegen Lysop ist beispielsweise kein ausgeglichenes Duell.
-- Diese Ergebnisziehungen sind statistische Stichproben aus einem Wahrscheinlichkeitsmodell, keine panelgetreuen Manga-Kämpfe. Die Anzahl der Samples stabilisiert nur den numerischen Schätzwert; sie erhöht nicht die Kanon-Evidenz.
+- Jede Paarung wird genau einmal gespeichert, mit identischer Gegenpaar-Orientierung im UI.
+- Die Rating-Basis enthält Power, bestätigtes Haki bzw. Chakra, Fähigkeiten, Vielseitigkeit, Angriff, Defensive, Tempo, Ausdauer und Battle IQ.
+- Situative Vorteile (z. B. Chiyo/Sasori, Shikamaru/Hidan oder Naruto/Toneri) werden nur als begrenzte Matchup-Modifikatoren modelliert.
+- Die Wahrscheinlichkeitskurve ist steil genug, damit extreme Leistungsunterschiede keine absurden Upsets mit mehreren Prozentpunkten erzeugen. Ein minimaler Rest bleibt, weil Modellwahrscheinlichkeiten keine absolute Kanon-Wahrheit darstellen.
+- Konfidenz beschreibt die Quellen- und Feat-Sicherheit, nicht die Zahl der Monte-Carlo-Stichproben.
 
-## Charakterporträts und Bilder
+## Tierlisten-Korrekturen 6.0.2
 
-Bereits lokal gespeicherte oder hochgeladene Porträts werden verwendet. Bilder können über den Bildmanager aus einer direkten Bild-URL ergänzt/ersetzt werden. Es sind nicht automatisch alle 140 Rechteinhaber-Bilder im ZIP eingebettet; neue Bilder werden nur auf ausdrückliche Aktion geladen und lokal gecacht. Die bestehende Supabase-Cloud-Bildintegration und das private Bucket-Schema bleiben erhalten.
+- Kakashi ist nur als DMS-Peak vertreten; der unbestätigte zusätzliche Kriegsbogen-Datensatz wurde entfernt. Sakumo Hatake bleibt eine eigenständige Person und nicht eine Kakashi-Variante.
+- Kakuzu steht mit Power 84 leicht über Sasori (83). Sasoris Gift und Puppen bleiben ein situativer Matchup-Vorteil.
+- Killer B steht auf Power 88; Chakra 98 und Fähigkeiten 94 werden getrennt betrachtet.
+
+## Online-Modus und Secrets
+
+Für den Online-Modus siehe `ONLINE_SETUP.md`. Beim Beitritt übernimmt der Gast automatisch das Anime-Universum des Hosts (einschließlich Wechsel der getrennten Datenbank und Spielstand-Umgebung). `.streamlit/secrets.toml` ist absichtlich nicht Bestandteil des ZIPs. Eigene Supabase-Secrets bleiben lokal bzw. als sichere Hosting-Secrets. Niemals einen `service_role`-Key in GitHub oder in eine clientseitige Datei hochladen.
+
+## Charakterbilder und Backups
+
+Die Porträts liegen gemeinsam unter `portraits/`; die One-Piece-IDs und Naruto-IDs überschneiden sich nicht. Naruto-IDs mit vier Ziffern werden vom Bildarchiv-Importer unterstützt. Portables Backup umfasst beide Anime-Datenbanken und beide getrennten Autosaves. Die Cloud-Bilderbibliothek bleibt privat und erfordert `cloud_portraits_schema.sql`.
 
 ## Tests
 
 Im Projektordner:
 
 ```bash
-python -m unittest discover -s tests -v
-python -m pytest -q
 python -m py_compile app.py
+python -m pytest -q
+python -m unittest discover -s tests -v
 ```
 
-Ein erfolgreicher Syntax-/Datentest ersetzt keinen abschließenden Live-Test in deiner eigenen Streamlit-Cloud- und Supabase-Umgebung. Bestehende `.streamlit/secrets.toml`-Zugangsdaten werden nicht mitgeliefert und dürfen nicht in GitHub committet werden.
+Die Tests prüfen getrennte Roster, vollständige Paarungsmatrizen, die vom Nutzer vorgegebenen Peak-Anker, Kakuzu/Sasori-Reihenfolge, Killer-B-Wert 88, die Kakashi-/Sakumo-Identitätskorrektur, Haki-/Chakra-Labels, keine Boruto-Figuren sowie Online-/Cloud-Sicherheitsfunktionen. Ein browserbasierter Live-Test setzt eine installierte Streamlit-Laufzeit und konfigurierte Secrets voraus.
 
-## Quellen / Methodenhinweise
+## Quellen / Bewertungsgrenzen
 
-- Offizielle Kapitelübersicht: https://www.viz.com/shonenjump/chapters/one-piece
-- Kapitel 1198: https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52163
-- OPwiki, aktuelle Kapitel: https://opwiki.org/wiki/Aktuelle_Kapitel
-- Nusjuro: https://opwiki.org/wiki/Ethanbaron_V._Nusjuro
-- Haki-System-Übersicht: https://onepiece.fandom.com/wiki/Haki
-- Gecko Moria: https://onepiece.fandom.com/wiki/Gecko_Moria
-- Ashura Doji: https://onepiece.fandom.com/wiki/Ashura_Doji
-- Vergo: https://onepiece.fandom.com/wiki/Vergo
-- Kawamatsu: https://onepiece.fandom.com/wiki/Kawamatsu
+Naruto: [Offizielle Naruto-Seite – Shippuden](https://naruto-official.com/en/anime/naruto2) · [Origins of Ninshu / Indra und Ashura](https://naruto-official.com/en/anime/naruto2/list?episode=the_origins_of_ninshu_the_two_souls%2C_indra_and_ashura&page=1) · [Six Paths / Finale](https://naruto-official.com/en/news/01_1355) · [Hashirama](https://naruto-official.com/en/news/01_1627) · [Tobirama](https://naruto-official.com/de/news/01_1694) · [Minato](https://naruto-official.com/en/news/01_1517) · [Might Guy](https://naruto-official.com/en/news/01_1673) · [Madara](https://naruto-official.com/en/news/01_1333) · [DMS Kakashi](https://naruto-official.com/en/anime/naruto2/list/01_859) · [The Last](https://naruto.fandom.com/wiki/The_Last:_Naruto_the_Movie).
 
-Fanprojekt, nicht mit Eiichiro Oda, Shueisha, VIZ oder anderen Rechteinhabern verbunden.
+One Piece: [Offizielle Kapitelübersicht](https://www.viz.com/shonenjump/chapters/one-piece) · [Kapitel 1198](https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52017) · [OPwiki – aktuelle Kapitel](https://opwiki.org/wiki/Aktuelle_Kapitel) · [Haki-Übersicht](https://onepiece.fandom.com/wiki/Haki).
 
----
-
-## Versionshistorie
-
-Die Abschnitte 5.0.2, 5.0.3 und 5.0.4 weiter unten dokumentieren die Änderungen der Vorgängerversionen. Die aktuelle Fassung ist **5.1** und verwendet die oben beschriebene Kapitel-1198-Datenbank mit 140 Charakteren.
-
-
-## 5.0.2 – Online-Performance und gemeinsame Bilder
-
-- Online-Polling lädt im Normalfall nur Raum-Metadaten; vollständige Payloads werden nur bei einer neuen Revision geladen.
-- Classic und Fivefold verwenden eine browserseitige gemeinsame Rad-Animation.
-- Lokale Autosaves werden bei unverändertem Spielzustand nicht erneut auf die Festplatte geschrieben.
-- Supabase Storage kann über `cloud_portraits_schema.sql` für einen privaten, geräteübergreifenden Charakterbildspeicher eingerichtet werden.
-- Eigene Bilder per URL oder Datei werden bei konfigurierter Cloud-Bilderdatenbank automatisch hochgeladen. Bestehende PC-Bilder können per ZIP importiert werden.
-
-
-## Grand Line Draft 5.0.2 – Online Performance & Cloud Portraits
-
-Diese Version synchronisiert Classic- und Fivefold-Rad-Animationen über einen gemeinsamen Startzeitpunkt, reduziert die Online-Polling-Last auf kompakte Metadaten und nutzt Supabase Storage für gemeinsame Charakterporträts. Vor der ersten Bildsynchronisierung einmal `cloud_portraits_schema.sql` im Supabase SQL Editor ausführen. Danach in der App den Cloud-Bilder-Expander verwenden. Siehe `ONLINE_SETUP.md`.
-
-
-## Performance Edition 5.0.3
-
-Die Matchup-Tabelle liegt separat in `matchup_results.json.gz` und wird erst beim Teamvergleich geladen. Charakter-/Fivefold-Profile und der Suchindex sind gecacht; sichtbare Cloud-Porträts werden parallel vorgeladen und als kompakte Thumbnails gerendert.
-
-
-## 5.0.4 – Katakuri Haki-Rekalibrierung
-
-- Katakuris Gesamt-Haki wurde von 84 auf 89 angepasst.
-- Observationshaki 98 und Rüstungshaki 89 bleiben bestehen; Königshaki steigt von 65 auf 80 (bestätigte Grundanwendung, keine belegte fortgeschrittene Beschichtung).
-- Fivefold-Haki-Wert und Charakterdetail zeigen jetzt 89.
-- Die 134 Katakuri-Matchups wurden mit kleinem Haki-Einfluss und 15.000 Ergebnisziehungen je Paar aktualisiert.
-- Keine Änderung an Katakuris Power Level (89), Draft-Regeln, Charakter-IDs oder Supabase-Schema.
-
-
-## 5.1 – Manga-Kapitel 1198 und 140er-Roster
-
-- Basis ist die vom Nutzer bereitgestellte Vollversion 5.0.4 (135 bestehende Charaktere); fünf Figuren ergänzt: Gecko Moria (Prime), Kyros, Ashura Doji, Vergo und Kawamatsu. Bestehende IDs bleiben erhalten, neue IDs sind 166–170.
-- Ruffy: Power Level 96. Kapitel 1198 zeigt eine neue dunkle, affenartig wirkende Nika-Manifestation. Sie wird nicht als Gear 6 ausgegeben, da der Manga sie nicht so benennt.
-- Nusjuro: Haki 93 (Observation 91, Armament 93, Conqueror 94), weil alle drei Formen individuell belegt sind.
-- Gecko Moria: Prime-Power 89. Der frühere Kampf gegen Kaido wird als wichtiger Peak-Nachweis berücksichtigt; Kaido gewann, die genaue Kampfdarstellung bleibt unvollständig.
-- Katakuri bleibt bei Gesamt-Haki 89 (Observation 98, Armament 89, Conqueror 80).
-- Alle 9.730 Matchups wurden aus den Profilen neu erzeugt. Unplausible Alt-Prioren werden nicht wiederverwendet. Shanks vs. Mihawk bleibt ein offenes Spitzenduell; Kaido ist in einem langen, gesunden 1v1 knapp vor Ruffy.
-- Matchup-Wahrscheinlichkeiten dürfen 99,95 % erreichen, fallen aber nie auf garantierte 100 %; der alte 98-%-Deckel wurde entfernt.
-- 15.000 aggregierte Binomialziehungen je Paarung, 145.950.000 insgesamt. Werte bleiben Fan-Schätzungen, keine Kanon-Ergebnisse.
+Alle Punktwerte und Siegchancen sind eigene Fan-Schätzungen. Offizielle Quellen belegen Handlungen, Fähigkeiten und Feats, nicht die hier verwendete 0–100-Skala. Fanprojekt, keine Verbindung zu den Rechteinhabern.

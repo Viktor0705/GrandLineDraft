@@ -18,10 +18,10 @@ class CharacterDataIntegrityTests(unittest.TestCase):
         cls.ratings = cls.data["characters"]
 
     def test_character_ids_and_names_are_unique(self):
-        self.assertEqual(len(self.characters), 135)
+        self.assertEqual(len(self.characters), 140)
         self.assertEqual(len({c["id"] for c in self.characters}), len(self.characters))
         self.assertEqual(len({c["name"] for c in self.characters}), len(self.characters))
-        self.assertEqual(len(self.ratings), 135)
+        self.assertEqual(len(self.ratings), 140)
         self.assertEqual(set(c["name"] for c in self.characters), set(self.ratings))
 
     def test_every_character_has_fivefold_values_and_rationales(self):
@@ -70,22 +70,22 @@ class CharacterDataIntegrityTests(unittest.TestCase):
         for name in unknown:
             profile = self.ratings[name]
             self.assertIsNone(profile.get("haki_score"), name)
-            self.assertIn("unbekannt", str(profile.get("haki_status", "")).lower(), name)
+            self.assertTrue(any(token in str(profile.get("haki_status", "")).lower() for token in ("unbekannt", "nicht bestätigt")), name)
             self.assertIsNone(profile["ranking_stats"]["haki"], name)
 
     def test_user_power_anchors(self):
         expected = {
             "Imu":100, "Joy Boy":100, "Rocks D. Xebec":99,
             "Gol D. Roger":98, "Edward Newgate":98, "Monkey D. Garp":98,
-            "Shanks":97, "Dracule Mihawk":97, "Kaido":96, "Monkey D. Luffy":95,
-            "Charlotte Katakuri":89, "Queen":85, "Donquixote Doflamingo":83,
+            "Shanks":97, "Dracule Mihawk":97, "Kaido":96, "Monkey D. Luffy":96,
+            "Charlotte Katakuri":89, "Queen":85, "Donquixote Doflamingo":83, "Gecko Moria (Prime)":89, "Kyros":78, "Ashura Doji":87, "Vergo":82, "Kanjuro":80,
         }
         for name, power in expected.items():
             self.assertEqual(self.ratings[name]["power"], power, name)
 
     def test_matchup_matrix_complete_and_simulated(self):
         matchups = self.matchups
-        self.assertEqual(len(matchups), 135 * 134 // 2)
+        self.assertEqual(len(matchups), 140 * 139 // 2)
         self.assertEqual(len({tuple(sorted((m["a"], m["b"]))) for m in matchups}), len(matchups))
         for item in matchups:
             self.assertEqual(item["simulations_per_pair"], 15000)
@@ -113,9 +113,9 @@ class CharacterDataIntegrityTests(unittest.TestCase):
     def test_manga_cutoff_and_simulation_count(self):
         method=self.data["matchup_method"]
         self.assertEqual(method["simulations_per_pair"],15000)
-        self.assertEqual(method["unique_pairs"],9045)
-        self.assertEqual(method["total_simulated_fights"],135675000)
-        self.assertEqual(self.data["review_summary"]["date"],"2026-11-05")
+        self.assertEqual(method["unique_pairs"],9730)
+        self.assertEqual(method["total_simulated_fights"],145950000)
+        self.assertEqual(self.data["review_summary"]["date"],"2026-11-16")
 
     def test_katakuri_haki_recalibration(self):
         kat=self.data["characters"]["Charlotte Katakuri"]
@@ -125,7 +125,20 @@ class CharacterDataIntegrityTests(unittest.TestCase):
         self.assertEqual(kat["haki_breakdown"]["armament"]["score"],89)
         self.assertEqual(kat["haki_breakdown"]["conqueror"]["score"],80)
         self.assertEqual(kat["power"],89)
-        self.assertEqual(len([m for m in self.matchups if "Charlotte Katakuri" in (m["a"],m["b"])]),134)
+        self.assertEqual(len([m for m in self.matchups if "Charlotte Katakuri" in (m["a"],m["b"])]),139)
+
+
+    def test_new_five_profiles_luffy_nusjuro_and_prime_moria(self):
+        names = {c["name"] for c in self.characters}
+        self.assertTrue({"Kyros", "Ashura Doji", "Gecko Moria (Prime)", "Vergo", "Kanjuro"}.issubset(names))
+        self.assertEqual(self.ratings["Monkey D. Luffy"]["power"], 96)
+        nus = self.ratings["Ethanbaron V. Nusjuro"]
+        self.assertEqual(nus["haki_score"], 93)
+        self.assertEqual(set(nus["haki_types"]), {"Observationshaki", "Rüstungshaki", "Königshaki"})
+        moria = self.ratings["Gecko Moria (Prime)"]
+        self.assertEqual(moria["power"], 89)
+        self.assertEqual(moria["confidence"], "Niedrig")
+        self.assertIn("nicht vollständig dargestellt", moria["rationale"])
 
 
 if __name__ == "__main__":
