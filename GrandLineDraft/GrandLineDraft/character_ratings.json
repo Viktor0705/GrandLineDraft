@@ -1,7 +1,7 @@
 {
   "schema_version": "6.0",
-  "model_name": "Grand Line Draft · One Piece Power Matrix 5.1 · Manga Kapitel 1198",
-  "last_reviewed": "2026-11-16",
+  "model_name": "Grand Line Draft · One Piece Rating Review Patch · Manga Kapitel 1198",
+  "last_reviewed": "2026-11-18",
   "weights": {
     "power": 0.68,
     "haki": 0.14,
@@ -80,7 +80,19 @@
     "one_piece_wiki_ashura_doji": "https://onepiece.fandom.com/wiki/Ashura_Doji",
     "one_piece_wiki_kyros": "https://onepiece.fandom.com/wiki/Kyros",
     "one_piece_wiki_vergo": "https://onepiece.fandom.com/wiki/Vergo",
-    "one_piece_wiki_denjiro": "https://onepiece.fandom.com/wiki/Denjiro"
+    "one_piece_wiki_denjiro": "https://onepiece.fandom.com/wiki/Denjiro",
+    "official_chapter_1198_opwiki": "https://opwiki.org/wiki/Manga:Kapitel_1198",
+    "chapter_1198_viz": "https://www.viz.com/shonenjump/one-piece-chapter-1198/chapter/52163",
+    "jack_onigashima_sulong_reference": "https://onepiece.fandom.com/wiki/Jack",
+    "killer_onigashima_rooftop_reference": "https://www.grandlinearchives.com/characters/killer",
+    "x_drake_wano_reference": "https://opwiki.org/wiki/X._Drake",
+    "kaku_egghead_reference": "https://www.grandlinearchives.com/characters/kaku",
+    "denjiro_haki_reference": "https://onepiece.fandom.com/wiki/Denjiro",
+    "koby_honesty_impact_reference": "https://onepiece.fandom.com/wiki/Chapter_1088",
+    "kuma_saturn_haki_reference": "https://onepiece.fandom.com/wiki/Bartholomew_Kuma",
+    "ace_conquerors_chapter_587": "https://onepiece.fandom.com/wiki/Chapter_587",
+    "chinjao_conquerors_chapter_716": "https://www.grandlinearchives.com/characters/chin-jao",
+    "dorry_brogy_egghead_reference": "https://www.grandlinearchives.com/races/giants"
   },
   "characters": {
     "Monkey D. Luffy": {
@@ -641,16 +653,17 @@
         "mobility",
         "support"
       ],
-      "rationale": "Peak Sanji nach Kapitel 1197: deutlich verbesserte defensive Rüstungshaki-Anwendung, Germa-Physis, Ifrit Jambe, extreme Geschwindigkeit und die Rolle als Ruffys Schild. Kein bestätigtes Königshaki.",
+      "rationale": "Peak Sanji nach Kapitel 1197–1198: Germa-Physis, Ifrit Jambe, extreme Geschwindigkeit und eine neue Königshaki-Anwendung gegen Killinghams Omen-Panzer. Der Nachweis rechtfertigt Haki 94; wie routiniert er die Anwendung dauerhaft kontrolliert und ob er fortgeschrittene Beschichtung beherrscht, bleibt offen.",
       "intelligence": 82,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 93,
+      "haki_score": 94,
       "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki",
-        "Rüstungshaki (neue defensive Meisterschaft, Kapitel 1197)"
+        "Rüstungshaki (starke defensive Anwendung)",
+        "Königshaki (Kapitel 1197–1198; Anwendung bestätigt)"
       ],
-      "haki_note": "Observationshaki und Rüstungshaki bestätigt. Kapitel 1197 stärkt besonders die defensive Rüstungshaki-Einordnung. Königshaki bleibt bis zu einer eindeutigen Bestätigung unbekannt.",
+      "haki_note": "Kapitel 1197–1198 zeigen Sanjis Königshaki-Anwendung beim Durchbrechen von Killinghams Omen-Panzer. Der Gesamtwert 94 bleibt unter Zoros 96: die neue Anwendung ist bestätigt, ihre dauerhafte Kontrolle und fortgeschrittene Beschichtung sind noch nicht vollständig vermessen.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Exoskelett, Regeneration, Ifrit Jambe und extreme Trittgeschwindigkeit. Kapitel 1196 stellt einen defensiveren Kampfansatz in Aussicht; sein bestes gezeigtes Gesamtpaket bleibt schnelle, offensive Nahkampfkombination mit hoher Widerstandskraft.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -660,26 +673,26 @@
         "speed": 99,
         "endurance": 95,
         "battle_iq": 84,
-        "haki_mastery": 93
+        "haki_mastery": 94
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": 93,
+        "haki": 94,
         "strength": 92,
         "speed": 99,
         "battle_iq": 83,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Observationshaki und Rüstungshaki bestätigt. Kapitel 1197 stärkt besonders die defensive Rüstungshaki-Einordnung. Königshaki bleibt bis zu einer eindeutigen Bestätigung unbekannt.",
+          "haki": "Kapitel 1197–1198 zeigen Sanjis Königshaki-Anwendung beim Durchbrechen von Killinghams Omen-Panzer. Der Gesamtwert 94 bleibt unter Zoros 96: die neue Anwendung ist bestätigt, ihre dauerhafte Kontrolle und fortgeschrittene Beschichtung sind noch nicht vollständig vermessen.",
           "strength": "Kraftwert 92/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 99/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 83/100; 70 % Kampftaktik (84) und 30 % allgemeine Intelligenz (82)."
@@ -688,19 +701,19 @@
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": 90,
+          "score": 91,
           "status": "bestätigt",
-          "rationale": "Gute Wahrnehmung und Reaktionen sind im Kampf wiederholt gezeigt; keine bestätigte Zukunftssicht, daher klar unter Katakuri."
+          "rationale": "Gute Wahrnehmung und Reaktionsleistung; keine Zukunftssicht belegt."
         },
         "armament": {
           "score": 96,
           "status": "bestätigt",
-          "rationale": "Kapitel 1197 zeigt Sanjis neue defensive Rüstungshaki-Anwendung: er widersteht Longinus und zerschlägt dessen Spitze; die genaue Obergrenze ist weiterhin Fan-Schätzung."
+          "rationale": "Sehr starke defensive und offensive Rüstungshaki-Anwendung; Kapitel 1197 stärkt besonders den Defensivnachweis."
         },
         "conqueror": {
-          "score": null,
-          "status": "nicht bestätigt",
-          "rationale": "Killinghams Gedanke und die Inszenierung wecken die Möglichkeit; Sanji benennt seine neue Technik jedoch als Rüstungshaki jenseits der Grenzen. Kein eindeutiger Manga-Satz bestätigt Königshaki-Beschichtung."
+          "score": 94,
+          "status": "bestätigt",
+          "rationale": "Kapitel 1197–1198 zeigen Königshaki in Sanjis Angriff gegen Killinghams Omen-Panzer. Wie routiniert und dauerhaft er es kontrolliert, bleibt noch offen."
         }
       },
       "matchup_reviewed": true,
@@ -712,7 +725,7 @@
         "versatility": 84,
         "confidence": "Mittel"
       },
-      "reassessment_note": "Sanji vs. Zoro/King/Queen: slightly above the earlier shared score with Zoro due to speed, exoskeleton, regeneration and Ifrit Jambe; Zoro retains greater burst cutting power. Their relative result remains close and matchup-dependent.",
+      "reassessment_note": "Peak Sanji nach Kapitel 1197–1198: Germa-Physis, Ifrit Jambe, extreme Geschwindigkeit und eine neue Königshaki-Anwendung gegen Killinghams Omen-Panzer. Der Nachweis rechtfertigt Haki 94; wie routiniert er die Anwendung dauerhaft kontrolliert und ob er fortgeschrittene Beschichtung beherrscht, bleibt offen.",
       "matchup_anchors": [
         {
           "name": "Roronoa Zoro",
@@ -897,7 +910,7 @@
       }
     },
     "Nico Robin": {
-      "power": 72,
+      "power": 74,
       "abilities": 94,
       "versatility": 86,
       "status": 75,
@@ -909,7 +922,7 @@
         "strategy",
         "support"
       ],
-      "rationale": "Robin: raised slightly for Demonio Fleur and strong control/finishing potential; she remains vulnerable to speed, range and opponents who can avoid her grapples.",
+      "rationale": "Auf 74 angehoben: Robin besiegte Black Maria mit Demonio Fleur und ergänzenden Fischmenschen-Karate-Techniken. Der Sieg zeigt, dass sie auf Tobiroppo-Niveau gefährlich ist; die starke Erschöpfung danach und ihre Anfälligkeit gegen schnelle Fernkämpfer begrenzen den Wert.",
       "intelligence": 94,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -979,7 +992,7 @@
         "versatility": 86,
         "confidence": "Hoch"
       },
-      "reassessment_note": "Robin: raised slightly for Demonio Fleur and strong control/finishing potential; she remains vulnerable to speed, range and opponents who can avoid her grapples.",
+      "reassessment_note": "Auf 74 angehoben: Robin besiegte Black Maria mit Demonio Fleur und ergänzenden Fischmenschen-Karate-Techniken. Der Sieg zeigt, dass sie auf Tobiroppo-Niveau gefährlich ist; die starke Erschöpfung danach und ihre Anfälligkeit gegen schnelle Fernkämpfer begrenzen den Wert. Haki bleibt unverändert/unbekannt, da diese Leistungen keine neue quantifizierbare Haki-Meisterschaft belegen.",
       "matchup_anchors": [
         {
           "name": "Franky",
@@ -1025,10 +1038,16 @@
         "nearest_power_anchors": "Jesus Burgess (72), Black Maria (71), Cavendish (71)",
         "evidence_confidence": "Hoch",
         "haki_treatment": "Zahlenwert nur bei verwertbarer bestätigter Gesamt-Haki-Evidenz; sonst unbekannt, nicht 0."
+      },
+      "last_rating_change_v6": {
+        "date": "2026-11-18",
+        "old_power": 72,
+        "new_power": 74,
+        "reason": "Manga-Feats bis Kapitel 1198; moderate Neubewertung unter Berücksichtigung situativer Einschränkungen."
       }
     },
     "Franky": {
-      "power": 71,
+      "power": 74,
       "abilities": 87,
       "versatility": 82,
       "status": 70,
@@ -1040,7 +1059,7 @@
         "ranged",
         "support"
       ],
-      "rationale": "Franky: slight adjustment for General Franky, heavy weapons and durability; below top commander tiers due to speed and Haki limitations.",
+      "rationale": "Auf 74 angehoben: Franky besiegte Sasaki im direkten Duell mit General Franky und Radical Beam. Dass der General stark beschädigt wurde und Franky den letzten Treffer gezielt setzen musste, spricht für einen moderaten statt großen Sprung.",
       "intelligence": 80,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -1108,7 +1127,7 @@
         "versatility": 82,
         "confidence": "Hoch"
       },
-      "reassessment_note": "Franky: slight adjustment for General Franky, heavy weapons and durability; below top commander tiers due to speed and Haki limitations.",
+      "reassessment_note": "Auf 74 angehoben: Franky besiegte Sasaki im direkten Duell mit General Franky und Radical Beam. Dass der General stark beschädigt wurde und Franky den letzten Treffer gezielt setzen musste, spricht für einen moderaten statt großen Sprung. Haki bleibt unverändert/unbekannt, da diese Leistungen keine neue quantifizierbare Haki-Meisterschaft belegen.",
       "matchup_anchors": [
         {
           "name": "Nico Robin",
@@ -1154,6 +1173,12 @@
         "nearest_power_anchors": "Black Maria (71), Cavendish (71), Brook (70)",
         "evidence_confidence": "Hoch",
         "haki_treatment": "Zahlenwert nur bei verwertbarer bestätigter Gesamt-Haki-Evidenz; sonst unbekannt, nicht 0."
+      },
+      "last_rating_change_v6": {
+        "date": "2026-11-18",
+        "old_power": 71,
+        "new_power": 74,
+        "reason": "Manga-Feats bis Kapitel 1198; moderate Neubewertung unter Berücksichtigung situativer Einschränkungen."
       }
     },
     "Brook": {
@@ -1422,10 +1447,10 @@
       }
     },
     "Portgas D. Ace": {
-      "power": 81,
-      "abilities": 89,
-      "versatility": 76,
-      "status": 82,
+      "power": 83,
+      "abilities": 90,
+      "versatility": 78,
+      "status": 84,
       "bounty": 550000000,
       "bounty_state": "historisch",
       "confidence": "Hoch",
@@ -1434,47 +1459,47 @@
         "ranged",
         "haki"
       ],
-      "rationale": "high commander / elite specialist range. Assessment uses strongest demonstrated canon form, ability interactions and known Haki only; no unconfirmed future power-ups are assumed.",
+      "rationale": "Auf 83 angehoben: Ace war ein starker Kommandant der Whitebeard-Piraten, kämpfte fünf Tage mit Jinbe und zeigte enorme Feuerkraft sowie eine bestätigte Königshaki-Erweckung als Kind. Seine erwachsene Haki-Meisterschaft und seine Leistungen gegen die stärksten Kommandanten bleiben weniger klar dokumentiert.",
       "intelligence": 67,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": null,
-      "haki_status": "Typ bestätigt; Meisterschaft unbekannt",
+      "haki_score": 80,
+      "haki_status": "bestätigt",
       "haki_types": [
-        "Königshaki (Ausbruch als Kind; spätere Kontrolle nicht belegt)"
+        "Königshaki (spontaner Ausbruch als Kind; erwachsene Kontrolle nicht gezeigt)"
       ],
-      "haki_note": "Ace’ Ausbruch als Kind ist bekannt, aber eine ausgereifte spätere Haki-Meisterschaft ist nicht ausreichend belegt. Deshalb bleibt die quantitative Haki-Gesamtbewertung unbekannt.",
+      "haki_note": "80: Königshaki ist in Kapitel 587 als spontaner Ausbruch im Kindesalter bestätigt. Da eine kontrollierte erwachsene Anwendung im Manga nicht gezeigt wird, bleibt der Gesamtwert bewusst konservativ; keine fortgeschrittene Beschichtung wird unterstellt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Mera-Mera no Mi, großflächige Feuerangriffe und Königshaki-Potenzial; hohe Reichweite, aber Magma ist ein direkter Elementnachteil.",
+      "ability_summary": "Mera-Mera no Mi mit großer Feuerreichweite und hoher Zerstörungskraft; Whitebeard-Kommandant, Fünf-Tage-Kampf gegen Jinbe und bestätigter Königshaki-Ausbruch als Kind. Magma bleibt ein direkter Elementnachteil.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 90,
+        "offense": 91,
         "defense": 87,
         "speed": 86,
-        "endurance": 87,
-        "battle_iq": 70,
-        "haki_mastery": 74
+        "endurance": 88,
+        "battle_iq": 71,
+        "haki_mastery": 80
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 90,
-        "haki": null,
-        "strength": 88,
+        "haki": 80,
+        "strength": 89,
         "speed": 86,
-        "battle_iq": 69,
+        "battle_iq": 70,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
-          "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Der Wert bewertet Fruchtwirkung und Beherrschung, nicht den gesamten Charakter-Kampfwert.",
-          "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 88/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 86/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 69/100; 70 % Kampftaktik (70) und 30 % allgemeine Intelligenz (67)."
+          "haki": "80: Königshaki ist in Kapitel 587 als spontaner Ausbruch im Kindesalter bestätigt. Da eine kontrollierte erwachsene Anwendung im Manga nicht gezeigt wird, bleibt der Gesamtwert bewusst konservativ; keine fortgeschrittene Beschichtung wird unterstellt.",
+          "strength": "Strength-Wert 89/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 86/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 70/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -1482,17 +1507,17 @@
         "observation": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "rationale": "Keine hinreichend bestätigte Manga-Anwendung."
         },
         "armament": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "rationale": "Eine erwachsene Manga-Anwendung ist nicht hinreichend dargestellt; Novel-/Anime-only-Belege werden nicht für den Kernwert verwendet."
         },
         "conqueror": {
-          "score": null,
-          "status": "Ausbruch bestätigt; Meisterschaft unbekannt",
-          "rationale": "Königshaki-Ausbruch in der Kindheit ist belegt. Ein verlässlicher numerischer Meisterschaftswert der späteren Version fehlt."
+          "score": 80,
+          "status": "bestätigt; nur Grundausbruch gezeigt",
+          "rationale": "Kapitel 587 bestätigt einen unbewussten Königshaki-Ausbruch im Kindesalter; reife Kontrolle ist nicht belegt."
         }
       },
       "devil_fruit_name": "Mera Mera no Mi",
@@ -1704,7 +1729,7 @@
       "rationale": "Peak Shanks: außergewöhnliches Königshaki, Zukunftssicht/Observation-Killing und der One-Shot gegen Kid. Im direkten Duell bleibt die Evidenz begrenzt; gleiches Power-Level wie Mihawk, andere Stärkeverteilung.",
       "intelligence": 88,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 98,
+      "haki_score": 100,
       "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki (Zukunftssicht)",
@@ -1712,7 +1737,7 @@
         "Königshaki (außergewöhnliche Reichweite/Anwendung)",
         "Observation-Killing als spezielle Anwendung"
       ],
-      "haki_note": "Der klarste heutige Haki-Spezialist unter den aktiven Piraten: Zukunftssicht, extreme Königshaki-Präsenz und Observation-Killing. Der Gesamtwert 100 ist dennoch eine relative Fan-Obergrenze, kein Canon-Wert.",
+      "haki_note": "Referenzwert 100 für die derzeit gezeigte Haki-Meisterschaft unter aktiven Piraten: außergewöhnliche Königshaki-Reichweite, Zukunftssicht und Observation-Killing. Die Zahl ist eine Fan-Modellobergrenze, kein Canon-Wert.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Spitzen-Schwertkampf und außergewöhnliches Königshaki mit Zukunftssicht/Observation-Killing; keine bestätigte Teufelsfrucht. Im Modell liegt sein Haki über Mihawks, ohne ihn pauschal zum besseren Schwertkämpfer zu erklären.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -1728,20 +1753,20 @@
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": 98,
+        "haki": 100,
         "strength": 98,
         "speed": 98,
         "battle_iq": 94,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Der klarste heutige Haki-Spezialist unter den aktiven Piraten: Zukunftssicht, extreme Königshaki-Präsenz und Observation-Killing. Der Gesamtwert 100 ist dennoch eine relative Fan-Obergrenze, kein Canon-Wert.",
+          "haki": "Referenzwert 100 für die derzeit gezeigte Haki-Meisterschaft unter aktiven Piraten: außergewöhnliche Königshaki-Reichweite, Zukunftssicht und Observation-Killing. Die Zahl ist eine Fan-Modellobergrenze, kein Canon-Wert.",
           "strength": "Kraftwert 98/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 98/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 94/100; 70 % Kampftaktik (96) und 30 % allgemeine Intelligenz (88)."
@@ -2252,10 +2277,10 @@
       }
     },
     "Eustass Kid": {
-      "power": 85,
-      "abilities": 92,
+      "power": 87,
+      "abilities": 93,
       "versatility": 77,
-      "status": 83,
+      "status": 84,
       "bounty": 3000000000,
       "bounty_state": "aktiv",
       "confidence": "Mittel",
@@ -2263,67 +2288,67 @@
         "frontline",
         "tank"
       ],
-      "rationale": "Kid vs. commander tier: raised modestly for Awakening and contribution to Big Mom’s defeat alongside Law; low defensive flexibility and susceptibility to decisive openings keep the rating below Law.",
+      "rationale": "Auf 87 angehoben: Kid ist ein Supernovae-Kapitän mit erwachter Magnet-Frucht, hoher Zähigkeit und relevanter Beteiligung am Sieg über Big Mom zusammen mit Law. Der gemeinsame Sieg wird nicht als alleiniger Sieg oder Gleichstand mit einem Kaiser gewertet; Shanks’ One-Shot bleibt ein klarer Abstand zu den absoluten Spitzen.",
       "intelligence": 58,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 81,
+      "haki_score": 83,
       "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki",
         "Rüstungshaki",
         "Königshaki"
       ],
-      "haki_note": "Königshaki ist bestätigt; fortgeschrittene Beschichtung ist nicht sicher belegt.",
+      "haki_note": "Königshaki ist bestätigt; Kid besitzt zusätzlich Observations- und Rüstungshaki. 83 bildet einen starken, aber noch nicht fortgeschritten beschichteten Haki-Nutzer ab.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Jiki Jiki no Mi-Erwachen, Magnetismus, Metallkonstrukte und Damned Punk; hohe Zerstörung und Flächenkontrolle, Reaktions-/Verteidigungsrisiko gegen Spitzen-Haki.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 94,
-        "defense": 84,
-        "speed": 82,
-        "endurance": 92,
-        "battle_iq": 75,
-        "haki_mastery": 80
+        "offense": 95,
+        "defense": 85,
+        "speed": 84,
+        "endurance": 93,
+        "battle_iq": 73,
+        "haki_mastery": 83
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 91,
-        "haki": 81,
-        "strength": 91,
-        "speed": 82,
-        "battle_iq": 70,
+        "haki": 83,
+        "strength": 92,
+        "speed": 84,
+        "battle_iq": 73,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Der Wert bewertet Fruchtwirkung und Beherrschung, nicht den gesamten Charakter-Kampfwert.",
-          "haki": "Königshaki ist bestätigt; fortgeschrittene Beschichtung ist nicht sicher belegt.",
-          "strength": "Kraftwert 91/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 82/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 70/100; 70 % Kampftaktik (75) und 30 % allgemeine Intelligenz (58)."
+          "haki": "Königshaki ist bestätigt; Kid besitzt zusätzlich Observations- und Rüstungshaki. 83 bildet einen starken, aber noch nicht fortgeschritten beschichteten Haki-Nutzer ab.",
+          "strength": "Strength-Wert 92/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 84/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 73/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": 82,
+          "score": 83,
           "status": "bestätigt",
-          "rationale": "Observationshaki ist im Charakterdossier bestätigt. Der Teilwert ist eine Fan-Schätzung auf Basis des allgemeinen Haki-Profils."
+          "rationale": "Observationshaki ist bestätigt; der Wert ist eine vorsichtige Fan-Schätzung."
         },
         "armament": {
-          "score": 82,
+          "score": 83,
           "status": "bestätigt",
-          "rationale": "Rüstungshaki ist im Charakterdossier bestätigt. Der Teilwert bewertet vor allem Härtung, Durchschlagskraft und defensive Nutzung."
+          "rationale": "Rüstungshaki ist bestätigt; seine offensive Ausrichtung und physische Robustheit fließen ein."
         },
         "conqueror": {
-          "score": 80,
+          "score": 84,
           "status": "bestätigt",
-          "rationale": "Königshaki ist als Fähigkeit bestätigt; eine fortgeschrittene Beschichtung ist im verwendeten Dossier nicht gleich sicher belegt, daher fällt der Teilwert konservativer aus."
+          "rationale": "Königshaki ist bestätigt. Eine fortgeschrittene Beschichtung seiner Angriffe ist nicht sicher belegt."
         }
       },
       "devil_fruit_name": "Jiki Jiki no Mi",
@@ -2386,10 +2411,10 @@
       }
     },
     "Killer": {
-      "power": 75,
-      "abilities": 80,
+      "power": 79,
+      "abilities": 82,
       "versatility": 70,
-      "status": 66,
+      "status": 70,
       "bounty": 200000000,
       "bounty_state": "historisch",
       "confidence": "Hoch",
@@ -2397,7 +2422,7 @@
         "frontline",
         "mobility"
       ],
-      "rationale": "high commander / elite specialist range. Assessment uses strongest demonstrated canon form, ability interactions and known Haki only; no unconfirmed future power-ups are assumed.",
+      "rationale": "Auf 79 angehoben: Killer gehört zu den stärkeren Supernovae, kämpfte auf dem Dach von Onigashima gegen Kaido und Big Mom und setzte mit Sonic Scyther innere Angriffe gegen Kaido ein. Er bleibt unter Kid und den stärksten Kommandanten; seine Haki-Meisterschaft ist nicht ausreichend quantifiziert.",
       "intelligence": 68,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -2408,24 +2433,24 @@
       ],
       "haki_note": "Als Haki-Nutzer geführt; bislang keine herausragende fortgeschrittene Haki-Anwendung belegt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Schnelle Doppelklingen/Sonic Scythes und präziser Stil gegen schwere Verteidigung; gutes Tempo, niedrigerer Rohschaden als Top-Kommandanten.",
+      "ability_summary": "Sonic Scythes, hohe Geschwindigkeit und präzise Angriffe, die auch robuste Gegner von innen treffen können; kämpfte auf dem Dach von Onigashima gegen die Kaiser und besiegte Hawkins.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 81,
-        "defense": 79,
-        "speed": 78,
-        "endurance": 78,
-        "battle_iq": 69,
-        "haki_mastery": 58
+        "offense": 83,
+        "defense": 80,
+        "speed": 87,
+        "endurance": 82,
+        "battle_iq": 72,
+        "haki_mastery": 65
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
         "haki": null,
-        "strength": 80,
+        "strength": 82,
         "speed": 89,
-        "battle_iq": 69,
+        "battle_iq": 72,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -2436,9 +2461,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 80/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 89/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 69/100; 70 % Kampftaktik (69) und 30 % allgemeine Intelligenz (68)."
+          "strength": "Strength-Wert 82/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 89/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 72/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {
@@ -2519,10 +2544,10 @@
       }
     },
     "X Drake": {
-      "power": 74,
-      "abilities": 81,
+      "power": 78,
+      "abilities": 83,
       "versatility": 73,
-      "status": 73,
+      "status": 75,
       "bounty": 222000000,
       "bounty_state": "historisch",
       "confidence": "Hoch",
@@ -2530,7 +2555,7 @@
         "frontline",
         "tank"
       ],
-      "rationale": "capable veteran / specialist range. Assessment uses strongest demonstrated canon form, ability interactions and known Haki only; no unconfirmed future power-ups are assumed.",
+      "rationale": "Auf 78 angehoben: Drake verbindet Marine-Ausbildung, Supernovae-Erfahrung und eine robuste Allosaurus-Ancient-Zoan. Er hielt im Onigashima-Raid gegen starke Gegner mit und griff CP0 an; klare Siege gegen Top-Kommandanten fehlen, daher bleibt er unter Jack/Killer und deutlich unter den All-Stars.",
       "intelligence": 78,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -2541,24 +2566,24 @@
       ],
       "haki_note": "Beide Arten als Haki-Nutzer aufgeführt; individuelle Meisterschaft ist nur begrenzt gezeigt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Ancient-Zoan-Ausdauer, Dinosaurierkraft und Marine-Ausbildung; robuster Hybridkämpfer mit ordentlicher Nahkampfleistung.",
+      "ability_summary": "Allosaurus-Ancient-Zoan, hohe Robustheit, Nahkampferfahrung und Marine-Ausbildung; zeigte auf Onigashima Durchhaltevermögen, aber keine klare Top-Kommandanten-Leistung.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 78,
-        "defense": 77,
-        "speed": 77,
-        "endurance": 77,
-        "battle_iq": 76,
-        "haki_mastery": 62
+        "offense": 80,
+        "defense": 81,
+        "speed": 80,
+        "endurance": 83,
+        "battle_iq": 78,
+        "haki_mastery": 65
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 85,
         "haki": null,
-        "strength": 77,
-        "speed": 77,
-        "battle_iq": 77,
+        "strength": 80,
+        "speed": 80,
+        "battle_iq": 78,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -2569,9 +2594,9 @@
         "rationale": {
           "devil_fruit": "Der Wert bewertet Fruchtwirkung und Beherrschung, nicht den gesamten Charakter-Kampfwert.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 77/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 77/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 77/100; 70 % Kampftaktik (76) und 30 % allgemeine Intelligenz (78)."
+          "strength": "Strength-Wert 80/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 80/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 78/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -2652,7 +2677,7 @@
       }
     },
     "Jewelry Bonney": {
-      "power": 76,
+      "power": 78,
       "abilities": 97,
       "versatility": 88,
       "status": 76,
@@ -2663,7 +2688,7 @@
         "control",
         "mobility"
       ],
-      "rationale": "Bonney: her Nika-like future/age-dependent transformations create high situational ceiling, but the form is conditional and should not be equated with consistent Gear 5-level power.",
+      "rationale": "Auf 78 angehoben: Distorted Future ermöglicht Bonney zeitweise eine Nika-ähnliche Zukunftsform und eine sehr hohe Angriffsspitze. Die Form ist aber stark abhängig von ihrer Vorstellungskraft und kostet sie viel Kraft; sie wird nicht mit Gear 5 oder einem dauerhaft verfügbaren Kaiser-Level gleichgesetzt.",
       "intelligence": 72,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -2735,7 +2760,7 @@
         "versatility": 88,
         "confidence": "Mittel"
       },
-      "reassessment_note": "Bonney: her Nika-like future/age-dependent transformations create high situational ceiling, but the form is conditional and should not be equated with consistent Gear 5-level power.",
+      "reassessment_note": "Auf 78 angehoben: Distorted Future ermöglicht Bonney zeitweise eine Nika-ähnliche Zukunftsform und eine sehr hohe Angriffsspitze. Die Form ist aber stark abhängig von ihrer Vorstellungskraft und kostet sie viel Kraft; sie wird nicht mit Gear 5 oder einem dauerhaft verfügbaren Kaiser-Level gleichgesetzt. Haki bleibt unverändert/unbekannt, da diese Leistungen keine neue quantifizierbare Haki-Meisterschaft belegen.",
       "matchup_anchors": [
         {
           "name": "Denjiro",
@@ -2781,6 +2806,12 @@
         "nearest_power_anchors": "Charlotte Perospero (76), Sentomaru (76), Tsuru (76)",
         "evidence_confidence": "Mittel",
         "haki_treatment": "Gesamt-Haki ist ein relativer Fan-Schätzwert; nicht bestätigte Einzeltypen bleiben unbekannt."
+      },
+      "last_rating_change_v6": {
+        "date": "2026-11-18",
+        "old_power": 76,
+        "new_power": 78,
+        "reason": "Manga-Feats bis Kapitel 1198; moderate Neubewertung unter Berücksichtigung situativer Einschränkungen."
       }
     },
     "Capone Bege": {
@@ -4268,10 +4299,10 @@
       }
     },
     "Bartholomew Kuma": {
-      "power": 85,
-      "abilities": 99,
-      "versatility": 91,
-      "status": 89,
+      "power": 86,
+      "abilities": 100,
+      "versatility": 93,
+      "status": 90,
       "bounty": 296000000,
       "bounty_state": "historisch",
       "confidence": "Mittel",
@@ -4280,63 +4311,66 @@
         "support",
         "mobility"
       ],
-      "rationale": "Kuma vs. commander-tier fighters: raised slightly for the Paw-Paw Fruit’s exceptional repulsion, displacement and defensive utility. Prime/fully functional version is used, but lack of clean prolonged fights limits certainty.",
+      "rationale": "Auf 86 angehoben: Kumas Buccaneer-Physis, Cyborg-Körper und Nikyu-Nikyu no Mi machen ihn zu einem außergewöhnlich robusten Kämpfer. Auf Egghead besiegte er einen Vizeadmiral, überstand schwere Treffer und landete einen Rüstungshaki-Treffer, der Saturn schwer verletzte. Die fehlende lange Duellserie begrenzt die Sicherheit.",
       "intelligence": 80,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": null,
-      "haki_status": "unbekannt / keine ausreichende Manga-Bestätigung",
-      "haki_types": [],
-      "haki_note": "Kumas Nika-/Paw-Kontext, Zähigkeit und Teufelsfrucht erklären seinen Kampfnutzen; konkrete Haki-Typen und Meisterschaft werden ohne belastbare Evidenz nicht numerisch behauptet.",
+      "haki_score": 84,
+      "haki_status": "bestätigt",
+      "haki_types": [
+        "Rüstungshaki (Treffer gegen Saturn)",
+        "Observationshaki"
+      ],
+      "haki_note": "84: Rüstungshaki ist durch den Haki-verstärkten Treffer gegen Saturn direkt belegt; Observationshaki ist in den offiziellen Charakterangaben aufgeführt. Eine fortgeschrittene Königshaki-Anwendung ist nicht bestätigt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Nikyu-Nikyu no Mi reflektiert Angriffe und stößt Personen/Schmerz mit hoher Geschwindigkeit fort; Teleportation und enormer Support-/Defensivnutzen.",
+      "ability_summary": "Buccaneer-Physis, Pacifista-Verstärkung und Nikyu-Nikyu no Mi; kann Angriffe reflektieren, über große Distanzen stoßen und zeigte gegen Saturn einen sehr starken Rüstungshaki-Treffer.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 90,
-        "defense": 91,
+        "offense": 93,
+        "defense": 93,
         "speed": 92,
-        "endurance": 91,
+        "endurance": 94,
         "battle_iq": 83,
-        "haki_mastery": 64
+        "haki_mastery": 84
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 95,
-        "haki": null,
-        "strength": 94,
+        "haki": 84,
+        "strength": 95,
         "speed": 92,
         "battle_iq": 82,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
-          "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Sehr hoher Fruchtwert: außergewöhnliche Offensivwirkung, Spezialnutzen, Reichweite und/oder erwachte Beherrschung.",
-          "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 94/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 92/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 82/100; 70 % Kampftaktik (83) und 30 % allgemeine Intelligenz (80)."
+          "haki": "84: Rüstungshaki ist durch den Haki-verstärkten Treffer gegen Saturn direkt belegt; Observationshaki ist in den offiziellen Charakterangaben aufgeführt. Eine fortgeschrittene Königshaki-Anwendung ist nicht bestätigt.",
+          "strength": "Strength-Wert 95/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 92/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 82/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": null,
-          "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "score": 82,
+          "status": "bestätigt",
+          "rationale": "Observation Haki ist für Kuma belegt; eine konkrete Zukunftssicht ist nicht gezeigt."
         },
         "armament": {
-          "score": null,
-          "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "score": 86,
+          "status": "bestätigt",
+          "rationale": "Der Rüstungshaki-verstärkte Treffer gegen Saturn zeigt eine starke offensive Anwendung."
         },
         "conqueror": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "rationale": "Königshaki ist im verwendeten Manga-Dossier nicht bestätigt."
         }
       },
       "devil_fruit_name": "Nikyu Nikyu no Mi",
@@ -5070,14 +5104,14 @@
       "rationale": "Auf 95 gesetzt: fast gleiche Kaiser-Stufe wie Kaido, mit außergewöhnlicher Zähigkeit und Seelen-/Elementfähigkeiten. Ihre gezeigten Kampfausgänge waren stark von Umgebung und Zielbedingungen geprägt.",
       "intelligence": 64,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 99,
+      "haki_score": 98,
       "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki",
         "Rüstungshaki",
         "Königshaki (Beschichtung)"
       ],
-      "haki_note": "Sehr hohe Haki- und Körperwerte; der Einsatz fortgeschrittener Königshaki-Beschichtung wird im Modell berücksichtigt, ohne alle Haki-Typen auf identische Meisterschaft zu setzen.",
+      "haki_note": "Big Mom besitzt alle drei Haki-Arten und fortgeschrittenes Königshaki. 98 berücksichtigt ihre enorme Stärke, aber etwas geringere konstante technische Haki-Präzision als Shanks und Kaido.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Soru-Soru no Mi, Homies, Hera/Prometheus/Zeus-ähnliche Seelenwaffen, Königshaki und extreme Robustheit; starke Flächenkontrolle und hoher Ausdauerwert.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -5087,26 +5121,26 @@
         "speed": 78,
         "endurance": 99,
         "battle_iq": 75,
-        "haki_mastery": 97
+        "haki_mastery": 98
       },
       "weaknesses": "Taktik/Emotionen können schwanken; ihr Topwert hängt vom Zugriff auf Seelen und Homies ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 99,
-        "haki": 99,
+        "haki": 98,
         "strength": 98,
         "speed": 78,
         "battle_iq": 72,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Soru Soru no Mi mit Seele-/Homie-Kontrolle, vielseitiger Elementar-Offensive und hoher Zähigkeit.",
-          "haki": "Sehr hohe Haki- und Körperwerte; der Einsatz fortgeschrittener Königshaki-Beschichtung wird im Modell berücksichtigt, ohne alle Haki-Typen auf identische Meisterschaft zu setzen.",
+          "haki": "Big Mom besitzt alle drei Haki-Arten und fortgeschrittenes Königshaki. 98 berücksichtigt ihre enorme Stärke, aber etwas geringere konstante technische Haki-Präzision als Shanks und Kaido.",
           "strength": "Kraftwert 98/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 78/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 72/100; 70 % Kampftaktik (75) und 30 % allgemeine Intelligenz (64)."
@@ -5115,7 +5149,7 @@
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": 98,
+          "score": 97,
           "status": "bestätigt",
           "rationale": "Observationshaki ist im Charakterdossier bestätigt. Der Teilwert ist eine Fan-Schätzung auf Basis des allgemeinen Haki-Profils."
         },
@@ -5125,7 +5159,7 @@
           "rationale": "Rüstungshaki ist im Charakterdossier bestätigt. Der Teilwert bewertet vor allem Härtung, Durchschlagskraft und defensive Nutzung."
         },
         "conqueror": {
-          "score": 100,
+          "score": 99,
           "status": "bestätigt",
           "rationale": "Fortgeschrittene Königshaki-Beschichtung wird als belegte oder im Profil hinreichend abgesicherte Spitzenanwendung berücksichtigt."
         }
@@ -5627,14 +5661,14 @@
       "rationale": "96/100 in seiner stärksten gezeigten Form. Außergewöhnliche Zähigkeit, Ausdauer, fortgeschrittenes Königshaki und enorme Zoan-Physis. Ruffys Sieg auf Onigashima zählt, war aber kein unbelasteter 1-gegen-1-Kampf; bei voller Gesundheit ist Kaido weiterhin leicht vor Gear-5-Ruffy.",
       "intelligence": 63,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 100,
+      "haki_score": 99,
       "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki (Zukunftssicht gezeigt)",
         "Rüstungshaki",
         "Königshaki (Beschichtung)"
       ],
-      "haki_note": "Top-Tier-Haki und extreme Ausdauer sind direkt gezeigt. Die Zukunftssicht erscheint situationsabhängig; der Haki-Wert bleibt hoch, ohne jede Anwendung als konstant verfügbar anzunehmen.",
+      "haki_note": "Haki bleibt absolute Spitzenklasse: Zukunftssicht, Rüstungshaki und fortgeschrittenes Königshaki. Der Gesamtwert 99 ordnet ihn knapp unter Shanks ein, ohne seine außergewöhnliche Meisterschaft kleinzureden.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Mythische Drachen-Zoan mit mehreren Formen, Boro Breath, enormer Haltbarkeit und Ausdauer; fortgeschrittenes Königshaki, hochwirksame Nah-/Flächenangriffe.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -5650,20 +5684,20 @@
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 99,
-        "haki": 100,
+        "haki": 99,
         "strength": 100,
         "speed": 94,
         "battle_iq": 78,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Mythische Zoan mit enormer Ausdauer, elementaren Attacken und Hybridform; Topklasse der Fruchtbeherrschung.",
-          "haki": "Top-Tier-Haki und extreme Ausdauer sind direkt gezeigt. Die Zukunftssicht erscheint situationsabhängig; der Haki-Wert bleibt hoch, ohne jede Anwendung als konstant verfügbar anzunehmen.",
+          "haki": "Haki bleibt absolute Spitzenklasse: Zukunftssicht, Rüstungshaki und fortgeschrittenes Königshaki. Der Gesamtwert 99 ordnet ihn knapp unter Shanks ein, ohne seine außergewöhnliche Meisterschaft kleinzureden.",
           "strength": "Kraftwert 100/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 94/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 78/100; 70 % Kampftaktik (84) und 30 % allgemeine Intelligenz (63)."
@@ -5672,9 +5706,9 @@
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": 100,
+          "score": 99,
           "status": "bestätigt",
-          "rationale": "Außergewöhnliche Zukunftssicht ist belegt; der Teilwert wird im Modell gegenüber dem allgemeinen Haki-Profil angehoben."
+          "rationale": "Außergewöhnliche Zukunftssicht; 99 steht für Spitzenmeisterschaft, ohne daraus eine automatische Überlegenheit gegenüber Shanks abzuleiten."
         },
         "armament": {
           "score": 99,
@@ -6027,10 +6061,10 @@
       }
     },
     "Jack": {
-      "power": 75,
-      "abilities": 80,
+      "power": 80,
+      "abilities": 82,
       "versatility": 70,
-      "status": 79,
+      "status": 80,
       "bounty": 1000000000,
       "bounty_state": "aktiv",
       "confidence": "Hoch",
@@ -6038,7 +6072,7 @@
         "frontline",
         "tank"
       ],
-      "rationale": "high commander / elite specialist range. Assessment uses strongest demonstrated canon form, ability interactions and known Haki only; no unconfirmed future power-ups are assumed.",
+      "rationale": "Auf 80 angehoben: Jack ist ein All-Star mit Mammut-Zoan, hoher Zähigkeit und außergewöhnlicher Ausdauer. Er hielt auf Zou fünf Tage gegen die Mink-Herrscher durch und besiegte mehrere Sulong-Minks; seine Niederlage gegen Sulong-Inuarashi verhindert eine Einordnung auf Queen-/King-Niveau.",
       "intelligence": 45,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -6049,13 +6083,13 @@
       ],
       "haki_note": "Haki-Nutzung aufgeführt; seine Zähigkeit und körperlichen Eigenschaften tragen stärker zur Gesamtstärke bei.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Ancient-Zoan-Mammutkraft und enorme Ausdauer; starke Frontlinie und Zähigkeit, begrenztere technische Vielfalt.",
+      "ability_summary": "Mammut-Ancient-Zoan, hohe rohe Kraft und enorme Ausdauer; hielt auf Zou lange gegen die Mink-Herrscher stand und besiegte mehrere Sulong-Kämpfer, wurde aber von Sulong-Inuarashi bezwungen.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 80,
-        "defense": 78,
+        "offense": 82,
+        "defense": 83,
         "speed": 77,
-        "endurance": 77,
+        "endurance": 90,
         "battle_iq": 52,
         "haki_mastery": 63
       },
@@ -6064,9 +6098,9 @@
       "ranking_stats": {
         "devil_fruit": 86,
         "haki": null,
-        "strength": 79,
+        "strength": 83,
         "speed": 77,
-        "battle_iq": 50,
+        "battle_iq": 52,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -6077,9 +6111,9 @@
         "rationale": {
           "devil_fruit": "Der Wert bewertet Fruchtwirkung und Beherrschung, nicht den gesamten Charakter-Kampfwert.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 79/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 77/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 50/100; 70 % Kampftaktik (52) und 30 % allgemeine Intelligenz (45)."
+          "strength": "Strength-Wert 83/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 77/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 52/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -6698,10 +6732,10 @@
       }
     },
     "Denjiro": {
-      "power": 78,
-      "abilities": 82,
-      "versatility": 70,
-      "status": 76,
+      "power": 82,
+      "abilities": 86,
+      "versatility": 74,
+      "status": 80,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Hoch",
@@ -6709,48 +6743,48 @@
         "frontline",
         "haki"
       ],
-      "rationale": "high commander / elite specialist range. Assessment uses strongest demonstrated canon form, ability interactions and known Haki only; no unconfirmed future power-ups are assumed.",
+      "rationale": "Auf 82 angehoben: Denjiro gilt als einer der stärksten und technisch besten Akazaya-Samurai. Er konnte Zoros fliegenden Schnitt abwehren, kurz mit ihm clashen und verfügt über fortgeschrittenes Rüstungshaki (Ryuo). Er bleibt unter Ashura Doji und den obersten Kommandanten.",
       "intelligence": 78,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": null,
-      "haki_status": "Typ bestätigt; Meisterschaft unbekannt",
+      "haki_score": 85,
+      "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki",
-        "Rüstungshaki"
+        "Rüstungshaki (fortgeschrittenes Ryuo)"
       ],
-      "haki_note": "Beide Arten bestätigt; erfahrener Samurai und starker Schwertkämpfer.",
+      "haki_note": "85: Observationshaki und fortgeschrittenes Rüstungshaki/Ryuo sind belegt. Denjiro ist ein sehr erfahrener Samurai und einer der technisch stärksten Schwertkämpfer der Akazaya; Königshaki ist nicht bestätigt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Meisterschwertkampf, Haki und Akazaya-Neun-Erfahrung; schneller, disziplinierter Nahkämpfer ohne übernatürliche Frucht.",
+      "ability_summary": "Einer der stärksten Akazaya-Samurai und herausragender Schwertkämpfer; Observation Haki und fortgeschrittenes Rüstungshaki (Ryuo), präzise fliegende Schnitte und Oden-Zwei-Schwerter-Technik.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 83,
-        "defense": 80,
-        "speed": 79,
-        "endurance": 80,
-        "battle_iq": 76,
-        "haki_mastery": 71
+        "offense": 86,
+        "defense": 82,
+        "speed": 83,
+        "endurance": 82,
+        "battle_iq": 80,
+        "haki_mastery": 85
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": null,
-        "strength": 82,
-        "speed": 79,
-        "battle_iq": 77,
+        "haki": 85,
+        "strength": 85,
+        "speed": 83,
+        "battle_iq": 80,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 82/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 79/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 77/100; 70 % Kampftaktik (76) und 30 % allgemeine Intelligenz (78)."
+          "haki": "85: Observationshaki und fortgeschrittenes Rüstungshaki/Ryuo sind belegt. Denjiro ist ein sehr erfahrener Samurai und einer der technisch stärksten Schwertkämpfer der Akazaya; Königshaki ist nicht bestätigt.",
+          "strength": "Strength-Wert 85/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 83/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 80/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {
@@ -6758,19 +6792,19 @@
       },
       "haki_breakdown": {
         "observation": {
-          "score": null,
-          "status": "Typ bestätigt; Meisterschaft unbekannt",
-          "rationale": "Der Haki-Typ ist im Dossier belegt, aber die individuellen Manga-Feats reichen für eine seriöse 0–100-Meisterschaftszahl nicht aus."
+          "score": 82,
+          "status": "bestätigt",
+          "rationale": "Bestätigte Wahrnehmungsfähigkeit; keine Zukunftssicht gezeigt."
         },
         "armament": {
-          "score": null,
-          "status": "Typ bestätigt; Meisterschaft unbekannt",
-          "rationale": "Der Haki-Typ ist im Dossier belegt, aber die individuellen Manga-Feats reichen für eine seriöse 0–100-Meisterschaftszahl nicht aus."
+          "score": 88,
+          "status": "bestätigt",
+          "rationale": "Fortgeschrittenes Ryuo und die Fähigkeit, Kaidos harte Haut zu durchtrennen, rechtfertigen eine hohe Einstufung."
         },
         "conqueror": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Königshaki ist im verwendeten Manga-Dossier nicht bestätigt. Das ist kein bestätigter Wert von 0."
+          "rationale": "Königshaki ist im verwendeten Manga-Dossier nicht bestätigt."
         }
       },
       "matchup_reviewed": true,
@@ -7743,10 +7777,10 @@
       }
     },
     "Don Chinjao": {
-      "power": 78,
-      "abilities": 87,
-      "versatility": 72,
-      "status": 79,
+      "power": 80,
+      "abilities": 88,
+      "versatility": 73,
+      "status": 80,
       "bounty": 542000000,
       "bounty_state": "historisch",
       "confidence": "Mittel",
@@ -7754,67 +7788,67 @@
         "frontline",
         "haki"
       ],
-      "rationale": "Prime Chinjao is scored, including his drill head and Conqueror’s Haki; old-age Luffy fight is not the ceiling.",
+      "rationale": "Auf 80 angehoben: Die Peak-Version berücksichtigt Chinjaos frühere Happo-Kampfstil-Legendenstärke, alle drei Haki-Arten und den expliziten Königshaki-Clash mit Luffy in Dressrosa. Er bleibt unter den hochrangigen Samurai und Kommandanten; sein Alter ist nicht als Peak-Maßstab verwendet.",
       "intelligence": 60,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": null,
-      "haki_status": "Typ bestätigt; Meisterschaft unbekannt",
+      "haki_score": 82,
+      "haki_status": "bestätigt",
       "haki_types": [
         "Observationshaki",
         "Rüstungshaki",
         "Königshaki"
       ],
-      "haki_note": "Königshaki bestätigt; aktuelle/alte Form ist deutlich weniger stark als sein Peak.",
+      "haki_note": "82: Alle drei Haki-Arten sind bestätigt, einschließlich eines expliziten Königshaki-Clashs mit Luffy. Es gibt jedoch keinen Beleg für eine fortgeschrittene Königshaki-Beschichtung wie bei den Top-Tier-Anwendern.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Happo-Kampfstil und durch Königshaki verstärkte Kopf-/Rüstungshaki-Angriffe; ehemalige Legendenklasse, im Alter deutlich reduziert.",
+      "ability_summary": "Happo-Kampfstil, Drill-Kopf, Observation-, Rüstungs- und Königshaki; in Dressrosa expliziter Königshaki-Clash mit Luffy. Prime-Version ist stärker als seine alte Form.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 83,
-        "defense": 82,
+        "offense": 85,
+        "defense": 83,
         "speed": 81,
-        "endurance": 81,
-        "battle_iq": 64,
-        "haki_mastery": 80
+        "endurance": 82,
+        "battle_iq": 65,
+        "haki_mastery": 82
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": null,
-        "strength": 82,
+        "haki": 82,
+        "strength": 84,
         "speed": 81,
-        "battle_iq": 63,
+        "battle_iq": 65,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 82/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 81/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 63/100; 70 % Kampftaktik (64) und 30 % allgemeine Intelligenz (60)."
+          "haki": "82: Alle drei Haki-Arten sind bestätigt, einschließlich eines expliziten Königshaki-Clashs mit Luffy. Es gibt jedoch keinen Beleg für eine fortgeschrittene Königshaki-Beschichtung wie bei den Top-Tier-Anwendern.",
+          "strength": "Strength-Wert 84/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 81/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 65/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
       "haki_breakdown": {
         "observation": {
-          "score": null,
-          "status": "Typ bestätigt; Meisterschaft unbekannt",
-          "rationale": "Der Haki-Typ ist im Dossier belegt, aber die individuellen Manga-Feats reichen für eine seriöse 0–100-Meisterschaftszahl nicht aus."
+          "score": 82,
+          "status": "bestätigt",
+          "rationale": "Bestätigter Haki-Typ; keine Zukunftssicht gezeigt."
         },
         "armament": {
-          "score": null,
-          "status": "Typ bestätigt; Meisterschaft unbekannt",
-          "rationale": "Der Haki-Typ ist im Dossier belegt, aber die individuellen Manga-Feats reichen für eine seriöse 0–100-Meisterschaftszahl nicht aus."
+          "score": 84,
+          "status": "bestätigt",
+          "rationale": "Starkes Rüstungshaki, passend zu seiner physischen Happo-Kampfstil-Offensive."
         },
         "conqueror": {
           "score": 80,
           "status": "bestätigt",
-          "rationale": "Königshaki ist als Fähigkeit bestätigt; eine fortgeschrittene Beschichtung ist im verwendeten Dossier nicht gleich sicher belegt, daher fällt der Teilwert konservativer aus."
+          "rationale": "Königshaki-Clash mit Luffy in Kapitel 716; keine fortgeschrittene Beschichtung belegt."
         }
       },
       "matchup_reviewed": true,
@@ -8008,10 +8042,10 @@
       }
     },
     "Kaku": {
-      "power": 75,
-      "abilities": 89,
-      "versatility": 80,
-      "status": 77,
+      "power": 80,
+      "abilities": 90,
+      "versatility": 81,
+      "status": 78,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Hoch",
@@ -8019,7 +8053,7 @@
         "frontline",
         "mobility"
       ],
-      "rationale": "Awakened giraffe Zoan, swordsmanship and Rokushiki provide a flexible kit; below Lucci and top commanders.",
+      "rationale": "Auf 80 angehoben: Kaku ist ein CP0-Agent mit erwachter Giraffen-Zoan, Rokushiki und Haki sowie einem vielseitigen Vier-Schwerter-Stil. Er bleibt klar unter Lucci und Zoro; der Egghead-Zusammenstoß mit Zoro wurde durch Stussys Eingreifen beendet und belegt keine Gleichwertigkeit.",
       "intelligence": 75,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -8030,15 +8064,15 @@
       ],
       "haki_note": "Beide Arten bestätigt; Haki ergänzt Rokushiki und Zoan-Kraft.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Giraffen-Zoan-Erwachen, Vier-Schwerter-Stil, Rankyaku und Rokushiki; vielseitiger Nahkämpfer mit guter Beweglichkeit.",
+      "ability_summary": "Erwachte Giraffen-Zoan, Rokushiki, Haki und Vier-Schwerter-Stil; vielseitiger CP0-Kämpfer mit hoher Beweglichkeit, aber deutlich unter Lucci und den Top-Kommandanten.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
         "offense": 84,
-        "defense": 84,
-        "speed": 83,
-        "endurance": 83,
-        "battle_iq": 76,
-        "haki_mastery": 72
+        "defense": 82,
+        "speed": 85,
+        "endurance": 82,
+        "battle_iq": 78,
+        "haki_mastery": 76
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
@@ -8046,8 +8080,8 @@
         "devil_fruit": 89,
         "haki": null,
         "strength": 84,
-        "speed": 83,
-        "battle_iq": 76,
+        "speed": 85,
+        "battle_iq": 78,
         "evidence": {
           "devil_fruit": "bestätigte Teufelsfrucht; Beherrschung/Erwachen nach belegten Fähigkeiten geschätzt",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -8058,9 +8092,9 @@
         "rationale": {
           "devil_fruit": "Der Wert bewertet Fruchtwirkung und Beherrschung, nicht den gesamten Charakter-Kampfwert.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 84/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 83/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 76/100; 70 % Kampftaktik (76) und 30 % allgemeine Intelligenz (75)."
+          "strength": "Strength-Wert 84/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 85/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 78/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -8665,10 +8699,10 @@
       }
     },
     "Koby": {
-      "power": 82,
-      "abilities": 87,
-      "versatility": 79,
-      "status": 85,
+      "power": 83,
+      "abilities": 89,
+      "versatility": 80,
+      "status": 86,
       "bounty": 500000000,
       "bounty_state": "cross_guild",
       "confidence": "Mittel",
@@ -8677,7 +8711,7 @@
         "leader",
         "haki"
       ],
-      "rationale": "Current best demonstrated form, including Honesty Impact and advanced Armament. Future potential is deliberately not treated as already achieved Prime.",
+      "rationale": "Auf 83 angehoben: Honesty Impact ist ein starkes offensives Rüstungshaki-Feat und zerstörte Pizarros riesige steinerne Hand. Koby bleibt wegen geringerer Kampferfahrung, begrenzter Ausdauer und fehlender langwieriger Spitzenkämpfe unter Lucci und den Admirälen.",
       "intelligence": 81,
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": 88,
@@ -8689,24 +8723,24 @@
       ],
       "haki_note": "Observation, Armament und die fortgeschrittene Anwendung in Honesty Impact; noch keine Legenden-Konstanz.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Observation, Rüstungshaki und Honesty Impact; sehr hohe Entwicklung und Burst-Power, aber nicht die Konstanz eines Admirals.",
+      "ability_summary": "Observation Haki und fortgeschrittenes Rüstungshaki; Honesty Impact zeigt enorme Durchschlagskraft, aber seine Konstanz gegen Top-Tier-Gegner ist noch nicht belegt.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 88,
-        "defense": 86,
-        "speed": 88,
-        "endurance": 80,
-        "battle_iq": 80,
-        "haki_mastery": 85
+        "offense": 89,
+        "defense": 84,
+        "speed": 89,
+        "endurance": 85,
+        "battle_iq": 82,
+        "haki_mastery": 88
       },
       "weaknesses": "Starker Burst, aber noch geringere Erfahrung/Beständigkeit gegen Spitzenkämpfer.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
         "haki": 88,
-        "strength": 85,
-        "speed": 88,
-        "battle_iq": 80,
+        "strength": 87,
+        "speed": 89,
+        "battle_iq": 82,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
@@ -8717,9 +8751,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Observation, Armament und die fortgeschrittene Anwendung in Honesty Impact; noch keine Legenden-Konstanz.",
-          "strength": "Kraftwert 85/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 88/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 80/100; 70 % Kampftaktik (80) und 30 % allgemeine Intelligenz (81)."
+          "strength": "Strength-Wert 87/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 89/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 82/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -11309,15 +11343,15 @@
       }
     },
     "Nekomamushi": {
-      "power": 80,
-      "abilities": 85,
+      "power": 82,
+      "abilities": 87,
       "intelligence": 70,
-      "versatility": 80,
-      "status": 78,
+      "versatility": 81,
+      "status": 80,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Mittel",
-      "rationale": "Prime Mink leader with Sulong and high physical capability; Haki is recorded only where supported by official character references.",
+      "rationale": "Auf 82 angehoben: Die stärkste bewertete Form berücksichtigt Sulong. Beide Mink-Herrscher konnten Jack in Sulong einzeln bezwingen; ihre Haki-Meisterschaft bleibt separat unquantifiziert.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -11328,14 +11362,14 @@
       ],
       "haki_note": "Beide Arten bestätigt; starke Sulong-Form wird separat im Power-/Fähigkeitenwert erfasst.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Mink-Körperkraft, Elektro, Kampfkunst und Sulong; hohe Frontlinien-Ausdauer, besonders in Mondform.",
+      "ability_summary": "Mink-Herrscher mit Elektro, hoher Ausdauer und Sulong-Peak; die jeweilige Sulong-Form konnte Jack im Einzelkampf bezwingen.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 87,
-        "defense": 85,
-        "speed": 84,
-        "endurance": 85,
-        "battle_iq": 73,
+        "offense": 89,
+        "defense": 87,
+        "speed": 85,
+        "endurance": 88,
+        "battle_iq": 74,
         "haki_mastery": 77
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
@@ -11343,9 +11377,9 @@
       "ranking_stats": {
         "devil_fruit": 0,
         "haki": null,
-        "strength": 86,
-        "speed": 84,
-        "battle_iq": 72,
+        "strength": 87,
+        "speed": 85,
+        "battle_iq": 74,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -11356,9 +11390,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 86/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 84/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 72/100; 70 % Kampftaktik (73) und 30 % allgemeine Intelligenz (70)."
+          "strength": "Strength-Wert 87/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 85/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 74/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -11437,15 +11471,15 @@
       }
     },
     "Inuarashi": {
-      "power": 80,
-      "abilities": 85,
+      "power": 82,
+      "abilities": 87,
       "intelligence": 72,
-      "versatility": 80,
-      "status": 78,
+      "versatility": 81,
+      "status": 80,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Mittel",
-      "rationale": "Prime Mink leader with Sulong and high physical capability; Haki is recorded only where supported by official character references.",
+      "rationale": "Auf 82 angehoben: Die stärkste bewertete Form berücksichtigt Sulong. Beide Mink-Herrscher konnten Jack in Sulong einzeln bezwingen; ihre Haki-Meisterschaft bleibt separat unquantifiziert.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -11456,13 +11490,13 @@
       ],
       "haki_note": "Beide Arten bestätigt; starke Sulong-Form wird separat im Power-/Fähigkeitenwert erfasst.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
-      "ability_summary": "Mink-Kampfkunst, Elektro und Sulong; extrem starker Nahkämpfer mit großer Ausdauer und Erfahrung gegen Jack.",
+      "ability_summary": "Mink-Herrscher mit Elektro, hoher Ausdauer und Sulong-Peak; die jeweilige Sulong-Form konnte Jack im Einzelkampf bezwingen.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 87,
-        "defense": 85,
-        "speed": 84,
-        "endurance": 85,
+        "offense": 89,
+        "defense": 87,
+        "speed": 85,
+        "endurance": 88,
         "battle_iq": 74,
         "haki_mastery": 77
       },
@@ -11471,9 +11505,9 @@
       "ranking_stats": {
         "devil_fruit": 0,
         "haki": null,
-        "strength": 86,
-        "speed": 84,
-        "battle_iq": 73,
+        "strength": 87,
+        "speed": 85,
+        "battle_iq": 74,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -11484,9 +11518,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 86/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 84/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 73/100; 70 % Kampftaktik (74) und 30 % allgemeine Intelligenz (72)."
+          "strength": "Strength-Wert 87/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 85/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 74/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -11565,7 +11599,7 @@
       }
     },
     "Bepo": {
-      "power": 66,
+      "power": 68,
       "abilities": 83,
       "intelligence": 66,
       "versatility": 69,
@@ -11573,7 +11607,7 @@
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Hoch",
-      "rationale": "Sulong form creates a sharp temporary power spike, but the transformation is situational and his sustained feats are limited.",
+      "rationale": "Auf 68 angehoben: Bepo erreichte mit Choppers Spezialmittel außerhalb des Vollmonds kurzzeitig Sulong, traf Blackbeard und konnte Law retten. Das ist ein starkes Peak-Feat, aber kein Sieg über Blackbeard; die Form ist zeitlich begrenzt und nicht zuverlässig verfügbar.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -11641,7 +11675,7 @@
         "versatility": 69,
         "confidence": "Hoch"
       },
-      "reassessment_note": "Sulong form creates a sharp temporary power spike, but the transformation is situational and his sustained feats are limited. Matchup-Prüfung: Mink-Elektro und zeitweilige Sulong-Form; hohe kurzfristige Kraft, aber Formzustand und Kontrolle sind nicht zuverlässig wiederholbar. Im direkten Vergleich liegen die nächsten numerischen Anker bei Bartolomeo (68), Carrot (68), Daz Bonez (68); diese Nähe ist nur ein Ausgangspunkt, kein garantierter Kampfausgang. Gegen Spezialisten entscheiden Reichweite, Gegenmittel, Haki, Startdistanz und Kampfziel. Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
+      "reassessment_note": "Auf 68 angehoben: Bepo erreichte mit Choppers Spezialmittel außerhalb des Vollmonds kurzzeitig Sulong, traf Blackbeard und konnte Law retten. Das ist ein starkes Peak-Feat, aber kein Sieg über Blackbeard; die Form ist zeitlich begrenzt und nicht zuverlässig verfügbar. Haki bleibt unverändert/unbekannt, da diese Leistungen keine neue quantifizierbare Haki-Meisterschaft belegen.",
       "matchup_anchors": [
         {
           "name": "Bartolomeo",
@@ -11687,6 +11721,12 @@
         "nearest_power_anchors": "Capone Bege (66), Bartolomeo (67), Blueno (65)",
         "evidence_confidence": "Hoch",
         "haki_treatment": "Zahlenwert nur bei verwertbarer bestätigter Gesamt-Haki-Evidenz; sonst unbekannt, nicht 0."
+      },
+      "last_rating_change_v6": {
+        "date": "2026-11-18",
+        "old_power": 66,
+        "new_power": 68,
+        "reason": "Manga-Feats bis Kapitel 1198; moderate Neubewertung unter Berücksichtigung situativer Einschränkungen."
       }
     },
     "Blueno": {
@@ -13468,14 +13508,14 @@
       "rationale": "Current strongest known form with Nidhöggr and Ragnir, advanced Conqueror’s coating, Observation Haki and evidence he can harm covenant-protected immortals. Very recent feats mean confidence remains medium-low.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 100,
+      "haki_score": 97,
       "haki_status": "bestätigt",
       "haki_types": [
-        "Observationshaki",
+        "Observationshaki (bestätigt)",
         "Königshaki",
         "fortgeschrittene Königshaki-Beschichtung"
       ],
-      "haki_note": "Königshaki ist Teil seines aktuellen Manga-Profils; die genaue Kontrolle der fortgeschrittenen Anwendung bleibt in Entwicklung.",
+      "haki_note": "Loki besitzt fortgeschrittenes Königshaki und eine außergewöhnlich starke mythische Zoan. 97 statt 100 berücksichtigt, dass seine vollständige Kontrolle und sein Platz neben Joy Boy/Rocks noch nicht abschließend belegt sind.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Elbaph-Riesenprinz mit mächtiger mythischer Form, überragender Physis und Haki; neueste Kapitel zeigen ihn als relevanten Akteur im Kampf gegen Imu.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -13485,26 +13525,26 @@
         "speed": 92,
         "endurance": 97,
         "battle_iq": 85,
-        "haki_mastery": 98
+        "haki_mastery": 97
       },
       "weaknesses": "Viele Peak-Fähigkeiten wurden erst in jüngsten Elbaph-Kapiteln gezeigt; der vollständige Vergleich gegen die Legenden fehlt.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 100,
-        "haki": 100,
+        "haki": 97,
         "strength": 99,
         "speed": 95,
         "battle_iq": 83,
         "evidence": {
           "devil_fruit": "im Manga belegte Teufelsfrucht",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Bestätigte mythische Zoan Ryu Ryu no Mi, Modell Nidhöggr; gigantische Drachenform, Flug, Blitze und hohe Robustheit.",
-          "haki": "Königshaki ist Teil seines aktuellen Manga-Profils; die genaue Kontrolle der fortgeschrittenen Anwendung bleibt in Entwicklung.",
+          "haki": "Loki besitzt fortgeschrittenes Königshaki und eine außergewöhnlich starke mythische Zoan. 97 statt 100 berücksichtigt, dass seine vollständige Kontrolle und sein Platz neben Joy Boy/Rocks noch nicht abschließend belegt sind.",
           "strength": "Kraftwert 99/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 95/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 83/100; 70 % Kampftaktik (85) und 30 % allgemeine Intelligenz (78)."
@@ -13516,18 +13556,18 @@
       "haki_breakdown": {
         "observation": {
           "score": null,
-          "status": "nicht bestätigt",
-          "rationale": "Keine ausreichend bestätigte Observationshaki-Anwendung im verwendeten Manga-Dossier. Unbekannt bedeutet nicht, dass die Figur es unmöglich beherrscht."
+          "status": "Typ bestätigt; Meisterschaft unbekannt",
+          "rationale": "Einzelne Beobachtungsleistungen sind nicht ausreichend quantifiziert."
         },
         "armament": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine ausreichend bestätigte Rüstungshaki-Anwendung im verwendeten Manga-Dossier. Unbekannt bedeutet nicht automatisch 0."
+          "rationale": "Keine eigenständige numerische Meisterschafts-Einordnung."
         },
         "conqueror": {
-          "score": 100,
+          "score": 97,
           "status": "bestätigt",
-          "rationale": "Fortgeschrittene Königshaki-Beschichtung wird als belegte oder im Profil hinreichend abgesicherte Spitzenanwendung berücksichtigt."
+          "rationale": "Fortgeschrittene Königshaki-Anwendung ist belegt; die dauerhafte Kontrolle bleibt noch zu beobachten."
         }
       },
       "matchup_reviewed": true,
@@ -13732,13 +13772,13 @@
       "rationale": "Auf 99 gesetzt: historische Erzählung und God-Valley-Kontext ordnen ihn über die Prime-Legenden ein. Wegen weniger vollständiger Solo-Feats bleibt die Konfidenz niedrig.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": 100,
+      "haki_score": 99,
       "haki_status": "bestätigt",
       "haki_types": [
         "Königshaki",
         "fortgeschrittene Königshaki-Anwendung (soweit gezeigt)"
       ],
-      "haki_note": "Sein historisches Peak-Profil und Königshaki-Anwendung rechtfertigen eine Top-Einstufung; direkte vollständige Solo-Duelle fehlen. Beobachtungs- und Rüstungshaki-Meisterschaft daher nicht separat numerisch behauptet.",
+      "haki_note": "99 statt 100: Rocks bleibt einer der stärksten historischen Haki-Nutzer. Wegen weniger vollständig dargestellter Solo-Duelle ist die absolute Modellobergrenze 100 nicht zwingend belegt.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "Legendärer Kapitän mit extremem Haki und historischer Bedrohung für Roger/Garp; individuelle Technikdetails sind trotz seiner Einordnung noch nicht vollständig quantifizierbar.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
@@ -13754,20 +13794,20 @@
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": 100,
+        "haki": 99,
         "strength": 99,
         "speed": 98,
         "battle_iq": 96,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "bestätigte, separat bewertbare Haki-Meisterschaft",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Sein historisches Peak-Profil und Königshaki-Anwendung rechtfertigen eine Top-Einstufung; direkte vollständige Solo-Duelle fehlen. Beobachtungs- und Rüstungshaki-Meisterschaft daher nicht separat numerisch behauptet.",
+          "haki": "99 statt 100: Rocks bleibt einer der stärksten historischen Haki-Nutzer. Wegen weniger vollständig dargestellter Solo-Duelle ist die absolute Modellobergrenze 100 nicht zwingend belegt.",
           "strength": "Kraftwert 99/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
           "speed": "Geschwindigkeitswert 98/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
           "battle_iq": "Battle IQ 96/100; 70 % Kampftaktik (95) und 30 % allgemeine Intelligenz (94)."
@@ -13780,17 +13820,17 @@
         "observation": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier."
         },
         "armament": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier; die Meisterschaft bleibt unbekannt."
+          "rationale": "Keine hinreichend bestätigte Anwendung im Manga-Dossier."
         },
         "conqueror": {
-          "score": 100,
+          "score": 99,
           "status": "bestätigt",
-          "rationale": "Fortgeschrittene Königshaki-Beschichtung wird als belegte oder im Profil hinreichend abgesicherte Spitzenanwendung berücksichtigt."
+          "rationale": "Historisches Spitzen-Königshaki; 99 berücksichtigt die starke Darstellung, aber auch die begrenzte Zahl vollständiger Solo-Feats."
         }
       },
       "matchup_reviewed": true,
@@ -14377,56 +14417,55 @@
       }
     },
     "Harald": {
-      "power": 93,
-      "abilities": 98,
+      "power": 95,
+      "abilities": 99,
       "intelligence": 70,
       "versatility": 78,
-      "status": 90,
+      "status": 92,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Niedrig",
-      "rationale": "Huge physical power and an extraordinary Conqueror’s Haki clash with Rocks; his prime is rated near the top but exact comparisons are limited.",
+      "rationale": "Auf 95 angehoben: Haralds enorme Physis und sein außergewöhnlicher Königshaki-Clash mit Rocks ordnen ihn oberhalb gewöhnlicher Kaiserkommandanten ein. Die genaue Distanz zu Rocks und den Prime-Legenden bleibt wegen fehlender vollständiger Vergleichskämpfe unsicher.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
-      "haki_score": null,
-      "haki_status": "Typ bestätigt; Meisterschaft unbekannt",
+      "haki_score": 94,
+      "haki_status": "bestätigt",
       "haki_types": [
-        "Königshaki (bestätigt; außergewöhnlicher Clash mit Rocks)",
-        "Fortgeschrittene Beschichtung nicht separat als bestätigt gewertet"
+        "Königshaki (bestätigt; außergewöhnlicher Clash mit Rocks)"
       ],
-      "haki_note": "Königshaki in Elbaph-Rückblicken belegt; die Zahl ist eine modellierte Prime-Meisterschaft.",
+      "haki_note": "Königshaki und der außergewöhnliche Clash mit Rocks sind bestätigt. 94 bewertet die belegte Spitzenanwendung, ohne eine nicht gezeigte fortgeschrittene Beschichtung zusätzlich zu behaupten.",
       "haki_reference": "https://onepiece.fandom.com/wiki/Haki",
       "ability_summary": "König von Elbaph mit gewaltiger Physis und Königshaki; durch die Elbaph-Rückblicke zentral für die neue Legenden-Skala, aber genaue Prime-Rangfolge bleibt offen.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 98,
-        "defense": 98,
-        "speed": 83,
-        "endurance": 98,
-        "battle_iq": 76,
-        "haki_mastery": 96
+        "offense": 99,
+        "defense": 99,
+        "speed": 84,
+        "endurance": 99,
+        "battle_iq": 75,
+        "haki_mastery": 94
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
       "rating_type": "Fan-Modell auf Basis Manga-Feats; Zahlen nicht offiziell",
       "ranking_stats": {
         "devil_fruit": 0,
-        "haki": null,
-        "strength": 97,
-        "speed": 83,
-        "battle_iq": 74,
+        "haki": 94,
+        "strength": 98,
+        "speed": 84,
+        "battle_iq": 75,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
-          "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
+          "haki": "Bestätigte Haki-Anwendung; der Gesamtwert ist eine vorsichtige Fan-Schätzung, keine offizielle Messung.",
           "strength": "abgeleitet aus Offensiv-, Defensiv-, Ausdauer- und Power-Profil",
           "speed": "Manga-Feats und vorhandenes Geschwindigkeitsprofil; Fan-Schätzung",
           "battle_iq": "Kampftaktik stärker gewichtet als allgemeine Intelligenz"
         },
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
-          "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 97/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 83/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 74/100; 70 % Kampftaktik (76) und 30 % allgemeine Intelligenz (70)."
+          "haki": "Königshaki und der außergewöhnliche Clash mit Rocks sind bestätigt. 94 bewertet die belegte Spitzenanwendung, ohne eine nicht gezeigte fortgeschrittene Beschichtung zusätzlich zu behaupten.",
+          "strength": "Strength-Wert 98/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 84/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 75/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -14434,17 +14473,17 @@
         "observation": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine ausreichend bestätigte Observationshaki-Anwendung im verwendeten Manga-Dossier. Unbekannt bedeutet nicht, dass die Figur es unmöglich beherrscht."
+          "rationale": "Keine ausreichende Manga-Bestätigung für eine numerische Einordnung."
         },
         "armament": {
           "score": null,
           "status": "nicht bestätigt",
-          "rationale": "Keine ausreichend bestätigte Rüstungshaki-Anwendung im verwendeten Manga-Dossier. Unbekannt bedeutet nicht automatisch 0."
+          "rationale": "Keine ausreichende Manga-Bestätigung für eine numerische Einordnung."
         },
         "conqueror": {
           "score": 94,
           "status": "bestätigt",
-          "rationale": "Königshaki ist als Fähigkeit bestätigt; eine fortgeschrittene Beschichtung ist im verwendeten Dossier nicht gleich sicher belegt, daher fällt der Teilwert konservativer aus."
+          "rationale": "Außergewöhnlicher Königshaki-Clash mit Rocks; der Wert bleibt eine Fan-Schätzung."
         }
       },
       "matchup_reviewed": true,
@@ -15538,15 +15577,15 @@
       }
     },
     "Dorry": {
-      "power": 81,
-      "abilities": 84,
+      "power": 82,
+      "abilities": 86,
       "intelligence": 61,
       "versatility": 80,
-      "status": 79,
+      "status": 80,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Mittel",
-      "rationale": "Prime giant warrior with huge physical output and strong team-up feats; no Haki score until a type is confirmed.",
+      "rationale": "Auf 82 angehoben: Die beiden Riesenkrieger zeigten auf Egghead, dass sie gemeinsam gegen die Gorosei-Formen bestehen und Luffy gegen Ju Peter retten konnten. Das ist ein starkes Peak-Feat, aber kein Beleg für eine individuelle Gleichstellung mit einem Admiral oder Kaiser.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -15557,11 +15596,11 @@
       "ability_summary": "Riesen-Physis, Elbaph-Kampftradition und Hakoku-/Kombinationsangriffe mit Brogy; extreme Kraft, aber große Trefferfläche und langsamere Reaktionsfenster.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 91,
-        "defense": 92,
+        "offense": 92,
+        "defense": 89,
         "speed": 59,
-        "endurance": 95,
-        "battle_iq": 68,
+        "endurance": 91,
+        "battle_iq": 67,
         "haki_mastery": 0
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
@@ -15571,7 +15610,7 @@
         "haki": null,
         "strength": 92,
         "speed": 59,
-        "battle_iq": 66,
+        "battle_iq": 67,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -15582,9 +15621,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 92/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 59/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 66/100; 70 % Kampftaktik (68) und 30 % allgemeine Intelligenz (61)."
+          "strength": "Strength-Wert 92/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 59/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 67/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -15668,15 +15707,15 @@
       }
     },
     "Brogy": {
-      "power": 81,
-      "abilities": 84,
+      "power": 82,
+      "abilities": 86,
       "intelligence": 61,
       "versatility": 80,
-      "status": 79,
+      "status": 80,
       "bounty": null,
       "bounty_state": "unbekannt",
       "confidence": "Mittel",
-      "rationale": "Comparable to Dorry; their joint attack is a major threat, but no unconfirmed Haki mastery is added.",
+      "rationale": "Auf 82 angehoben: Die beiden Riesenkrieger zeigten auf Egghead, dass sie gemeinsam gegen die Gorosei-Formen bestehen und Luffy gegen Ju Peter retten konnten. Das ist ein starkes Peak-Feat, aber kein Beleg für eine individuelle Gleichstellung mit einem Admiral oder Kaiser.",
       "roles": [],
       "version_label": "Peak / stärkste belegte Form bis Manga-Kapitel 1198 (08.11.2026)",
       "haki_score": null,
@@ -15687,11 +15726,11 @@
       "ability_summary": "Riesen-Physis, Elbaph-Kampftradition und Hakoku-/Kombinationsangriffe mit Dorry; extreme Kraft, aber große Trefferfläche und langsamere Reaktionsfenster.",
       "evidence_basis": "Manga-Feats bis Kapitel 1198; SBS/Vivre Cards nur dort, wo die Aussage belegbar ist. Community-Rankings sind Vergleichsperspektiven, keine Kanon-Beweise.",
       "combat_stats": {
-        "offense": 91,
-        "defense": 92,
+        "offense": 92,
+        "defense": 89,
         "speed": 59,
-        "endurance": 95,
-        "battle_iq": 68,
+        "endurance": 91,
+        "battle_iq": 67,
         "haki_mastery": 0
       },
       "weaknesses": "Kein universeller Konter festgelegt; effektive Gegenstrategien hängen von Haki, Reichweite, Fruchtinteraktion und Kampfumgebung ab.",
@@ -15701,7 +15740,7 @@
         "haki": null,
         "strength": 92,
         "speed": 59,
-        "battle_iq": 66,
+        "battle_iq": 67,
         "evidence": {
           "devil_fruit": "keine bestätigte eigene Teufelsfrucht",
           "haki": "unbekannt – Typ oder Meisterschaft nicht ausreichend quantifizierbar",
@@ -15712,9 +15751,9 @@
         "rationale": {
           "devil_fruit": "Keine eigene Teufelsfrucht mit hinreichender Bestätigung im verwendeten Charakterdossier. Das bedeutet 0 in der Disziplin Teufelsfrucht, nicht 0 allgemeine Kampfstärke.",
           "haki": "Unbekannt: zu wenig individuelle Manga-Belege für einen seriösen Zahlenwert. Fivefold verwendet intern einen neutralen Platzhalter von 50, der in der Karte ausdrücklich als unbekannt gekennzeichnet wird.",
-          "strength": "Kraftwert 92/100 aus Offensiv-, Defensiv- und Ausdauerprofil; dieser Wert ist getrennt vom Gesamt-Power-Level.",
-          "speed": "Geschwindigkeitswert 59/100; Reaktionen, Beschleunigung und Mobilität sind wichtiger als Titel oder Kopfgeld.",
-          "battle_iq": "Battle IQ 66/100; 70 % Kampftaktik (68) und 30 % allgemeine Intelligenz (61)."
+          "strength": "Strength-Wert 92/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "speed": "Speed-Wert 59/100; Fan-Schätzung aus den gezeigten Manga-Leistungen.",
+          "battle_iq": "Battle iq-Wert 67/100; Fan-Schätzung aus den gezeigten Manga-Leistungen."
         }
       },
       "specialty_stats": {},
@@ -17521,21 +17560,21 @@
     "manga_cutoff": "Chapter 1198 · 08.11.2026"
   },
   "review_summary": {
-    "version": "v5.1 · 140-character One Piece refresh",
-    "date": "2026-11-16",
+    "version": "v5.1 + rating review patch 18.11.2026 r2",
+    "date": "2026-11-18",
     "characters_total": 140,
     "unique_matchups": 9730,
     "simulations_per_pair": 15000,
     "total_simulated_fights": 145950000,
     "characters_individually_reviewed": 140,
     "new_character_profiles": 20,
-    "haki_numeric_profiles": 38,
-    "haki_unknown_or_unquantified": 102,
+    "haki_numeric_profiles": 43,
+    "haki_unknown_or_unquantified": 97,
     "manual_anchor_adjustments": 25,
     "unresolved_haki_contradictions": 0,
     "method": "All 140 character profiles are present. Existing 135 IDs are preserved; five new characters are included: Kyros, Ashura Doji, Gecko Moria (Prime), Vergo and Kanjuro. Complete pairwise matchup matrix is recalculated from current app duel-rating profiles with curated matchup modifiers and 15,000 aggregate binomial Monte Carlo draws per pair.",
     "important_limit": "A 15k aggregate-binomial Monte Carlo sample stabilizes the model estimate, not canon truth. Gecko Moria Prime is a low-confidence fan estimate; the historical Kaido conflict is not fully depicted and does not establish parity.",
-    "haki_adjustment": "Charlotte Katakuri: 84 -> 89 overall; Conqueror 65 -> 80; Observation 98 and Armament 89 unchanged.",
+    "haki_adjustment": "Shanks 100, Kaido 99, Big Mom 98, Kid 83, Sanji 94, Harald 94, Loki 97 und Rocks 99; weitere belastbare Haki-Gesamtwerte wurden für Denjiro, Kuma, Ace und Don Chinjao ergänzt.",
     "characters": 140,
     "latest_manga_chapter": "1198",
     "new_characters": [
@@ -17549,13 +17588,31 @@
       "Monkey D. Luffy",
       "Ethanbaron V. Nusjuro",
       "Charlotte Katakuri",
-      "Denjiro"
+      "Denjiro",
+      "Eustass Kid",
+      "Harald",
+      "Jack",
+      "Killer",
+      "X Drake",
+      "Kaku",
+      "Nekomamushi",
+      "Inuarashi",
+      "Koby",
+      "Bartholomew Kuma",
+      "Portgas D. Ace",
+      "Don Chinjao",
+      "Dorry",
+      "Brogy",
+      "Nico Robin",
+      "Franky",
+      "Jewelry Bonney",
+      "Bepo"
     ],
     "moria_prime_note": "Power 89: former Kaido rival; direct battle is not fully shown, so confidence remains low and no equality with Kaido is claimed.",
     "haki_consistency_audit": {
-      "numeric_profiles": 38,
-      "unknown_or_unquantified_profiles": 102,
-      "rule": "Numerical Haki is only used where the profile has a confirmed status and reasoned score. Unquantified Haki remains null/unknown, never zero."
+      "numeric_profiles": 43,
+      "unknown_or_unquantified_profiles": 97,
+      "rule": "Numerische Haki-Werte werden nur bei bestätigtem Haki und einer ausdrücklich begründeten Fan-Schätzung geführt. Bekannte Haki-Typen ohne belastbare Gesamt-Meisterschaft bleiben null/unbekannt; unbekannt ist nicht 0."
     },
     "haki_uncertainty_register": [
       "Nami",
@@ -17565,7 +17622,6 @@
       "Franky",
       "Brook",
       "Jinbe",
-      "Portgas D. Ace",
       "Benn Beckman",
       "Killer",
       "X Drake",
@@ -17575,7 +17631,6 @@
       "Cavendish",
       "Buggy",
       "Crocodile",
-      "Bartholomew Kuma",
       "Perona",
       "Daz Bonez",
       "Bentham (Bon Clay)",
@@ -17587,7 +17642,6 @@
       "Jack",
       "Black Maria",
       "Kozuki Momonosuke",
-      "Denjiro",
       "Marco",
       "Fisher Tiger",
       "Arlong",
@@ -17595,7 +17649,6 @@
       "Hody Jones",
       "Bellamy",
       "Nefertari Vivi",
-      "Don Chinjao",
       "Kaku",
       "Stussy",
       "Magellan",
@@ -17631,7 +17684,6 @@
       "Lucky Roux",
       "Figarland Garling",
       "Figarland Shamrock",
-      "Harald",
       "Shiki",
       "Kong",
       "Jaygarcia Saturn",
@@ -17660,7 +17712,28 @@
       "Kyros",
       "Gecko Moria (Prime)",
       "Kanjuro"
-    ]
+    ],
+    "matrix_status": "V5.1-Matchup-Matrix noch nicht neu berechnet; siehe rating_patch.matrix_warning.",
+    "additional_power_adjustments": {
+      "Jack": "75 -> 80",
+      "Killer": "75 -> 79",
+      "X Drake": "74 -> 78",
+      "Kaku": "75 -> 80",
+      "Denjiro": "78 -> 82",
+      "Nekomamushi": "80 -> 82",
+      "Inuarashi": "80 -> 82",
+      "Koby": "82 -> 83",
+      "Bartholomew Kuma": "85 -> 86",
+      "Portgas D. Ace": "81 -> 83",
+      "Don Chinjao": "78 -> 80",
+      "Dorry": "81 -> 82",
+      "Brogy": "81 -> 82",
+      "Nico Robin": "72 -> 74",
+      "Franky": "71 -> 74",
+      "Jewelry Bonney": "76 -> 78",
+      "Bepo": "66 -> 68"
+    },
+    "additional_power_adjustment_note": "Robin/Franky: direkte Siege über Tobiroppo-Gegner; Bonney/Bepo: hohe, aber klar situative Peak-Formen. Keine zusätzlichen Haki-Werte aus diesen Feats abgeleitet."
   },
   "power_changes": {
     "Sanji": {
@@ -17709,14 +17782,14 @@
       "delta": 4
     },
     "Dorry": {
-      "old": 79,
-      "new": 81,
-      "delta": 2
+      "old": 81,
+      "new": 82,
+      "delta": 1
     },
     "Brogy": {
-      "old": 79,
-      "new": 81,
-      "delta": 2
+      "old": 81,
+      "new": 82,
+      "delta": 1
     },
     "Yasopp": {
       "old": 84,
@@ -17812,12 +17885,97 @@
       "old": null,
       "new": 93,
       "delta": 0
+    },
+    "Eustass Kid": {
+      "old": 85,
+      "new": 87,
+      "delta": 2
+    },
+    "Harald": {
+      "old": 93,
+      "new": 95,
+      "delta": 2
+    },
+    "Jack": {
+      "old": 75,
+      "new": 80,
+      "delta": 5
+    },
+    "Killer": {
+      "old": 75,
+      "new": 79,
+      "delta": 4
+    },
+    "X Drake": {
+      "old": 74,
+      "new": 78,
+      "delta": 4
+    },
+    "Kaku": {
+      "old": 75,
+      "new": 80,
+      "delta": 5
+    },
+    "Denjiro": {
+      "old": 78,
+      "new": 82,
+      "delta": 4
+    },
+    "Nekomamushi": {
+      "old": 80,
+      "new": 82,
+      "delta": 2
+    },
+    "Inuarashi": {
+      "old": 80,
+      "new": 82,
+      "delta": 2
+    },
+    "Koby": {
+      "old": 82,
+      "new": 83,
+      "delta": 1
+    },
+    "Bartholomew Kuma": {
+      "old": 85,
+      "new": 86,
+      "delta": 1
+    },
+    "Portgas D. Ace": {
+      "old": 81,
+      "new": 83,
+      "delta": 2
+    },
+    "Don Chinjao": {
+      "old": 78,
+      "new": 80,
+      "delta": 2
+    },
+    "Nico Robin": {
+      "old": 72,
+      "new": 74,
+      "delta": 2
+    },
+    "Franky": {
+      "old": 71,
+      "new": 74,
+      "delta": 3
+    },
+    "Jewelry Bonney": {
+      "old": 76,
+      "new": 78,
+      "delta": 2
+    },
+    "Bepo": {
+      "old": 66,
+      "new": 68,
+      "delta": 2
     }
   },
   "haki_consistency_audit": {
-    "numeric_profiles": 35,
-    "unknown_or_unquantified_profiles": 100,
-    "rule": "Numerical Haki requires a confirmed type plus an individually reasoned mastery estimate; otherwise overall score null."
+    "numeric_profiles": 43,
+    "unknown_or_unquantified_profiles": 97,
+    "rule": "Numerische Haki-Werte werden nur bei bestätigtem Haki und einer ausdrücklich begründeten Fan-Schätzung geführt. Bekannte Haki-Typen ohne belastbare Gesamt-Meisterschaft bleiben null/unbekannt; unbekannt ist nicht 0."
   },
   "haki_uncertainty_register": [
     "Nami",
@@ -17827,7 +17985,6 @@
     "Franky",
     "Brook",
     "Jinbe",
-    "Portgas D. Ace",
     "Benn Beckman",
     "Killer",
     "X Drake",
@@ -17837,7 +17994,6 @@
     "Cavendish",
     "Buggy",
     "Crocodile",
-    "Bartholomew Kuma",
     "Perona",
     "Daz Bonez",
     "Bentham (Bon Clay)",
@@ -17849,7 +18005,6 @@
     "Jack",
     "Black Maria",
     "Kozuki Momonosuke",
-    "Denjiro",
     "Marco",
     "Fisher Tiger",
     "Arlong",
@@ -17857,7 +18012,6 @@
     "Hody Jones",
     "Bellamy",
     "Nefertari Vivi",
-    "Don Chinjao",
     "Kaku",
     "Stussy",
     "Magellan",
@@ -17893,12 +18047,10 @@
     "Lucky Roux",
     "Figarland Garling",
     "Figarland Shamrock",
-    "Harald",
     "Shiki",
     "Kong",
     "Jaygarcia Saturn",
     "Topman Warcury",
-    "Ethanbaron V. Nusjuro",
     "Marcus Mars",
     "Shepherd Ju Peter",
     "Gunko",
@@ -17919,6 +18071,50 @@
     "S-Shark",
     "Limejuice",
     "Shepherd Sommers",
-    "Rimoshifu Killingham"
-  ]
+    "Rimoshifu Killingham",
+    "Kyros",
+    "Gecko Moria (Prime)",
+    "Kanjuro"
+  ],
+  "rating_patch": {
+    "version": "rating-review-2026-11-18-r2",
+    "date": "2026-11-18",
+    "purpose": "Additional character review across the remaining roster, including Robin, Franky, Bonney and Bepo.",
+    "updated_characters": [
+      "Eustass Kid",
+      "Harald",
+      "Jack",
+      "Killer",
+      "X Drake",
+      "Kaku",
+      "Denjiro",
+      "Nekomamushi",
+      "Inuarashi",
+      "Koby",
+      "Bartholomew Kuma",
+      "Portgas D. Ace",
+      "Don Chinjao",
+      "Dorry",
+      "Brogy",
+      "Nico Robin",
+      "Franky",
+      "Jewelry Bonney",
+      "Bepo"
+    ],
+    "haki_updated_characters": [
+      "Shanks",
+      "Kaido",
+      "Charlotte Linlin",
+      "Eustass Kid",
+      "Sanji",
+      "Harald",
+      "Loki",
+      "Rocks D. Xebec",
+      "Denjiro",
+      "Bartholomew Kuma",
+      "Portgas D. Ace",
+      "Don Chinjao"
+    ],
+    "matrix_warning": "The existing matchup_results.json.gz and POWER_MATRIX_V5_MATCHUPS.csv are still the original v5.1 matrix. They were not recalculated because the bundle contains no reproducible matrix-generation script. This patch must not be treated as a complete playable release until pairwise matchups are regenerated from these profiles."
+  }
 }
